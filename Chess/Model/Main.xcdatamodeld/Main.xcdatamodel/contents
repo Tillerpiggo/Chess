@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H1323" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BoardModel" representedClassName="BoardModel" syncable="YES" codeGenerationType="class">
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="board" inverseEntity="GameModel"/>
+        <relationship name="squares" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="board" inverseEntity="SquareModel"/>
+    </entity>
+    <entity name="GameModel" representedClassName="GameModel" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BoardModel" inverseName="game" inverseEntity="BoardModel"/>
+        <relationship name="pieces" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PieceModel" inverseName="game" inverseEntity="PieceModel"/>
+        <relationship name="players" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PlayerModel" inverseName="game" inverseEntity="PlayerModel"/>
+        <relationship name="squares" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="game" inverseEntity="SquareModel"/>
+    </entity>
+    <entity name="MoveModel" representedClassName="MoveModel" syncable="YES" codeGenerationType="class">
+        <relationship name="end" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="moveEnd" inverseEntity="PositionModel"/>
+        <relationship name="start" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="moveStart" inverseEntity="PositionModel"/>
+    </entity>
+    <entity name="MoverModel" representedClassName="MoverModel" syncable="YES" codeGenerationType="class">
+        <relationship name="canCapturePatterns" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PatternModel" inverseName="moverCanCapture" inverseEntity="PatternModel"/>
+        <relationship name="canMovePatterns" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PatternModel" inverseName="moverCanMove" inverseEntity="PatternModel"/>
+        <relationship name="piece" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="mover" inverseEntity="PieceModel"/>
+        <relationship name="pieceFirstMove" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="firstMoveMover" inverseEntity="PieceModel"/>
+    </entity>
+    <entity name="PatternModel" representedClassName="PatternModel" syncable="YES" codeGenerationType="class">
+        <attribute name="directions" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[NSNumber]"/>
+        <attribute name="fileDistance" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isRestricting" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="rankDistance" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="custom" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="pattern" inverseEntity="PositionModel"/>
+        <relationship name="moverCanCapture" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="canCapturePatterns" inverseEntity="MoverModel"/>
+        <relationship name="moverCanMove" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="canMovePatterns" inverseEntity="MoverModel"/>
+    </entity>
+    <entity name="PieceModel" representedClassName="PieceModel" syncable="YES" codeGenerationType="class">
+        <attribute name="hasMoved" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCapturesSameAsNormal" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isFirstMoveSameAsNormal" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isImportant" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="pieceImage" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="firstMoveMover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="pieceFirstMove" inverseEntity="MoverModel"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="pieces" inverseEntity="GameModel"/>
+        <relationship name="mover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="piece" inverseEntity="MoverModel"/>
+        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="piece" inverseEntity="PlayerModel"/>
+        <relationship name="position" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="piece" inverseEntity="PositionModel"/>
+        <relationship name="square" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="piece" inverseEntity="SquareModel"/>
+    </entity>
+    <entity name="PlayerModel" representedClassName="PlayerModel" syncable="YES" codeGenerationType="class">
+        <attribute name="player" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="players" inverseEntity="GameModel"/>
+        <relationship name="piece" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="owner" inverseEntity="PieceModel"/>
+        <relationship name="square" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="startingPieceOwner" inverseEntity="SquareModel"/>
+    </entity>
+    <entity name="PositionModel" representedClassName="PositionModel" syncable="YES" codeGenerationType="class">
+        <attribute name="file" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rank" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="position" inverseEntity="SquareModel"/>
+        <relationship name="moveEnd" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoveModel" inverseName="end" inverseEntity="MoveModel"/>
+        <relationship name="moveStart" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoveModel" inverseName="start" inverseEntity="MoveModel"/>
+        <relationship name="pattern" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PatternModel" inverseName="custom" inverseEntity="PatternModel"/>
+        <relationship name="piece" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="position" inverseEntity="PieceModel"/>
+    </entity>
+    <entity name="SquareModel" representedClassName="SquareModel" syncable="YES" codeGenerationType="class">
+        <attribute name="startingPieceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BoardModel" inverseName="squares" inverseEntity="BoardModel"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="squares" inverseEntity="GameModel"/>
+        <relationship name="piece" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="square" inverseEntity="PieceModel"/>
+        <relationship name="position" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="board" inverseEntity="PositionModel"/>
+        <relationship name="startingPieceOwner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="square" inverseEntity="PlayerModel"/>
+    </entity>
+    <elements>
+        <element name="BoardModel" positionX="-63" positionY="0" width="128" height="73"/>
+        <element name="GameModel" positionX="-63" positionY="-18" width="128" height="133"/>
+        <element name="MoveModel" positionX="18" positionY="90" width="128" height="73"/>
+        <element name="MoverModel" positionX="-27" positionY="81" width="128" height="103"/>
+        <element name="PatternModel" positionX="-18" positionY="90" width="128" height="163"/>
+        <element name="PieceModel" positionX="-36" positionY="27" width="128" height="238"/>
+        <element name="PlayerModel" positionX="0" positionY="81" width="128" height="103"/>
+        <element name="PositionModel" positionX="-18" positionY="72" width="128" height="148"/>
+        <element name="SquareModel" positionX="-54" positionY="9" width="128" height="163"/>
+    </elements>
+</model>
