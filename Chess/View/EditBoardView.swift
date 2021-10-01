@@ -43,7 +43,7 @@ struct EditBoardView: View {
 				let squareLength = CGFloat(geometry.size.smallestSide) / CGFloat(game.board.squares.largestDimension)
 				
 				BoardView(
-					squares: emptySquares,
+                    squares: .constant(emptySquares),
 					squareLength: squareLength,
 					selectedSquares: [],
 					legalMoves: [],
@@ -67,7 +67,7 @@ struct EditBoardView: View {
 				
 				
 				BoardView(
-					squares: game.board.squares,
+					squares: $game.board.squares,
 					squareLength: squareLength,
 					selectedSquares: [],
 					legalMoves: [],
@@ -85,6 +85,7 @@ struct EditBoardView: View {
 							self.drop(providers: providers, rank: rank, file: file)
 						}
 					)
+                    .shadow(color: Color.black.opacity(0.15), radius: 20)
 				
 					
 					
@@ -121,7 +122,7 @@ struct EditBoardView: View {
 			
 			
 		}
-			//.gesture(panGesture())
+			.gesture(panGesture())
 			.gesture(zoomGesture())
     }
     
@@ -163,6 +164,7 @@ struct EditBoardView: View {
         
         // New square tapped on the right
         if translatedPosition.file >= files {
+            print("tapped on right")
             var newFile = [Square]()
             for rank in 0..<ranks {
                 let state: Square.SquareState = rank == translatedPosition.rank ? .empty : .nonexistent
@@ -189,6 +191,7 @@ struct EditBoardView: View {
         
         // New square tapped on the top
         if translatedPosition.rank >= ranks {
+            print("tapped on top")
             for (fileIndex, _) in squares.enumerated() {
                 let state: Square.SquareState = fileIndex == translatedPosition.file ? .empty: .nonexistent
                 

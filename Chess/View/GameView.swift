@@ -15,7 +15,7 @@ struct GameView: View {
 		VStack {
 			Text(victoryText)
 			
-			BoardView(squares: game.squares, selectedSquares: game.selectedSquares, legalMoves: game.legalMoves) { position in
+            BoardView(squares: .constant(game.squares), selectedSquares: game.selectedSquares, legalMoves: game.legalMoves) { position in
 				game.selectSquare(at: position)
 			}
 		}

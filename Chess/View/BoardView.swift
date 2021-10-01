@@ -11,7 +11,7 @@ import SwiftUI
 struct BoardView: View {
 	// It is assumed/expected that this array represents a rectangle (all inner lists have the same length)
 	
-	var squares: [[Square]]
+	@Binding var squares: [[Square]]
 	var squareLength: CGFloat?
 	var selectedSquares: [Position]
 	var legalMoves: [Position]
@@ -79,12 +79,26 @@ struct BoardView: View {
 //                                    self.square(square, sideLength: sideLength)
 //                                        .onTapGesture { onSelected(square.position) }
 //                                }
-                                self.square(square, sideLength: sideLength)
-                                    //.onTapGesture { onSelected(square.position) }
-                                    .gesture(LongPressGesture().onChanged {_ in 
-                                        self.selectedSquare = square
-                                        print("Selected Square: \(square.position)")
-                                    })
+                                if square.piece != nil {
+                                    self.square(square, sideLength: sideLength)
+                                        .gesture(LongPressGesture()
+                                                    .onChanged { _ in
+                                                        self.selectedSquare = square
+                                                        print("Selected Square: \(square.position)")
+                                                    }
+                                                    .onEnded { _ in
+                                                        self.selectedSquare = nil
+                                                        self.dragPiece = nil
+                                                    }
+                                        )
+                                        //.onTapGesture { onSelected(square.position) }
+                                } else {
+                                    self.square(square, sideLength: sideLength)
+                                        .highPriorityGesture(TapGesture()
+                                                                .onEnded() {
+                                            onSelected(square.position)
+                                        })
+                                }
 
                             }
                             //fileView(file, sideLength: sideLength)
@@ -93,9 +107,10 @@ struct BoardView: View {
                         .frame(width: sideLength)
 					}
 				}
-                .gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare ?? squares[0][0]))
+                .gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare))
                 
 				.frame(width: geometry.size.width, height: geometry.size.height)
+                .drawingGroup()
                  
             
 //                HStack(spacing: 0) {
@@ -166,9 +181,9 @@ struct BoardView: View {
 	private func circleDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
 		var offset = gestureDragOffset(sideLength: sideLength, position: position)
 		
-		// Quantize values to grid
-		offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
-		offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+		// Quantize values to grid (TODO figure out quantization for dynamic boards)
+		//offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+		//offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
 		
 		return offset
 	}
@@ -220,25 +235,34 @@ struct BoardView: View {
 	@State private var dragPiece: Piece? = nil
 	@State private var dragPieceStartingLocation: CGSize = .zero
 	
-	private func dragPieceGesture(sideLength: CGFloat, square: Square) -> some Gesture {
+	private func dragPieceGesture(sideLength: CGFloat, square: Square?) -> some Gesture {
 		DragGesture(minimumDistance: 0)
 			.updating($gestureDragOffset) { latestDragGestureValue, pieceDragOffset, transaction in
-                print("pieceDragOffset: \(pieceDragOffset)")
-				pieceDragOffset = latestDragGestureValue.translation
+                if let square = square {
+                    print("pieceDragOffset: \(pieceDragOffset)")
+                    pieceDragOffset = latestDragGestureValue.translation
+                }
 			}
 			.onChanged { _ in
-				if dragPiece == nil {
-					dragPiece = square.piece
-				}
+                if let square = square {
+                    if dragPiece == nil {
+                        dragPiece = square.piece
+                    }
+                }
 			}
 			.onEnded { finalDragGestureValue in
                 print("ended")
-				let finalDragLocation: (Int, Int) = location(for: finalDragGestureValue.translation, sideLength: sideLength)
-				let startingPosition = square.position
-				let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
+                
+                if let square = square, square.state != .nonexistent {
+                    let finalDragLocation: (Int, Int) = location(for: finalDragGestureValue.translation, sideLength: sideLength)
+                    let startingPosition = square.position
+                    let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
+                    
+                    
+                    onDrag(startingPosition, endingPosition)
+                }
 				
-				dragPiece = nil
-				onDrag(startingPosition, endingPosition)
+                dragPiece = nil
 			}
 	}
 	

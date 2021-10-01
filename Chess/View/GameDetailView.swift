@@ -20,7 +20,7 @@ struct GameDetailView: View {
 			List {
 				Section {
 					BoardView(
-						squares: game.board.squares,
+						squares: $game.board.squares,
 						selectedSquares: [],
 						legalMoves: [],
 						onSelected: { _ in }

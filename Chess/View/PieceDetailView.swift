@@ -34,7 +34,7 @@ struct PieceDetailView: View {
 				List {
 					Section {
 						BoardView(
-							squares: viewModel.squares,
+                            squares: .constant(viewModel.squares),
 							selectedSquares: viewModel.selectedSquares,
 							legalMoves: [],
 							onSelected: { _ in }

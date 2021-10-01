@@ -83,7 +83,7 @@ struct BoardTitleView: View {
 		SingleAxisGeometryReader { width in
 			VStack {
 				// The point is to just display the starting position
-				BoardView(squares: game.board.squares, selectedSquares: [], legalMoves: [], onSelected: { _ in }).frame(width: width, height: width)
+                BoardView(squares: .constant(game.board.squares), selectedSquares: [], legalMoves: [], onSelected: { _ in }).frame(width: width, height: width)
 				
 				ZStack {
 					Rectangle()
