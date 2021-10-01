@@ -62,11 +62,6 @@ struct BoardView: View {
 		GeometryReader { geometry in
 			let sideLength = squareLength ?? CGFloat(geometry.size.smallestSide) / CGFloat(squares.largestDimension)
 			ZStack {
-				
-            
-                
-				
-                
 				HStack(spacing: 0) {
                     ForEach(fileList, id: \.self) { (file) in
                         VStack(spacing: 0) {
@@ -108,8 +103,6 @@ struct BoardView: View {
 					}
 				}
                 .gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare))
-                
-				.frame(width: geometry.size.width, height: geometry.size.height)
                 .drawingGroup()
                  
             

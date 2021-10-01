@@ -108,9 +108,6 @@ struct Board {
 	
     static func empty(ranks: Int = 8, files: Int = 8, bottomLeftSquareColor: Square.SquareType = .dark) -> Board  {
 		var squares = [[Square]]()
-        
-        // This determines the bottom left square color by toggling the result of the modulo that is used to determine type
-        let squareTypeNumber = bottomLeftSquareColor == .dark ? 1 : 0
 		
 		// Create an empty board
 		for fileIndex in 0..<files {
@@ -122,7 +119,7 @@ struct Board {
 								startingPieceID: nil,
 								startingPieceOwner: nil,
 								position: Position(rank: rankIndex, file: fileIndex),
-								type: (rankIndex + fileIndex) % 2 == squareTypeNumber ? .light : .dark)
+                                type: Board.squareType(position: Position(rank: rankIndex, file: fileIndex), bottomLeftSquareColor: bottomLeftSquareColor))
 				)
 			}
 			squares.append(file)
@@ -130,6 +127,11 @@ struct Board {
 		
 		return Board(squares: squares)
 	}
+    
+    static func squareType(position: Position, bottomLeftSquareColor: Square.SquareType = .dark) -> Square.SquareType {
+        let squareTypeNumber = bottomLeftSquareColor == .dark ? 1 : 0
+        return (position.rank + position.file) % 2 == squareTypeNumber ? .light : .dark
+    }
 	
 	static func standardPieces() -> [Square.StandardPieceType: Piece] {
 		
@@ -207,7 +209,7 @@ struct Board {
 	}
 	
 	init?(boardModel: BoardModel) {
-        print("initializing boradmodel")
+        //print("initializing boradmodel")
 		// Arbitrary sort parameter because it doesn't matter
 		guard let squareModelList = boardModel.squares?.sortedArray(using: [NSSortDescriptor(key: "state", ascending: true)]) as? [SquareModel] else {
 			print("Failed to initialize board out of boardModel")
@@ -228,9 +230,9 @@ struct Board {
 			}
 		}
         
-        print("squareList: \(squareList.count)")
-        print("numberOfRanks: \(numberOfRanks)")
-        print("numberOfFiles: \(numberOfFiles)")
+        //print("squareList: \(squareList.count)")
+        //print("numberOfRanks: \(numberOfRanks)")
+        //print("numberOfFiles: \(numberOfFiles)")
 		
 		// Populate the array
 		for square in squareList {
