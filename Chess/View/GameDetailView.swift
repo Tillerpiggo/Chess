@@ -27,13 +27,16 @@ struct GameDetailView: View {
 					)
 					.listRowBackground(Color.backgroundColor)
 					.cornerRadius(8)
-					.frame(width: geometry.size.width - 64, height: geometry.size.width - 64)
+                    .frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(game.board.ranks) / CGFloat(game.board.files)))
 					.disabled(true)
 				}
 				
 				Section {
                     NavigationLink(destination: EditBoardView(game: game, changedGame: { game in
+                        print("unchanged game: \(self.game.board.squares[0][0].piece?.name)")
+                        print("should change to: \(self.game.board.squares[0][0].piece?.name)")
                         self.game = game
+                        print("changed game: \(self.game.board.squares[0][0].piece?.name)")
                     })
                     ) {
 						Text("Board")

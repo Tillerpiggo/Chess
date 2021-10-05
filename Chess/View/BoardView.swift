@@ -66,14 +66,6 @@ struct BoardView: View {
                     ForEach(fileList, id: \.self) { (file) in
                         VStack(spacing: 0) {
                             ForEach(file.squares.reversed(), id: \.self) { square in
-//                                if square.piece != nil {
-//                                    self.square(square, sideLength: sideLength)
-//                                            .onTapGesture { onSelected(square.position) }
-//                                            //.gesture(dragPieceGesture(sideLength: sideLength, square: squares[square.position.file][square.position.rank]))
-//                                } else {
-//                                    self.square(square, sideLength: sideLength)
-//                                        .onTapGesture { onSelected(square.position) }
-//                                }
                                 if square.piece != nil {
                                     self.square(square, sideLength: sideLength)
                                         .gesture(LongPressGesture()
@@ -86,7 +78,6 @@ struct BoardView: View {
                                                         self.dragPiece = nil
                                                     }
                                         )
-                                        //.onTapGesture { onSelected(square.position) }
                                 } else {
                                     self.square(square, sideLength: sideLength)
                                         .highPriorityGesture(TapGesture()
@@ -96,35 +87,12 @@ struct BoardView: View {
                                 }
 
                             }
-                            //fileView(file, sideLength: sideLength)
-                            //square(file.squares[0], sideLength: sideLength)
                         }
                         .frame(width: sideLength)
 					}
 				}
                 .gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare))
                 .drawingGroup()
-                 
-            
-//                HStack(spacing: 0) {
-//                    ForEach(0..<squares.count) { (file) in
-//                        VStack(spacing: 0) {
-//                            ForEach((0..<squares[file].count).reversed(), id: \.self) { (rank) in
-//                                if squares[file][rank].piece != nil {
-//                                    square(squares[file][rank], sideLength: sideLength)
-//                                        .onTapGesture { onSelected(Position(rank: rank, file: file)) }
-//                                        .gesture(dragPieceGesture(sideLength: sideLength, square: squares[file][rank]))
-//                                } else {
-//                                    square(squares[file][rank], sideLength: sideLength)
-//                                        .onTapGesture { onSelected(Position(rank: rank, file: file)) }
-//                                }
-//                            }
-//                        }
-//                        .frame(width: sideLength)
-//                    }
-//                }
-//                .frame(width: geometry.size.width, height: geometry.size.height)
-                
 				
 				// Drag piece
 				if let dragPiece = dragPiece {
@@ -275,7 +243,7 @@ struct BoardView: View {
 	private func squareSideLength(in geometry: GeometryProxy) -> CGFloat {
 		var sideLength: CGFloat
 		
-		if geometry.size.width < geometry.size.height {
+		if geometry.size.width > geometry.size.height {
 			sideLength = geometry.size.width / CGFloat(squares.count) // divide by the number of files
 		} else {
 			sideLength = geometry.size.width / CGFloat(squares[0].count) // divide by the number of ranks (assumed to be the same for each rank)
@@ -312,6 +280,7 @@ struct SquareView: View {
 				}
 			}
 			.opacity(square.state == .nonexistent ? 0 : 1)
+            .animation(.easeInOut(duration: 0.3))
 		}
 	}
 	

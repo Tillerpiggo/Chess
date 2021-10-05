@@ -89,8 +89,11 @@ struct EditBoardView: View {
 					onDrag:
 						{  (startingPosition, endingPosition) in
                             if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+                                print("was: \(self.game.board.squares[0][0].piece?.name)")
 								game.move(move, onlyAllowLegalMoves: false)
-							}
+                                print("is: \(game.board.squares[0][0].piece?.name)")
+                                changedGame(game)
+                            }
 						},
 					onDrop:
 						{ (providers, rank, file) in
@@ -195,13 +198,11 @@ struct EditBoardView: View {
                 let state: Square.SquareState = rank == translatedPosition.rank ? .empty : .nonexistent
                 let position = Position(rank: rank, file: files)
                 
-                newFile.append(Square(state: state, position: position, type: type))
+                newFile.insert(Square(state: state, position: position, type: type), at: rank)
             }
             
             squares.append(newFile)
             isTranslatedPositionInBoard = false
-            
-            toggleBottomLeftSquareColor()
         }
         
         // New square tapped on the bottom
@@ -227,7 +228,7 @@ struct EditBoardView: View {
         // New square tapped on the top
         if translatedPosition.rank >= ranks {
             print("tapped on top")
-            print("squares.enumerated(): \(squares.count)")
+            
             for (fileIndex, _) in squares.enumerated() {
                 let state: Square.SquareState = fileIndex == translatedPosition.file ? .empty: .nonexistent
                 let position = Position(rank: ranks, file: fileIndex)
@@ -235,17 +236,22 @@ struct EditBoardView: View {
                 let newSquare = Square(state: state, position: position, type: type)
                 
                 print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
-                squares[fileIndex].append(newSquare)
+                
+                print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
+                squares[fileIndex].insert(newSquare, at: ranks)
+                print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
             }
             isTranslatedPositionInBoard = false
             
-            toggleBottomLeftSquareColor()
+            print("squares[0]: \(squares[0].count)")
         }
         
         // Square tapped inside existing board
         if isTranslatedPositionInBoard {
             print("tapped in board")
-            squares[translatedPosition.file][translatedPosition.rank].state = .empty
+            withAnimation {
+                squares[translatedPosition.file][translatedPosition.rank].state = .empty
+            }
             squares[translatedPosition.file][translatedPosition.rank].type = type
         }
 		
@@ -253,10 +259,18 @@ struct EditBoardView: View {
             updateSquarePositions(&squares)
         }
         
-        print("squares before: \(game.board.squares.count)")
-		game.board.squares = squares
+        print("squares[0]: \(squares[0].count)")
         
-        print("squares after: \(squares.count)")
+        print("file length before: \(game.board.squares[0].count)")
+		game.board.squares = squares
+        print("file length after: \(game.board.squares[0].count)")
+        print("squares[0]: \(squares[0].count)")
+        
+        if game.board.squares == squares {
+            print("they're the same")
+        } else {
+            print("they're different")
+        }
         
         changedGame(game)
 	}
@@ -308,9 +322,8 @@ struct EditBoardView: View {
             }
             
             for (fileIndex, _) in squares.enumerated() {
-                squares[fileIndex].remove(at: ranks)
+                squares[fileIndex].remove(at: ranks - 1)
             }
-            toggleBottomLeftSquareColor()
         }
         
         // Removed from left
@@ -323,16 +336,16 @@ struct EditBoardView: View {
             
         }
         
+        // Removed from right
         if removedPosition.file == files - 1 {
+            print("removed from right")
             if !squares[files - 1].contains(where: { $0.state != .nonexistent }) {
-                squares.remove(at: 0)
-                toggleBottomLeftSquareColor()
+                squares.remove(at: files - 1)
             }
         }
         
         // Something was removed
         updateSquarePositions(&squares)
-        
         // Repeat until nothing else can be trimmed // TODO: Figure out how to accomplish this
         //trimSquaresIfNecessary(&squares, afterSquareRemovedAt: checkPosition)
     }

@@ -58,13 +58,12 @@ struct Board {
 		var newBoard = self
 		newBoard.squares = boardState
 		
-        print("Hello?")
 		if piece.canMove(to: move.end, in: self) || !onlyAllowLegalMoves {
 			//print("new board")
-            print("yesr")
+            //print("yesr")
 			return newBoard
 		} else {
-            print("nope?")
+            //print("nope?")
 			//print("Board state failed")
 			return nil
 		}
@@ -248,6 +247,11 @@ extension Board: Equatable {
 	static func == (lhs: Board, rhs: Board) -> Bool {
 		//print(lhs.squares.flatMap { $0.map { $0.piece?.mover.canMovePatterns.map { $0.type } ?? [] } })
 		//print(rhs.squares.flatMap { $0.map { $0.piece?.mover.canMovePatterns.map { $0.type } ?? [] } })
+        
+        guard lhs.files == rhs.files && lhs.ranks == rhs.ranks else {
+            return false
+        }
+        
 		for (fileIndex, file) in lhs.squares.enumerated() {
 			for (rankIndex, lhsSquare) in file.enumerated() {
 				if lhsSquare != rhs.squares[fileIndex][rankIndex] {

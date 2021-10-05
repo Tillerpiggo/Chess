@@ -31,9 +31,7 @@ struct Game: Identifiable {
 		guard board.squares[move.start]?.piece?.owner == activePlayer || !onlyAllowLegalMoves else { return }
 		
         // Proceed if the move is legal OR if we don't care about move legality (and make sure it's possible on the board)
-        print("MOVE!")
         if (isMoveLegal(move) || !onlyAllowLegalMoves), board.move(move: move, onlyAllowLegalMoves: onlyAllowLegalMoves) {
-			print("Yo")
 			let previousPlayer = activePlayer
 			activePlayer = player(after: activePlayer)!
 			
