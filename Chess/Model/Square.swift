@@ -39,6 +39,14 @@ struct Square: Equatable, Identifiable, Hashable {
 		self.piece?.position = self.position
 		state = .occupied
 	}
+    
+    // Sets the piece and also sets the square's startingPieceID and owner
+    // to match the given piece
+    mutating func setStartingPiece(_ piece: Piece?) {
+        self.setPiece(piece)
+        startingPieceID = piece?.id
+        startingPieceOwner = piece?.owner
+    }
 	
 	// Updates the square's piece so that it knows that piece has moved
 	mutating func pieceHasMoved() {

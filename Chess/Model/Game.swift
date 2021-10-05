@@ -31,7 +31,7 @@ struct Game: Identifiable {
 		guard board.squares[move.start]?.piece?.owner == activePlayer || !onlyAllowLegalMoves else { return }
 		
         // Proceed if the move is legal OR if we don't care about move legality (and make sure it's possible on the board)
-        if (isMoveLegal(move) || !onlyAllowLegalMoves), board.move(move: move, onlyAllowLegalMoves: onlyAllowLegalMoves) {
+        if (isMoveLegal(move) || !onlyAllowLegalMoves), board.move(move: move) {
 			let previousPlayer = activePlayer
 			activePlayer = player(after: activePlayer)!
 			
@@ -45,6 +45,11 @@ struct Game: Identifiable {
 				}
 			}
         }
+    }
+    
+    // Moves a piece on the board, changing how the board is setup at the start of a game
+    mutating func moveSetup(_ move: Move) {
+        board.moveSetup(move: move)
     }
     
     private func player(after player: Player) -> Player? {

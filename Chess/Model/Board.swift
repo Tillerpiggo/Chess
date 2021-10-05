@@ -27,17 +27,24 @@ struct Board {
 	}
 	
     /// Performs a move and returns if the move succeeded or not
-    mutating func move(move: Move, onlyAllowLegalMoves: Bool = true) -> Bool {
-        if let boardState = boardState(after: move, onlyAllowLegalMoves: onlyAllowLegalMoves) {
+    mutating func move(move: Move) -> Bool {
+        if let boardState = boardState(after: move) {
 			self = boardState
 			return true
 		} else {
 			return false
 		}
 	}
+    
+    /// Moves a piece and changes the startingPieceIDs
+    mutating func moveSetup(move: Move) {
+        if let boardState = boardStateSetup(after: move) {
+            self = boardState
+        }
+    }
 	
 	/// Returns the boardState after a given move. If the move is illegal, returns nil
-    func boardState(after move: Move, onlyAllowLegalMoves: Bool = true) -> Board? {
+    func boardState(after move: Move) -> Board? {
 		var boardState = squares
 		guard let piece = squares[move.start]?.piece else { return nil }
         guard move.end.rank < ranks, move.end.rank >= 0, move.end.file < files, move.end.file >= 0 else {
@@ -58,16 +65,39 @@ struct Board {
 		var newBoard = self
 		newBoard.squares = boardState
 		
-		if piece.canMove(to: move.end, in: self) || !onlyAllowLegalMoves {
-			//print("new board")
-            //print("yesr")
+		if piece.canMove(to: move.end, in: self) {
 			return newBoard
 		} else {
-            //print("nope?")
-			//print("Board state failed")
 			return nil
 		}
 	}
+    
+    /// Returns the boardState after a given move changing the board setup.
+    func boardStateSetup(after move: Move) -> Board? {
+        var boardState = squares
+        guard let piece = squares[move.start]?.piece else { return nil }
+        guard move.end.rank < ranks, move.end.rank >= 0, move.end.file < files,
+              move.end.file >= 0 else {
+                  return nil
+        }
+        
+        // Empty the starting square
+        boardState[move.start]?.setPiece(nil)
+        boardState[move.start]?.state = .empty
+        boardState[move.start]?.startingPieceID = nil
+        boardState[move.start]?.startingPieceOwner = nil
+        
+        // Setup piece in ending square
+        boardState[move.end]?.setPiece(piece)
+        boardState[move.end]?.state = .occupied
+        boardState[move.end]?.startingPieceID = piece.id
+        boardState[move.end]?.startingPieceOwner = piece.owner
+        
+        var newBoard = self
+        newBoard.squares = boardState
+        
+        return newBoard
+    }
 	
 	func pieces(for player: Player) -> [Piece] {
 		var pieces = [Piece]()

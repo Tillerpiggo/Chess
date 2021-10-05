@@ -219,7 +219,6 @@ struct BoardView: View {
                     let startingPosition = square.position
                     let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
                     
-                    
                     onDrag(startingPosition, endingPosition)
                 }
 				

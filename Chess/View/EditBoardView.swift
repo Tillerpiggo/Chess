@@ -90,7 +90,9 @@ struct EditBoardView: View {
 						{  (startingPosition, endingPosition) in
                             if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
                                 print("was: \(self.game.board.squares[0][0].piece?.name)")
-								game.move(move, onlyAllowLegalMoves: false)
+                                //self.game.move(move)
+                                game.moveSetup(move)
+                                
                                 print("is: \(game.board.squares[0][0].piece?.name)")
                                 changedGame(game)
                             }
@@ -145,7 +147,9 @@ struct EditBoardView: View {
     }
     
     func selectedPositionOnBoard(_ selectedPosition: Position) {
+        print("selected: \(selectedPosition)")
         if game.board.squares[selectedPosition.file][selectedPosition.rank].state == .empty {
+            print("actuallySelected: \(selectedPosition)")
             game.board.squares[selectedPosition.file][selectedPosition.rank].state = .nonexistent
             
             // Remove row/file if there is nothing left in it and it's on the edge
