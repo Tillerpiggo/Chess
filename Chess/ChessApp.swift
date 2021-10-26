@@ -16,16 +16,16 @@ struct ChessApp: App {
 	
 	@Environment(\.scenePhase) var scenePhase
 	
-	/*
+	
 	@StateObject var game: GameViewModel = {
 		
 		let players: [Player] = [.white, .black]
 		
-		let game = Game(board: Board.standard, players: players)
+        let game = Game.standard()
 		
 		return GameViewModel(game: game)
 	}()
-*/
+
 	
 	@StateObject var gameStore: GameManager =
 		GameManager(
@@ -35,16 +35,21 @@ struct ChessApp: App {
 	
 	var body: some Scene {
 		WindowGroup {
-			//TestModalList()
-			BoardListView()
-				.environmentObject(gameStore)
-				/*
-				.onAppear {
-					//UINavigationBar.appearance().barTintColor = UIColor(themeColor)
-					UINavigationBar.appearance().backgroundColor = UIColor(.backgroundColor)
-					UITableView.appearance().backgroundColor = UIColor(.backgroundColor)
-				}
-*/
+            
+            TabView {
+                BoardListView()
+                    .environmentObject(gameStore)
+                    .tabItem {
+                        Text("Your Games")
+                    }
+                PlayView()
+                    .environmentObject(gameStore)
+                    .tabItem {
+                        Text("Play")
+                    }
+            }
+             
+            //GameView(game: game)
 		}
 		.onChange(of: scenePhase) { _ in
 			persistenceController.save()

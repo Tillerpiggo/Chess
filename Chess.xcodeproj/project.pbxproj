@@ -61,6 +61,8 @@
 		23E8553D26B88CE5009E34B9 /* Main.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23E8553B26B88CE5009E34B9 /* Main.xcdatamodeld */; };
 		23E8554026B88DB7009E34B9 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8553F26B88DB7009E34B9 /* PersistenceController.swift */; };
 		23F1D44526BB526A00C364ED /* GameCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F1D44426BB526A00C364ED /* GameCoreDataManager.swift */; };
+		2FA14683270F9403007B110D /* PlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA14682270F9403007B110D /* PlayView.swift */; };
+		2FA14685270F952A007B110D /* CreateGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA14684270F952A007B110D /* CreateGameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +134,8 @@
 		23E8553C26B88CE5009E34B9 /* Main.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Main.xcdatamodel; sourceTree = "<group>"; };
 		23E8553F26B88DB7009E34B9 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		23F1D44426BB526A00C364ED /* GameCoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCoreDataManager.swift; sourceTree = "<group>"; };
+		2FA14682270F9403007B110D /* PlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayView.swift; sourceTree = "<group>"; };
+		2FA14684270F952A007B110D /* CreateGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGameView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +212,8 @@
 			isa = PBXGroup;
 			children = (
 				23E8552F26B7CA61009E34B9 /* BoardListView.swift */,
+				2FA14682270F9403007B110D /* PlayView.swift */,
+				2FA14684270F952A007B110D /* CreateGameView.swift */,
 				234C388226C30F01005E38D2 /* GameDetailView.swift */,
 				23C427AB26E1E04400E7D31C /* EditBoardView.swift */,
 				23C427AF26E29F7E00E7D31C /* PieceChooser.swift */,
@@ -418,6 +424,7 @@
 				23311FF726D99753003D45FF /* EditPatternView.swift in Sources */,
 				23E8553026B7CA61009E34B9 /* BoardListView.swift in Sources */,
 				23D4BEFA26DEC230007AF4A8 /* ModelManager.swift in Sources */,
+				2FA14683270F9403007B110D /* PlayView.swift in Sources */,
 				2391B26A26C4544100349054 /* EditPieceView.swift in Sources */,
 				23D1E90F26E08A6800A36B0B /* MoverManager.swift in Sources */,
 				2371E28825D104CB009D4D21 /* Move.swift in Sources */,
@@ -428,6 +435,7 @@
 				23123D2525D5E07200F2B813 /* GameView.swift in Sources */,
 				2391B26626C3782400349054 /* PieceListView.swift in Sources */,
 				234BE2B724C8F20400580B6B /* Identifiable+Extensions.swift in Sources */,
+				2FA14685270F952A007B110D /* CreateGameView.swift in Sources */,
 				23262EC426BA06CA00EA7FBE /* AddCancelHeader.swift in Sources */,
 				2381829A26B8F7C600F056F8 /* Array+Extensions.swift in Sources */,
 				234BE2B324C8EC6600580B6B /* Board.swift in Sources */,

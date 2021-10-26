@@ -13,8 +13,29 @@ class GameViewModel: ObservableObject {
 	@Published private(set) var game: Game
 	
 	var squares: [[Square]] {
-		return game.board.squares
+//        if game.activePlayer == .white {
+//            return game.board.squares
+//        } else {
+//            return game.board.otherSideSquares
+//        }
+        return game.board.squares
 	}
+    
+    var ranks: Int {
+        return game.board.ranks
+    }
+    
+    var files: Int {
+        return game.board.files
+    }
+    
+    var isReversed: Bool {
+        return game.activePlayer == .black
+    }
+    
+    var activePlayer: Player {
+        return game.activePlayer
+    }
 	
 	var legalMoves: [Position] {
 		if let selectedSquare = selectedSquares.first, let piece = squares[selectedSquare]?.piece {
@@ -38,6 +59,7 @@ class GameViewModel: ObservableObject {
 		// If you selected your own piece
 		if game.board.squares[position]?.piece?.owner == game.activePlayer {
 			selectedSquares = [position]
+            
 		// You selected an empty square or an enemy piece
 		} else {
 			

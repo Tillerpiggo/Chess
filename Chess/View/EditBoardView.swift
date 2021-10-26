@@ -14,6 +14,7 @@ struct EditBoardView: View {
     var changedGame: (Game) -> Void
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
+    @State var isDragEnabled: Bool = false
     
     private func toggleBottomLeftSquareColor() {
         if self.bottomLeftSquareColor == .light {
@@ -44,106 +45,116 @@ struct EditBoardView: View {
 	}
 	
     var body: some View {
-		
-		ZStack {
-			Rectangle()
-				.fill(Color.white)
-				.ignoresSafeArea()
-			
-			GeometryReader { geometry in
-				let squareLength = CGFloat(geometry.size.smallestSide) / CGFloat(game.board.squares.largestDimension)
-				
-				BoardView(
-                    squares: .constant(emptySquares),
-					squareLength: squareLength,
-					selectedSquares: [],
-					legalMoves: [],
-					onSelected: { selectedPosition in
-                        selectedPositionOnGhostBoard(selectedPosition, type: emptySquares[selectedPosition.file][selectedPosition.rank].type)
-					}
-				)
-				.opacity(0.2)
-                .offset(x: squareLength * -1, y: squareLength * -1)
-				
-				/*
-				VStack {
-					Spacer()
-					Rectangle()
-						.fill(Color.black)
-						.aspectRatio(1, contentMode: .fit)
-						.shadow(radius: 40)
-					Spacer()
-				}
-*/
-					
-				
-				
-				BoardView(
-					squares: $game.board.squares,
-					squareLength: squareLength,
-					selectedSquares: [],
-					legalMoves: [],
-					onSelected: { (selectedPosition) in
-						selectedPositionOnBoard(selectedPosition)
-					},
-					onDrag:
-						{  (startingPosition, endingPosition) in
-                            if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-                                print("was: \(self.game.board.squares[0][0].piece?.name)")
-                                //self.game.move(move)
-                                game.moveSetup(move)
-                                
-                                print("is: \(game.board.squares[0][0].piece?.name)")
-                                changedGame(game)
+        GeometryReader { geometry in
+            let squareLength = CGFloat(geometry.size.smallestSide) / 8
+            ZStack {
+                Rectangle()
+                    .fill(Color.white)
+                    .ignoresSafeArea()
+                
+                Group {
+                    
+                    
+                    BoardView(
+                        squares: .constant(emptySquares),
+                        squareLength: squareLength,
+                        isDragEnabled: isDragEnabled,
+                        selectedSquares: [],
+                        legalMoves: [],
+                        onSelected: { selectedPosition in
+                            selectedPositionOnGhostBoard(selectedPosition, type: emptySquares[selectedPosition.file][selectedPosition.rank].type)
+                        }
+                    )
+                    .opacity(0.2)
+                    .offset(x: squareLength * -1, y: squareLength * -1)
+                    
+                    /*
+                    VStack {
+                        Spacer()
+                        Rectangle()
+                            .fill(Color.black)
+                            .aspectRatio(1, contentMode: .fit)
+                            .shadow(radius: 40)
+                        Spacer()
+                    }
+    */
+                        
+                    
+                    
+                    BoardView(
+                        squares: $game.board.squares,
+                        squareLength: squareLength,
+                        isDragEnabled: isDragEnabled,
+                        selectedSquares: [],
+                        legalMoves: [],
+                        onSelected: { (selectedPosition) in
+                            selectedPositionOnBoard(selectedPosition)
+                        },
+                        onDrag:
+                            {  (startingPosition, endingPosition) in
+                                if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+                                    print("was: \(self.game.board.squares[0][0].piece?.name)")
+                                    //self.game.move(move)
+                                    game.moveSetup(move)
+                                    
+                                    print("is: \(game.board.squares[0][0].piece?.name)")
+                                    changedGame(game)
+                                }
+                            },
+                        onDrop:
+                            { (providers, rank, file) in
+                                self.drop(providers: providers, rank: rank, file: file)
                             }
-						},
-					onDrop:
-						{ (providers, rank, file) in
-							self.drop(providers: providers, rank: rank, file: file)
-						}
-					)
-                    .shadow(color: Color.black.opacity(0.15), radius: 20)
-				
-					
-					
-			}
-			.offset(panOffset)
-			.scaleEffect(zoomScale)
-			
-			
-			VStack {
-				ZStack {
-					Rectangle()
-						.fill(Color.white.opacity(0.3))
-						.cornerRadius(12)
-					
-					VisualEffectView(effect: UIBlurEffect(style: .regular))
-					
-					ScrollView(.horizontal) {
-						HStack {
-							ForEach(game.pieces) { piece in
-								Image(piece.imageName)
-									.resizable()
-									.frame(width: 40, height: 40)
-									.onDrag { NSItemProvider(object: piece.id.uuidString as NSString) }
-							}
-							
-						}
-					}
-						.padding()
-				}
-				.frame(height: 60)
-				
-				Spacer()
-			}
-			
-			
-		}
-			.gesture(panGesture())
-			.gesture(zoomGesture())
+                        )
+                        .shadow(color: Color.black.opacity(0.15), radius: 20)
+                    
+                        
+                        
+                }
+                .offset(panOffset)
+                .scaleEffect(zoomScale)
+                
+                
+                VStack {
+                    ZStack {
+                        Rectangle()
+                            .fill(Color.white.opacity(0.3))
+                            .cornerRadius(12)
+                        
+                        VisualEffectView(effect: UIBlurEffect(style: .regular))
+                        
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(game.pieces) { piece in
+                                    Image(piece.imageName)
+                                        .resizable()
+                                        .frame(width: 40, height: 40)
+                                        .onDrag { NSItemProvider(object: piece.id.uuidString as NSString) }
+                                }
+                                
+                            }
+                        }
+                            .padding()
+                    }
+                    .frame(height: 60)
+                    
+                    Spacer()
+                }
+                
+                
+            }
+            //.gesture(!isDragEnabled ? zoomGesture() : nil)
+            .gesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
+            .toolbar {
+                Button(isDragEnabled ? "Move Board" : "Move Pieces") {
+                    isDragEnabled.toggle()
+                }
+            }
             .onAppear {
                 bottomLeftSquareColor = game.board.squares[0][0].type
+                print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
             }
+        }
     }
     
     func selectedPositionOnBoard(_ selectedPosition: Position) {
@@ -154,6 +165,8 @@ struct EditBoardView: View {
             
             // Remove row/file if there is nothing left in it and it's on the edge
             trimSquaresIfNecessary(&game.board.squares, afterSquareRemovedAt: selectedPosition)
+            
+            changedGame(game)
         }
     }
 	
@@ -178,8 +191,11 @@ struct EditBoardView: View {
 			for rank in 0..<ranks {
 				let state: Square.SquareState = rank == translatedPosition.rank ? .empty : .nonexistent
                 let position = Position(rank: rank, file: 0)
-				
-                newFile.append(Square(state: state, position: position, type: type))
+                
+                // If it is an even number of ranks away, it should be in the same order
+                let squareType = ((selectedPosition.rank - rank) % 2 == 0) ? type : type.opposite
+                print("selectedPosition.rank: \(selectedPosition.rank), rank: \(rank)")
+                newFile.append(Square(state: state, position: position, type: squareType))
 			}
 			
 			squares.insert(newFile, at: 0)
@@ -202,7 +218,9 @@ struct EditBoardView: View {
                 let state: Square.SquareState = rank == translatedPosition.rank ? .empty : .nonexistent
                 let position = Position(rank: rank, file: files)
                 
-                newFile.insert(Square(state: state, position: position, type: type), at: rank)
+                // If it is an even number of ranks away, it should be in the same order
+                let squareType = (selectedPosition.rank - rank) % 2 == 0 ? type : type.opposite
+                newFile.insert(Square(state: state, position: position, type: squareType), at: rank)
             }
             
             squares.append(newFile)
@@ -216,7 +234,9 @@ struct EditBoardView: View {
                 let state: Square.SquareState = fileIndex == translatedPosition.file ? .empty: .nonexistent
                 let position = Position(rank: 0, file: fileIndex)
                 
-                let newSquare = Square(state: state, position: position, type: type)
+                // If it is an even number of files away, it should be in the same order
+                let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
+                let newSquare = Square(state: state, position: position, type: squareType)
                 
                 squares[fileIndex].insert(newSquare, at: 0)
             }
@@ -237,7 +257,9 @@ struct EditBoardView: View {
                 let state: Square.SquareState = fileIndex == translatedPosition.file ? .empty: .nonexistent
                 let position = Position(rank: ranks, file: fileIndex)
                 
-                let newSquare = Square(state: state, position: position, type: type)
+                // If it is an even number of files away, it should be in the same order
+                let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
+                let newSquare = Square(state: state, position: position, type: squareType)
                 
                 print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
                 
@@ -365,6 +387,7 @@ struct EditBoardView: View {
 		MagnificationGesture()
 			.updating($gestureZoomScale) { latestGestureScale, gestureZoomScale, transaction in
 				gestureZoomScale = latestGestureScale
+                
 				print("GestureZoomScale: \(gestureZoomScale)")
 			}
 			.onEnded { finalGestureScale in
@@ -379,13 +402,17 @@ struct EditBoardView: View {
 		return (steadyStatePanOffset + gesturePanOffset) / zoomScale
 	}
 	
-	private func panGesture() -> some Gesture {
-		DragGesture()
+    private func panGesture(sideLength: CGFloat) -> some Gesture {
+        DragGesture()
 			.updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, transaction in
 				gesturePanOffset = latestDragGestureValue.translation
 			}
 			.onEnded { finalDragGestureValue in
-				steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
+                // Quantize translation
+                let translationX = (finalDragGestureValue.translation.width / sideLength).rounded() * sideLength
+                let translationY = (finalDragGestureValue.translation.height / sideLength).rounded() * sideLength
+                
+                steadyStatePanOffset = steadyStatePanOffset + CGSize(width: translationX, height: translationY)//+ finalDragGestureValue.translation
 			}
 	}
 	

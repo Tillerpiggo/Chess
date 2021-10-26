@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct Game: Identifiable {
+struct Game: Identifiable, Hashable {
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
 	var name: String
     var board: Board
 	var pieces: [Piece]

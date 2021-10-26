@@ -25,6 +25,11 @@ struct Board {
 	var ranks: Int {
 		return squares.first!.count
 	}
+    
+    /// Returns the squares from the perspective of black, with black on the bottom side.
+    var otherSideSquares: [[Square]] {
+        return squares.map { $0.reversed() }.reversed();
+    }
 	
     /// Performs a move and returns if the move succeeded or not
     mutating func move(move: Move) -> Bool {

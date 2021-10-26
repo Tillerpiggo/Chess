@@ -13,9 +13,12 @@ struct BoardView: View {
 	
 	@Binding var squares: [[Square]]
 	var squareLength: CGFloat?
+    var isDragEnabled: Bool = true
+    var isReversed: Bool = false
+    var activePlayer: Player?
 	var selectedSquares: [Position]
 	var legalMoves: [Position]
-	var onSelected: (Position) -> Void = { _ in }
+    var onSelected: (Position) -> Void = { _ in }
     
     // Very stupid very dumb workaround
     struct File: Identifiable, Hashable {
@@ -27,11 +30,20 @@ struct BoardView: View {
         }
     }
     
-    private var fileList: [File] { squares.map { File($0) } }
+    private var fileList: [File] {
+        if !isReversed {
+            return squares.map { File($0) }
+        } else {
+            return squares.map { File($0.reversed()) }.reversed()
+        }
+    }
 	
 	
 	// StartingPosition, EndingPosition
 	var onDrag: (Position, Position) -> Void = { _, _ in }
+    
+    // Gives the drag gesture value if the square is empty
+    var onDragOnEmptySquare: (CGSize) -> Void = { _ in }
 	
 	// Providers, rank, file
 	var onDrop: ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }
@@ -60,7 +72,7 @@ struct BoardView: View {
     
 	var body: some View {
 		GeometryReader { geometry in
-			let sideLength = squareLength ?? CGFloat(geometry.size.smallestSide) / CGFloat(squares.largestDimension)
+            let sideLength = squareLength ?? CGFloat(geometry.size.largestSide) / CGFloat(squares.largestDimension)
 			ZStack {
 				HStack(spacing: 0) {
                     ForEach(fileList, id: \.self) { (file) in
@@ -68,15 +80,21 @@ struct BoardView: View {
                             ForEach(file.squares.reversed(), id: \.self) { square in
                                 if square.piece != nil {
                                     self.square(square, sideLength: sideLength)
-                                        .gesture(LongPressGesture()
-                                                    .onChanged { _ in
-                                                        self.selectedSquare = square
-                                                        print("Selected Square: \(square.position)")
+                                        //.gesture(dragPieceGesture(sideLength: sideLength, square: square))
+                                        .gesture(!isDragEnabled ? nil : LongPressGesture()
+                                                    .onChanged { value in
+
+
+                                                            self.selectedSquare = square
+                                                            print("Selected Square: \(square.position)")
+
+                                                            onSelected(square.position)
                                                     }
                                                     .onEnded { _ in
                                                         self.selectedSquare = nil
                                                         self.dragPiece = nil
                                                     }
+                                                 
                                         )
                                 } else {
                                     self.square(square, sideLength: sideLength)
@@ -91,22 +109,28 @@ struct BoardView: View {
                         .frame(width: sideLength)
 					}
 				}
-                .gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare))
                 .drawingGroup()
+                //.gesture(dragPieceGesture(sideLength: sideLength, square: selectedSquare))
+                .gesture(isDragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+                //.highPriorityGesture((selectedSquare == nil && gestureDragOffset.distance > 100.0) ? nil : dragPieceGesture(sideLength: sideLength, square: selectedSquare))
 				
 				// Drag piece
 				if let dragPiece = dragPiece {
-					Circle()
-						.fill(Color.black.opacity(0.2))
-						.frame(width: sideLength * 2 + 16, height: sideLength * 2 + 16)
+                    Group {
+                        Rectangle()
+                            .fill(Color.selectedSquareColor)
+                            .frame(width: sideLength, height: sideLength)
+                            .opacity(0.5)
+                        Circle()
+                            .fill(Color.black.opacity(0.2))
+                            .frame(width: sideLength * 2 + 16, height: sideLength * 2 + 16)
+                    }
 						.offset(circleDragOffset(sideLength: sideLength, position: dragPiece.position))
 					Image(dragPiece.imageName)
 						.resizable()
 						.frame(width: sideLength * 2, height: sideLength * 2)
 						.offset(pieceDragOffset(sideLength: sideLength, position: dragPiece.position))
 				}
-				
-				
 			}
 		}
 	}
@@ -122,6 +146,11 @@ struct BoardView: View {
 		// Transpose it to the desired square
 		xOriginOffset += CGFloat(position.file) * sideLength
 		yOriginOffset += CGFloat(position.rank) * sideLength
+        
+        if isReversed {
+            xOriginOffset *= -1
+            yOriginOffset *= -1
+        }
 		
 		return CGSize(
 			width: gestureDragOffset.width + xOriginOffset,
@@ -143,8 +172,17 @@ struct BoardView: View {
 		var offset = gestureDragOffset(sideLength: sideLength, position: position)
 		
 		// Quantize values to grid (TODO figure out quantization for dynamic boards)
-		//offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
-		//offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+        if files % 2 == 0 {
+            offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+        } else {
+            offset.width = (offset.width / sideLength).rounded() * sideLength
+        }
+        
+        if ranks % 2 == 0 {
+            offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+        } else {
+            offset.height = (offset.height / sideLength).rounded() * sideLength
+        }
 		
 		return offset
 	}
@@ -163,7 +201,7 @@ struct BoardView: View {
             if legalMoves.contains(Position(rank: square.position.rank, file: square.position.file)) {
                 Circle()
                     .fill(Color.black.opacity(0.3))
-                    .frame(width: 8, height: 8)
+                    .frame(width: 12, height: 12)
             }
         }
     }
@@ -197,31 +235,48 @@ struct BoardView: View {
 	@State private var dragPieceStartingLocation: CGSize = .zero
 	
 	private func dragPieceGesture(sideLength: CGFloat, square: Square?) -> some Gesture {
+
 		DragGesture(minimumDistance: 0)
 			.updating($gestureDragOffset) { latestDragGestureValue, pieceDragOffset, transaction in
-                if let square = square {
+                if let _ = square {
                     print("pieceDragOffset: \(pieceDragOffset)")
                     pieceDragOffset = latestDragGestureValue.translation
+                } else {
+                    print("EMPTY!!!")
+//                    selectedSquare = nil
+//                    dragPiece = nil
+                    //onDragOnEmptySquare(latestDragGestureValue.translation)
                 }
 			}
-			.onChanged { _ in
+			.onChanged { latestDragGestureValue in
                 if let square = square {
-                    if dragPiece == nil {
+                    if dragPiece == nil && (square.piece?.owner == activePlayer || activePlayer == nil) {
                         dragPiece = square.piece
                     }
+                } else {
+                    print("EMPTY!!!")
+//                    selectedSquare = nil
+//                    dragPiece = nil
                 }
 			}
 			.onEnded { finalDragGestureValue in
                 print("ended")
-                
                 if let square = square, square.state != .nonexistent {
-                    let finalDragLocation: (Int, Int) = location(for: finalDragGestureValue.translation, sideLength: sideLength)
+                    var finalDragLocation: (Int, Int) = location(for: finalDragGestureValue.translation, sideLength: sideLength)
+                    if isReversed {
+                        finalDragLocation.0 *= -1
+                        finalDragLocation.1 *= -1
+                    }
+                    
                     let startingPosition = square.position
                     let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
                     
-                    onDrag(startingPosition, endingPosition)
+                    
+                        onDrag(startingPosition, endingPosition)
+                    
                 }
 				
+                selectedSquare = nil
                 dragPiece = nil
 			}
 	}
@@ -279,7 +334,7 @@ struct SquareView: View {
 				}
 			}
 			.opacity(square.state == .nonexistent ? 0 : 1)
-            .animation(.easeInOut(duration: 0.3))
+            //.animation(.easeInOut(duration: 0.3))
 		}
 	}
 	
@@ -293,7 +348,7 @@ struct SquareView: View {
 	}
 */
 	
-	init(_ square: Square, isSelected: Bool, isRed: Bool, showPiece: Bool = true) {
+    init(_ square: Square, isSelected: Bool, isRed: Bool, showPiece: Bool = true) {
 		self.square = square
 		self.isSelected = isSelected
 		self.isRed = isRed

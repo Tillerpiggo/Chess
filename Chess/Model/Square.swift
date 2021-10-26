@@ -96,6 +96,13 @@ struct Square: Equatable, Identifiable, Hashable {
 	enum SquareType: Int {
 		case light = 0
 		case dark = 1
+        
+        var opposite: SquareType {
+            switch self {
+            case .light: return .dark
+            case .dark: return .light
+            }
+        }
 	}
 	
 	init(state: SquareState, piece: Piece? = nil, startingPieceID: UUID? = nil, startingPieceOwner: Player? = nil, position: Position, type: SquareType) {

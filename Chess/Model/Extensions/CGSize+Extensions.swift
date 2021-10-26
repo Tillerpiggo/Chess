@@ -12,6 +12,14 @@ extension CGSize {
 	var smallestSide: CGFloat {
 		min(width, height)
 	}
+    
+    var largestSide: CGFloat {
+        max(width, height)
+    }
+    
+    var distance: CGFloat {
+        sqrt(pow(width, 2) + pow(height, 2))
+    }
 
 	static func +(lhs: Self, rhs: Self) -> CGSize {
 		CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
