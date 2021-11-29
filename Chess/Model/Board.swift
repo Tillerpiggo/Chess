@@ -26,6 +26,10 @@ struct Board {
 		return squares.first!.count
 	}
     
+    var smallestSide: Int {
+        return min(ranks, files)
+    }
+    
     /// Returns the squares from the perspective of black, with black on the bottom side.
     var otherSideSquares: [[Square]] {
         return squares.map { $0.reversed() }.reversed();
@@ -128,11 +132,13 @@ struct Board {
 	
 	mutating func setup(pieces: [Piece]) {
 		for (fileIndex, file) in squares.enumerated() {
-			for (rankIndex, rank) in file.enumerated()  {
-				if let pieceID = squares[fileIndex][rankIndex].startingPieceID,
-				   let pieceOwner = squares[fileIndex][rankIndex].startingPieceOwner {
+			for (rankIndex, square) in file.enumerated()  {
+				if let pieceID = square.startingPieceID,
+                   let pieceOwner = square.startingPieceOwner {
 					var piece = pieces.first(where: { $0.id == pieceID })
-					piece?.position = Position(rank: rankIndex, file: fileIndex)
+					//piece?.position = Position(rank: rankIndex, file: fileIndex)
+                    piece?.id = UUID() // needs to be unique for ForEach()
+                    piece?.position = square.position
 					piece?.owner = pieceOwner
 					squares[fileIndex][rankIndex].setPiece(piece)
 				}
@@ -232,7 +238,7 @@ struct Board {
 			squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
 			squares[fileIndex][1].setPiece(.pawn, owner: .white, id: ids[.pawn]!)
 			squares[fileIndex][7].setPiece(backRank[fileIndex], owner: .black, id: ids[backRank[fileIndex]]!)
-			squares[fileIndex][6].setPiece(.pawn, owner: .black, id: ids[.pawn]!)
+            squares[fileIndex][6].setPiece(.pawn, owner: .black, id: ids[.pawn]!)
 		}
 		
 		return Board(squares: squares)

@@ -35,8 +35,9 @@ struct Square: Equatable, Identifiable, Hashable {
 	
 	// Ensures that the piece always has the same position as the square that it is on
 	mutating func setPiece(_ piece: Piece?) {
-		self.piece = piece
-		self.piece?.position = self.position
+        var newPiece = piece
+        newPiece?.position = self.position
+		self.piece = newPiece
 		state = .occupied
 	}
     

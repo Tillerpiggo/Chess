@@ -14,7 +14,7 @@ struct EditBoardView: View {
     var changedGame: (Game) -> Void
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
-    @State var isDragEnabled: Bool = false
+    @State var isDragEnabled: Bool = true
     
     private func toggleBottomLeftSquareColor() {
         if self.bottomLeftSquareColor == .light {
@@ -53,65 +53,87 @@ struct EditBoardView: View {
                     .ignoresSafeArea()
                 
                 Group {
-                    
-                    
-                    BoardView(
-                        squares: .constant(emptySquares),
-                        squareLength: squareLength,
-                        isDragEnabled: isDragEnabled,
-                        selectedSquares: [],
-                        legalMoves: [],
+                    BoardView2(
+                        board: $game.board,
+                        dragEnabled: isDragEnabled,
+                        pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
-                            selectedPositionOnGhostBoard(selectedPosition, type: emptySquares[selectedPosition.file][selectedPosition.rank].type)
+                            print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
+                            print("selectedPosition: \(selectedPosition)")
+                            //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                        },
+                        onDrag: { (startingPosition, endingPosition) in
+                            if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+                                //print("was: \(self.game.board.squares[0][0].piece?.name)")
+                                //self.game.move(move)
+                                game.moveSetup(move)
+
+                                //print("is: \(game.board.squares[0][0].piece?.name)")
+                                changedGame(game)
+                            }
                         }
                     )
-                    .opacity(0.2)
-                    .offset(x: squareLength * -1, y: squareLength * -1)
+
                     
-                    /*
-                    VStack {
-                        Spacer()
-                        Rectangle()
-                            .fill(Color.black)
-                            .aspectRatio(1, contentMode: .fit)
-                            .shadow(radius: 40)
-                        Spacer()
-                    }
-    */
-                        
-                    
-                    
-                    BoardView(
-                        squares: $game.board.squares,
-                        squareLength: squareLength,
-                        isDragEnabled: isDragEnabled,
-                        selectedSquares: [],
-                        legalMoves: [],
-                        onSelected: { (selectedPosition) in
-                            selectedPositionOnBoard(selectedPosition)
-                        },
-                        onDrag:
-                            {  (startingPosition, endingPosition) in
-                                if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-                                    print("was: \(self.game.board.squares[0][0].piece?.name)")
-                                    //self.game.move(move)
-                                    game.moveSetup(move)
-                                    
-                                    print("is: \(game.board.squares[0][0].piece?.name)")
-                                    changedGame(game)
-                                }
-                            },
-                        onDrop:
-                            { (providers, rank, file) in
-                                self.drop(providers: providers, rank: rank, file: file)
-                            }
-                        )
-                        .shadow(color: Color.black.opacity(0.15), radius: 20)
+//                    BoardView(
+//                        squares: .constant(emptySquares),
+//                        squareLength: squareLength,
+//                        isDragEnabled: isDragEnabled,
+//                        selectedSquares: [],
+//                        legalMoves: [],
+//                        onSelected: { selectedPosition in
+//                            selectedPositionOnGhostBoard(selectedPosition, type: emptySquares[selectedPosition.file][selectedPosition.rank].type, sideLength: squareLength)
+//                        }
+//                    )
+//                    .opacity(0.15)
+//                    .offset(x: squareLength * -1, y: squareLength * -1)
+//
+//                    /*
+//                    VStack {
+//                        Spacer()
+//                        Rectangle()
+//                            .fill(Color.black)
+//                            .aspectRatio(1, contentMode: .fit)
+//                            .shadow(radius: 40)
+//                        Spacer()
+//                    }
+//    */
+//
+//
+//
+//                    BoardView(
+//                        squares: $game.board.squares,
+//                        squareLength: squareLength,
+//                        isDragEnabled: isDragEnabled,
+//                        selectedSquares: [],
+//                        legalMoves: [],
+//                        onSelected: { (selectedPosition) in
+//                            selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+//                        },
+//                        onDrag:
+//                            {  (startingPosition, endingPosition) in
+//                                if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+//                                    print("was: \(self.game.board.squares[0][0].piece?.name)")
+//                                    //self.game.move(move)
+//                                    game.moveSetup(move)
+//
+//                                    print("is: \(game.board.squares[0][0].piece?.name)")
+//                                    changedGame(game)
+//                                }
+//                            },
+//                        onDrop:
+//                            { (providers, rank, file) in
+//                                self.drop(providers: providers, rank: rank, file: file)
+//                            }
+//                        )
+//                        .shadow(color: Color.black.opacity(0.15), radius: 20)
                     
                         
                         
                 }
+                .animation(nil)
                 .offset(panOffset)
+                .animation(.spring())
                 .scaleEffect(zoomScale)
                 
                 
@@ -146,31 +168,42 @@ struct EditBoardView: View {
             //.gesture(!isDragEnabled ? zoomGesture() : nil)
             .gesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
             .toolbar {
-                Button(isDragEnabled ? "Move Board" : "Move Pieces") {
+                Button(isDragEnabled ? "Drag Board" : "Drag Pieces") {
                     isDragEnabled.toggle()
                 }
             }
             .onAppear {
-                bottomLeftSquareColor = game.board.squares[0][0].type
+                // Find the square type
+                let coloredSquareFile = game.board.squares.first(where: { $0.contains { $0.state != .nonexistent } })
+                if let coloredSquare = coloredSquareFile?.first(where: { $0.state != .nonexistent }) {
+                    let squaresAway = coloredSquare.position.rank + coloredSquare.position.file
+                    if squaresAway % 2 == 0 {
+                        bottomLeftSquareColor = coloredSquare.type
+                    } else {
+                        bottomLeftSquareColor = coloredSquare.type.opposite
+                    }
+                } else {
+                    bottomLeftSquareColor = .dark
+                }
                 print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
             }
         }
     }
     
-    func selectedPositionOnBoard(_ selectedPosition: Position) {
+    func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {
         print("selected: \(selectedPosition)")
         if game.board.squares[selectedPosition.file][selectedPosition.rank].state == .empty {
             print("actuallySelected: \(selectedPosition)")
             game.board.squares[selectedPosition.file][selectedPosition.rank].state = .nonexistent
             
             // Remove row/file if there is nothing left in it and it's on the edge
-            trimSquaresIfNecessary(&game.board.squares, afterSquareRemovedAt: selectedPosition)
+            trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
             
             changedGame(game)
         }
     }
 	
-	func selectedPositionOnGhostBoard(_ selectedPosition: Position, type: Square.SquareType) {
+    func selectedPositionOnGhostBoard(_ selectedPosition: Position, type: Square.SquareType, sideLength: CGFloat) {
 		// Translate position to game board position
 		var translatedPosition = Position(
 			rank: selectedPosition.rank - 1,
@@ -195,10 +228,11 @@ struct EditBoardView: View {
                 // If it is an even number of ranks away, it should be in the same order
                 let squareType = ((selectedPosition.rank - rank) % 2 == 0) ? type : type.opposite
                 print("selectedPosition.rank: \(selectedPosition.rank), rank: \(rank)")
-                newFile.append(Square(state: state, position: position, type: squareType))
+                newFile.append(Square(state: state, position: position, type: type))
 			}
 			
 			squares.insert(newFile, at: 0)
+            steadyStatePanOffset.width -= sideLength
             
             translatedPosition.file += 1
             
@@ -220,7 +254,7 @@ struct EditBoardView: View {
                 
                 // If it is an even number of ranks away, it should be in the same order
                 let squareType = (selectedPosition.rank - rank) % 2 == 0 ? type : type.opposite
-                newFile.insert(Square(state: state, position: position, type: squareType), at: rank)
+                newFile.insert(Square(state: state, position: position, type: type), at: rank)
             }
             
             squares.append(newFile)
@@ -236,7 +270,7 @@ struct EditBoardView: View {
                 
                 // If it is an even number of files away, it should be in the same order
                 let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
-                let newSquare = Square(state: state, position: position, type: squareType)
+                let newSquare = Square(state: state, position: position, type: type)
                 
                 squares[fileIndex].insert(newSquare, at: 0)
             }
@@ -259,7 +293,7 @@ struct EditBoardView: View {
                 
                 // If it is an even number of files away, it should be in the same order
                 let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
-                let newSquare = Square(state: state, position: position, type: squareType)
+                let newSquare = Square(state: state, position: position, type: type)
                 
                 print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
                 
@@ -268,6 +302,7 @@ struct EditBoardView: View {
                 print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
             }
             isTranslatedPositionInBoard = false
+            steadyStatePanOffset.height -= sideLength
             
             print("squares[0]: \(squares[0].count)")
         }
@@ -282,7 +317,7 @@ struct EditBoardView: View {
         }
 		
         if shouldUpdateSquarePositions {
-            updateSquarePositions(&squares)
+            updateSquarePositions()
         }
         
         print("squares[0]: \(squares[0].count)")
@@ -301,28 +336,29 @@ struct EditBoardView: View {
         changedGame(game)
 	}
     
-    private func updateSquarePositions(_ squares: inout [[Square]]) {
+    private func updateSquarePositions() {
         print("updated square positions")
         // update all of the positions of all of the other squares
-        for (fileIndex, file) in squares.enumerated() {
+        for (fileIndex, file) in game.board.squares.enumerated() {
             for (rankIndex, _) in file.enumerated()
             {
-                squares[fileIndex][rankIndex].position = Position(rank: rankIndex, file: fileIndex)
+                game.board.squares[fileIndex][rankIndex].position = Position(rank: rankIndex, file: fileIndex)
             }
         }
     }
     
-    private func trimSquaresIfNecessary(_ squares: inout [[Square]], afterSquareRemovedAt removedPosition: Position) {
+    private func trimSquaresIfNecessary(afterSquareRemovedAt removedPosition: Position, sideLength: CGFloat) {
         
         // Position placed to collapse the board if an island is removed
         var checkPosition = removedPosition
-        
+
         if removedPosition.rank == ranks - 1 { checkPosition.rank = ranks - 2 }
         if removedPosition.file == files - 1 { checkPosition.file = files - 2 }
+        var removedSquare: Bool = false
         
         // Removed from bottom
         if removedPosition.rank == 0 {
-            for file in squares {
+            for file in game.board.squares {
                 
                 // Rank still has squares in it
                 if file[0].state != .nonexistent {
@@ -330,16 +366,17 @@ struct EditBoardView: View {
                 }
             }
             
-            for (fileIndex, _) in squares.enumerated() {
-                squares[fileIndex].remove(at: 0)
+            for (fileIndex, _) in game.board.squares.enumerated() {
+                game.board.squares[fileIndex].remove(at: 0)
             }
             
             toggleBottomLeftSquareColor()
+            removedSquare = true
         }
         
         // Removed from top
         if removedPosition.rank == ranks - 1 {
-            for file in squares {
+            for file in game.board.squares {
                 
                 // Rank still has squares in it
                 if file[ranks - 1].state != .nonexistent {
@@ -347,33 +384,40 @@ struct EditBoardView: View {
                 }
             }
             
-            for (fileIndex, _) in squares.enumerated() {
-                squares[fileIndex].remove(at: ranks - 1)
+            for (fileIndex, _) in game.board.squares.enumerated() {
+                game.board.squares[fileIndex].remove(at: ranks - 1)
             }
+            
+            steadyStatePanOffset.height += sideLength
+            removedSquare = true
         }
         
         // Removed from left
         if removedPosition.file == 0 {
-            if !squares[0].contains(where: { $0.state != .nonexistent }) {
-                squares.remove(at: 0)
+            if !game.board.squares[0].contains(where: { $0.state != .nonexistent }) {
+                game.board.squares.remove(at: 0)
                 toggleBottomLeftSquareColor()
+                
+                steadyStatePanOffset.width += sideLength
+                removedSquare = true
             }
-            
-            
         }
         
         // Removed from right
         if removedPosition.file == files - 1 {
             print("removed from right")
-            if !squares[files - 1].contains(where: { $0.state != .nonexistent }) {
-                squares.remove(at: files - 1)
+            if !game.board.squares[files - 1].contains(where: { $0.state != .nonexistent }) {
+                game.board.squares.remove(at: files - 1)
+                removedSquare = true
             }
         }
         
-        // Something was removed
-        updateSquarePositions(&squares)
+        updateSquarePositions()
         // Repeat until nothing else can be trimmed // TODO: Figure out how to accomplish this
-        //trimSquaresIfNecessary(&squares, afterSquareRemovedAt: checkPosition)
+        if removedSquare {
+            // Something was removed
+            trimSquaresIfNecessary(afterSquareRemovedAt: checkPosition, sideLength: sideLength)
+        }
     }
 	
 	@GestureState private var gestureZoomScale: CGFloat = 1.0
@@ -409,10 +453,10 @@ struct EditBoardView: View {
 			}
 			.onEnded { finalDragGestureValue in
                 // Quantize translation
-                let translationX = (finalDragGestureValue.translation.width / sideLength).rounded() * sideLength
-                let translationY = (finalDragGestureValue.translation.height / sideLength).rounded() * sideLength
+//                let translationX = (finalDragGestureValue.predictedEndTranslation.width / sideLength).rounded() * sideLength
+//                let translationY = finalDragGestureValue.predictedEndTranslation.height
                 
-                steadyStatePanOffset = steadyStatePanOffset + CGSize(width: translationX, height: translationY)//+ finalDragGestureValue.translation
+                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
 			}
 	}
 	
