@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		024928E4275030B2002FAA46 /* BoardView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView2.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
+		028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028193782754BAEE009BBBB9 /* OffsetTransition.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
 		23079A6626D9FAC200A343CE /* MoverModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6526D9FAC200A343CE /* MoverModel.swift */; };
 		23123D2525D5E07200F2B813 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23123D2425D5E07200F2B813 /* GameView.swift */; };
@@ -81,6 +82,7 @@
 /* Begin PBXFileReference section */
 		024928E3275030B2002FAA46 /* BoardView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView2.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
+		028193782754BAEE009BBBB9 /* OffsetTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetTransition.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
 		23079A6526D9FAC200A343CE /* MoverModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverModel.swift; sourceTree = "<group>"; };
 		23123D2425D5E07200F2B813 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				23294DAE26C8933500F45EE9 /* ConfirmDismissActionSheet.swift */,
 				23DA467626ED83E60000E024 /* VisualEffectView.swift */,
 				024928E527519482002FAA46 /* TouchLocatingView.swift */,
+				028193782754BAEE009BBBB9 /* OffsetTransition.swift */,
 				23F1D44826BB52BE00C364ED /* Component Views */,
 			);
 			path = View;
@@ -439,6 +442,7 @@
 				2391B26A26C4544100349054 /* EditPieceView.swift in Sources */,
 				23D1E90F26E08A6800A36B0B /* MoverManager.swift in Sources */,
 				2371E28825D104CB009D4D21 /* Move.swift in Sources */,
+				028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */,
 				23C427AC26E1E04400E7D31C /* EditBoardView.swift in Sources */,
 				234BE2AF24C8E9EB00580B6B /* Piece.swift in Sources */,
 				234BE2B524C8F12A00580B6B /* Player.swift in Sources */,

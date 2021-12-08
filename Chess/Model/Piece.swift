@@ -143,7 +143,7 @@ struct Piece: Identifiable {
 			position: position,
 			owner: owner
 		)
-	}
+    }
 	
 	static func bishop(position: Position, owner: Player) -> Piece {
 		Piece(

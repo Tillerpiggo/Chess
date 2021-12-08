@@ -18,21 +18,20 @@ struct GameDetailView: View {
     var body: some View {
 		GeometryReader { geometry in
 			List {
-				Section {
-					BoardView(
-						squares: $game.board.squares,
-						selectedSquares: [],
-						legalMoves: [],
-						onSelected: { _ in }
-					)
-					.listRowBackground(Color.backgroundColor)
-					.cornerRadius(8)
-                    .frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(game.board.ranks) / CGFloat(game.board.files)))
-					.disabled(true)
-				}
+                //GeometryReader { g in
+                    Section {
+                        BoardView2(board: $game.board)
+                            .listRowBackground(Color.backgroundColor)
+                            .listRowInsets(EdgeInsets())
+                            //.frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(game.board.ranks) / CGFloat(game.board.files)))
+                            .disabled(true)
+                    }
+                    //.frame(width: g.size.width, height: (g.size.width) * (CGFloat(game.board.ranks) / CGFloat(game.board.files)))
+                //}
 				
 				Section {
                     NavigationLink(destination: EditBoardView(game: game, changedGame: { game in
+                        print("unchanged game: \(self.game.board.squares[0][0].piece?.name)")
                         print("does game == game? \(self.game == game)")
                         self.game = game
                         print("does game == game now? \(self.game == game)")

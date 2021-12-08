@@ -26,15 +26,23 @@ struct EditBoardView: View {
         print("toggled to \(self.bottomLeftSquareColor)")
     }
 	
-	var emptySquares: [[Square]] {
-        //let ranks = game.board.ranks + 2
-        //let files = game.board.files + 2
-        let emptyBoard = Board.empty(ranks: game.board.ranks + 2, files: game.board.files + 2, bottomLeftSquareColor: bottomLeftSquareColor)
-        
-        //print("bot")
-		
-		return emptyBoard.squares
-	}
+//	var emptySquares: [[Square]] {
+//        //let ranks = game.board.ranks + 2
+//        //let files = game.board.files + 2
+//        let emptyBoard = Board.empty(ranks: game.board.ranks + 2, files: game.board.files + 2, bottomLeftSquareColor: bottomLeftSquareColor)
+//
+//        //print("bot")
+//
+//		return emptyBoard.squares
+//	}
+    
+    var emptyBoard: Board {
+        return Board.empty(
+            ranks: game.board.ranks + 2,
+            files: game.board.files + 2,
+            bottomLeftSquareColor: bottomLeftSquareColor
+        )
+    }
 	
 	private var ranks: Int {
 		return game.board.squares.first?.count ?? 0
@@ -54,88 +62,48 @@ struct EditBoardView: View {
                 
                 Group {
                     BoardView2(
+                        board: .constant(emptyBoard),
+                        dragEnabled: isDragEnabled,
+                        onSelected: { selectedPosition in
+                            print("selected: \(selectedPosition)")
+                            selectedPositionOnGhostBoard(selectedPosition, type: .light, sideLength: squareLength)
+                        }
+                    )
+                        .opacity(0.2)
+                        .frame(
+                            width: squareLength * CGFloat(emptyBoard.files),
+                            height: squareLength * CGFloat(emptyBoard.ranks)
+                        )
+                    
+                    BoardView2(
                         board: $game.board,
                         dragEnabled: isDragEnabled,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
                             print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
                             print("selectedPosition: \(selectedPosition)")
-                            //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                            if gesturePanOffset == .zero {
+                                selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                            }
                         },
                         onDrag: { (startingPosition, endingPosition) in
                             if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-                                //print("was: \(self.game.board.squares[0][0].piece?.name)")
-                                //self.game.move(move)
                                 game.moveSetup(move)
-
-                                //print("is: \(game.board.squares[0][0].piece?.name)")
                                 changedGame(game)
+                                print("move: \(move)")
                             }
                         }
                     )
-
-                    
-//                    BoardView(
-//                        squares: .constant(emptySquares),
-//                        squareLength: squareLength,
-//                        isDragEnabled: isDragEnabled,
-//                        selectedSquares: [],
-//                        legalMoves: [],
-//                        onSelected: { selectedPosition in
-//                            selectedPositionOnGhostBoard(selectedPosition, type: emptySquares[selectedPosition.file][selectedPosition.rank].type, sideLength: squareLength)
-//                        }
-//                    )
-//                    .opacity(0.15)
-//                    .offset(x: squareLength * -1, y: squareLength * -1)
-//
-//                    /*
-//                    VStack {
-//                        Spacer()
-//                        Rectangle()
-//                            .fill(Color.black)
-//                            .aspectRatio(1, contentMode: .fit)
-//                            .shadow(radius: 40)
-//                        Spacer()
-//                    }
-//    */
-//
-//
-//
-//                    BoardView(
-//                        squares: $game.board.squares,
-//                        squareLength: squareLength,
-//                        isDragEnabled: isDragEnabled,
-//                        selectedSquares: [],
-//                        legalMoves: [],
-//                        onSelected: { (selectedPosition) in
-//                            selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
-//                        },
-//                        onDrag:
-//                            {  (startingPosition, endingPosition) in
-//                                if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-//                                    print("was: \(self.game.board.squares[0][0].piece?.name)")
-//                                    //self.game.move(move)
-//                                    game.moveSetup(move)
-//
-//                                    print("is: \(game.board.squares[0][0].piece?.name)")
-//                                    changedGame(game)
-//                                }
-//                            },
-//                        onDrop:
-//                            { (providers, rank, file) in
-//                                self.drop(providers: providers, rank: rank, file: file)
-//                            }
-//                        )
-//                        .shadow(color: Color.black.opacity(0.15), radius: 20)
-                    
-                        
+                        .frame(
+                            width: squareLength * CGFloat(game.board.files),
+                            height: squareLength * CGFloat(game.board.ranks)
+                        )
                         
                 }
-                .animation(nil)
+                .offset(x: -squareLength, y: squareLength)
                 .offset(panOffset)
-                .animation(.spring())
                 .scaleEffect(zoomScale)
-                
+                .animation(.spring(), value: panOffset)
                 
                 VStack {
                     ZStack {
@@ -192,15 +160,18 @@ struct EditBoardView: View {
     
     func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {
         print("selected: \(selectedPosition)")
-        if game.board.squares[selectedPosition.file][selectedPosition.rank].state == .empty {
+        guard let square = game.board.squares[selectedPosition] else { return }
+        if square.state == .empty {
             print("actuallySelected: \(selectedPosition)")
             game.board.squares[selectedPosition.file][selectedPosition.rank].state = .nonexistent
             
             // Remove row/file if there is nothing left in it and it's on the edge
             trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
-            
-            changedGame(game)
+        } else if square.state == .nonexistent {
+            game.board.squares[selectedPosition.file][selectedPosition.rank].state = .empty
         }
+        
+        changedGame(game)
     }
 	
     func selectedPositionOnGhostBoard(_ selectedPosition: Position, type: Square.SquareType, sideLength: CGFloat) {
@@ -209,6 +180,8 @@ struct EditBoardView: View {
 			rank: selectedPosition.rank - 1,
 			file: selectedPosition.file - 1
 		)
+        
+        print("selected position: \(selectedPosition)")
 		
 		var squares = game.board.squares
 		
@@ -232,7 +205,7 @@ struct EditBoardView: View {
 			}
 			
 			squares.insert(newFile, at: 0)
-            steadyStatePanOffset.width -= sideLength
+            //steadyStatePanOffset.width -= sideLength
             
             translatedPosition.file += 1
             
@@ -302,7 +275,7 @@ struct EditBoardView: View {
                 print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
             }
             isTranslatedPositionInBoard = false
-            steadyStatePanOffset.height -= sideLength
+            //steadyStatePanOffset.height -= sideLength
             
             print("squares[0]: \(squares[0].count)")
         }
@@ -456,7 +429,7 @@ struct EditBoardView: View {
 //                let translationX = (finalDragGestureValue.predictedEndTranslation.width / sideLength).rounded() * sideLength
 //                let translationY = finalDragGestureValue.predictedEndTranslation.height
                 
-                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
+                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.predictedEndTranslation
 			}
 	}
 	

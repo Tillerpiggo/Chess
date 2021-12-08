@@ -13,7 +13,7 @@ import Combine
 // (so that I can keep the sweet functional programming of Movers without rewriting everything)
 class GameManager: ObservableObject {
 	//@Published private(set) var games = [Game]()
-	@Published private(set) var games = [Game]()
+	@Published var games = [Game]()
 	
 	
 	// (replacable with test data as well)

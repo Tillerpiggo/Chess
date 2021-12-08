@@ -51,13 +51,12 @@ class EditPatternViewModel: ObservableObject {
 	
 	private(set) var pattern: Pattern
 	private var piece: Piece
-	
-	var squares: [[Square]] {
-		var board = Board.empty(ranks: 7, files: 7)
-		board.squares[3][3].setPiece(piece)
-		
-		return board.squares
-	}
+    
+    var board: Board {
+        var board = Board.empty(ranks: 7, files: 7)
+        board.squares[3][3].setPiece(piece)
+        return board
+    }
 	
 	var selectedSquares: [Position] {
 		var sevenBySevenPositionGrid = [Position]()

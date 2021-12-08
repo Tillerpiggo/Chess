@@ -32,17 +32,23 @@ struct PieceDetailView: View {
 				}
 				
 				List {
-					Section {
-						BoardView(
-                            squares: .constant(viewModel.squares),
-							selectedSquares: viewModel.selectedSquares,
-							legalMoves: [],
-							onSelected: { _ in }
-						)
-						.listRowBackground(Color.backgroundColor)
-						.cornerRadius(8)
-						.frame(width: geometry.size.width - 64, height: geometry.size.width - 64)
-					}
+                    Section {
+                        BoardView2(board: .constant(viewModel.board))
+                            .listRowBackground(Color.backgroundColor)
+                            .frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files)))
+                            .disabled(true)
+                    }
+					//Section {
+//						BoardView(
+//                            squares: .constant(viewModel.squares),
+//							selectedSquares: viewModel.selectedSquares,
+//							legalMoves: [],
+//							onSelected: { _ in }
+//						)
+//						.listRowBackground(Color.backgroundColor)
+//						.cornerRadius(8)
+//						.frame(width: geometry.size.width - 64, height: geometry.size.width - 64)
+					//}
 					
 					Section(header: Text("Patterns")) {
 						ForEach(viewModel.patterns) { pattern in

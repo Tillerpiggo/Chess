@@ -43,13 +43,14 @@ struct EditPatternView: View {
 				
 				Form {
 					Section {
-						BoardView(
-                            squares: .constant(viewModel.squares),
-							selectedSquares: viewModel.selectedSquares,
-							legalMoves: [],
-							onSelected: { _ in },
-							makeSelectedSquaresRed: viewModel.isRestricting
-						)
+                        BoardView2(board: .constant(viewModel.board))
+//						BoardView(
+//                            squares: .constant(viewModel.squares),
+//							selectedSquares: viewModel.selectedSquares,
+//							legalMoves: [],
+//							onSelected: { _ in },
+//							makeSelectedSquaresRed: viewModel.isRestricting
+//						)
 						// TODO: refactor this into a custom BoardView styling view modifier
 						.listRowBackground(Color.backgroundColor)
 						.cornerRadius(8)

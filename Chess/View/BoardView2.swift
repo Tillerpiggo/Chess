@@ -52,6 +52,7 @@ struct BoardView2: View {
                     .fill(Color.lightSquareColor)
                 BoardSquares(board, type: .dark)
                     .fill(Color.darkSquareColor)
+
                 ForEach(pieces) { piece in
                     Image(piece.imageName)
                         .resizable()
@@ -64,6 +65,7 @@ struct BoardView2: View {
                         )
                 }
                 .opacity(pieceOpacity)
+                .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
                 
                 // The piece being dragged
                 if let dragPiece = dragPiece {
@@ -85,19 +87,30 @@ struct BoardView2: View {
                         .resizable()
                         .frame(width: sideLength * 2, height: sideLength * 2)
                         .offset(pieceDragOffset(sideLength: sideLength, position: dragPiece.position))
+                        
+                }
+                    
+            }
+            .onTouch(type: .startOrEnd) { location, type in
+                print("type: \(type)")
+                if type == .started {
+                    touchDownPosition = position(at: location, in: geometry.size)
+                    selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
+                } else if type == .ended {
+                    let position = position(at: location, in: geometry.size)
+                    if position == touchDownPosition {
+                        onSelected(position)
+                    }
+                    touchDownPosition = nil;
                 }
             }
-            .onTouch(type: .started) { location in
-                
-                selectedSquare = board.squares[position(at: location, in: geometry.size)]
-            }
-//            .onTouch(type: .ended) { location in
-//                selectedSquare = nil
-//                onSelected(position(at: location, in: geometry.size))
-//            }
-            .simultaneousGesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+            .gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+            
         }
     }
+    // Make sure that dragging doesn't trigger tapping on the ghost board
+    
+    @State private var touchDownPosition: Position?
     
     // MARK: - Drag Piece Gesture
     @GestureState private var gestureDragOffset: CGSize = .zero
@@ -257,10 +270,12 @@ struct BoardSquares: Shape {
                 // Otherwise only do dark squares
                 if ((file + rank) % 2 == 0) == (type == .light) {
                     let rect = CGRect(x: sideLength * CGFloat(file) + xOffset,
-                                      y: sideLength * CGFloat(rank) + yOffset,
+                                      y: sideLength * CGFloat(board.ranks - rank - 1) + yOffset,
                                       width: sideLength,
                                       height: sideLength)
-                    path.addRect(rect)
+                    if (board.squares[file][rank].state != .nonexistent) {
+                        path.addRect(rect)
+                    }
                 }
             }
         }

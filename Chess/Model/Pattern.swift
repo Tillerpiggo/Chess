@@ -9,29 +9,7 @@
 import Foundation
 
 struct Pattern: Identifiable {
-	var type: PatternType/*{
-		
-		didSet {
-			switch type {
-			case .withinDistance, .outsideDistance:
-				if rankDistance == nil { rankDistance = 0 }
-				if fileDistance == nil { fileDistance = 0 }
-				directions = nil
-				
-			case .inDirections:
-				if directions == nil { directions = [] }
-				rankDistance = nil
-				fileDistance = nil
-				
-			default:
-				rankDistance = nil
-				fileDistance = nil
-				directions = nil
-				
-			}
-		}
-	}
-*/
+	var type: PatternType
 	
 	var custom: [Position]
 	var isRestricting: Bool
@@ -341,15 +319,15 @@ extension Pattern {
 	}
 	
 	static let pawn: (Move, Board) -> Bool = { (move, board) in
-		Pattern.vertical(move, board) && !Pattern.outsideDistance(ranks: 1, files: 0)(move, board)
+		Pattern.vertical(move, board) && withinDistance(ranks: 1, files: 0)(move, board)
 	}
 	
 	static let pawnFirstMove: (Move, Board) -> Bool = { (move, board) in
-		Pattern.vertical(move, board) && !Pattern.outsideDistance(ranks: 2, files: 0)(move, board)
+		Pattern.vertical(move, board) && withinDistance(ranks: 2, files: 0)(move, board)
 	}
 	
 	static let pawnCapture: (Move, Board) -> Bool = { (move, board) in
-		Pattern.bishop(move, board) && !Pattern.outsideDistance(ranks: 1, files: 1)(move, board)
+		Pattern.bishop(move, board) && withinDistance(ranks: 1, files: 1)(move, board)
 	}
 	
 	static let knight: (Move, Board) -> Bool = { (move, board) in

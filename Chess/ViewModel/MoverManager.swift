@@ -95,7 +95,6 @@ class MoverManager: ObservableObject {
 		self.cancellables = [
 			moverManager.models.eraseToAnyPublisher().sink { movers in
 				self.mover = Mover(moverModel: movers.first!)!
-				print("movers: \(movers)")
 			},
 			firstMoveMoverManager.models.eraseToAnyPublisher().sink { movers in
 				self.firstMoveMover = Mover(moverModel: movers.first!)!

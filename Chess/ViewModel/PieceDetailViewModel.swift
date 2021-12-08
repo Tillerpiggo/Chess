@@ -34,13 +34,13 @@ class PieceDetailViewModel: ObservableObject {
 		
 		return sevenBySevenPositionGrid
 	}
-	
-	var squares: [[Square]] {
-		var board = Board.empty(ranks: 7, files: 7)
-		board.squares[3][3].setPiece(positionPiece)
-		
-		return board.squares
-	}
+    
+    var board: Board {
+        var board = Board.empty(ranks: 8, files: 8)
+        board.squares[3][3].setPiece(positionPiece)
+        
+        return board
+    }
 	
 	var patterns: [Pattern] {
 		switch selectedMovementType {
