@@ -5,6 +5,19 @@
 ////  Created by Tyler on 10/31/21.
 ////  Copyright © 2021 Beaglepig. All rights reserved.
 ////
+
+
+import SwiftUI
+
+class EditBoardViewModel: ObservableObject {
+    var changedGame: (Game) -> Void
+    
+    init(changedGame: @escaping (Game) -> Void) {
+        self.changedGame = changedGame
+    }
+}
+
+
 //
 //import SwiftUI
 //

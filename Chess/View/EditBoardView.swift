@@ -12,9 +12,15 @@ struct EditBoardView: View {
 	
 	@State var game: Game
     var changedGame: (Game) -> Void
+    //@StateObject var model: EditBoardViewModel
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
     @State var isDragEnabled: Bool = true
+    
+//    init(game: Game, changedGame: @escaping (Game) -> Void) {
+//        self._game = State(wrappedValue: game)
+//        self._model = StateObject(wrappedValue: EditBoardViewModel(changedGame: changedGame))
+//    }
     
     private func toggleBottomLeftSquareColor() {
         if self.bottomLeftSquareColor == .light {
@@ -80,8 +86,8 @@ struct EditBoardView: View {
                         dragEnabled: isDragEnabled,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
-                            print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
-                            print("selectedPosition: \(selectedPosition)")
+                            //print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
+                            //print("selectedPosition: \(selectedPosition)")
                             if gesturePanOffset == .zero {
                                 selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
                             }
@@ -89,8 +95,9 @@ struct EditBoardView: View {
                         onDrag: { (startingPosition, endingPosition) in
                             if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
                                 game.moveSetup(move)
+                                //changedGame(game)
                                 changedGame(game)
-                                print("move: \(move)")
+                                //print("move: \(move)")
                             }
                         }
                     )
@@ -103,7 +110,7 @@ struct EditBoardView: View {
                 .offset(x: -squareLength, y: squareLength)
                 .offset(panOffset)
                 .scaleEffect(zoomScale)
-                .animation(.spring(), value: panOffset)
+                //.animation(.easeInOut(duration: 0.05), value: panOffset)
                 
                 VStack {
                     ZStack {
@@ -133,8 +140,8 @@ struct EditBoardView: View {
                 
                 
             }
-            //.gesture(!isDragEnabled ? zoomGesture() : nil)
             .gesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
+            .gesture(!isDragEnabled ? zoomGesture() : nil)
             .toolbar {
                 Button(isDragEnabled ? "Drag Board" : "Drag Pieces") {
                     isDragEnabled.toggle()
@@ -171,7 +178,7 @@ struct EditBoardView: View {
             game.board.squares[selectedPosition.file][selectedPosition.rank].state = .empty
         }
         
-        changedGame(game)
+            changedGame(game)
     }
 	
     func selectedPositionOnGhostBoard(_ selectedPosition: Position, type: Square.SquareType, sideLength: CGFloat) {
@@ -268,16 +275,16 @@ struct EditBoardView: View {
                 let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
                 let newSquare = Square(state: state, position: position, type: type)
                 
-                print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
+                //print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
                 
-                print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
+                //print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
                 squares[fileIndex].insert(newSquare, at: ranks)
-                print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
+                //print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
             }
             isTranslatedPositionInBoard = false
             //steadyStatePanOffset.height -= sideLength
             
-            print("squares[0]: \(squares[0].count)")
+            //print("squares[0]: \(squares[0].count)")
         }
         
         // Square tapped inside existing board
@@ -429,7 +436,7 @@ struct EditBoardView: View {
 //                let translationX = (finalDragGestureValue.predictedEndTranslation.width / sideLength).rounded() * sideLength
 //                let translationY = finalDragGestureValue.predictedEndTranslation.height
                 
-                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.predictedEndTranslation
+                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
 			}
 	}
 	

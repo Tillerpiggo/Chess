@@ -93,14 +93,16 @@ struct Board {
         // Empty the starting square
         boardState[move.start]?.setPiece(nil)
         boardState[move.start]?.state = .empty
+        let startingPieceID = boardState[move.start]?.startingPieceID
+        let startingPieceOwner = boardState[move.start]?.startingPieceOwner
         boardState[move.start]?.startingPieceID = nil
         boardState[move.start]?.startingPieceOwner = nil
         
         // Setup piece in ending square
         boardState[move.end]?.setPiece(piece)
         boardState[move.end]?.state = .occupied
-        boardState[move.end]?.startingPieceID = piece.id
-        boardState[move.end]?.startingPieceOwner = piece.owner
+        boardState[move.end]?.startingPieceID = startingPieceID
+        boardState[move.end]?.startingPieceOwner = startingPieceOwner
         
         var newBoard = self
         newBoard.squares = boardState

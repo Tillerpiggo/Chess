@@ -23,9 +23,9 @@ struct BoardListView: View {
 		
 		NavigationView {
 			List {
-				ForEach($gameStore.games) { $game in
+				ForEach(gameStore.games) { game in
 					NavigationLink(destination:
-						GameDetailView(game: $game)
+						GameDetailView(game: makeGameBinding(game)!)
 							.environmentObject(gameStore)
 					) {
 						HStack {
@@ -61,11 +61,11 @@ struct BoardListView: View {
 		)
 	}
 	
-//	func makeGameBinding(_ game: Game) -> Binding<Game>? {
-//		guard let index = gameStore.games.firstIndex(where: { $0.id == game.id }) else { return nil }
-//		return .init(get: { gameStore.games[index] },
-//					 set: { gameStore.updateGame($0) })
-//	}
+	func makeGameBinding(_ game: Game) -> Binding<Game>? {
+		guard let index = gameStore.games.firstIndex(where: { $0.id == game.id }) else { return nil }
+		return .init(get: { gameStore.games[index] },
+					 set: { gameStore.updateGame($0) })
+	}
 	
 	init() {
 		UITableView.appearance().backgroundColor = UIColor(.backgroundColor)

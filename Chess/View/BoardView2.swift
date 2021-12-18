@@ -92,7 +92,7 @@ struct BoardView2: View {
                     
             }
             .onTouch(type: .startOrEnd) { location, type in
-                print("type: \(type)")
+                //print("type: \(type)")
                 if type == .started {
                     touchDownPosition = position(at: location, in: geometry.size)
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
