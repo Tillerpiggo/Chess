@@ -142,13 +142,7 @@ struct TouchLocater: ViewModifier {
         GeometryReader { g in
             content
                 .overlay(
-                    ZStack {
-                        TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds, size: size)
-                            
-//                        Rectangle()
-//                            .fill(Color.blue)
-//                            .opacity(0.4)
-                    }
+                    TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds, size: size)
                         .offset(offset(in: g.size))
                 )
         }

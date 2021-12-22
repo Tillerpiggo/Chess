@@ -114,7 +114,7 @@ struct BoardView2: View {
                     touchDownPosition = nil;
                 }
             }
-            //.gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+            .gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
             
         }
     }
