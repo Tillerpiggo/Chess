@@ -19,7 +19,7 @@ struct EditBoardView: View {
     
     init(game: Game, changedGame: @escaping (Game) -> Void) {
         self._game = State(wrappedValue: game)
-        self._model = StateObject(wrappedValue: EditBoardViewModel(changedGame: changedGame))
+        self._model = StateObject(wrappedValue: EditBoardViewModel(game: game, changedGame: changedGame))
     }
     
     private func toggleBottomLeftSquareColor() {
@@ -82,14 +82,15 @@ struct EditBoardView: View {
                         )
                     
                     BoardView2(
-                        board: $game.board,
+                        board: $model.game.board,
                         dragEnabled: isDragEnabled,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
                             //print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
                             //print("selectedPosition: \(selectedPosition)")
                             if gesturePanOffset == .zero {
-                                selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                                model.selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                                //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
                             }
                         },
                         onDrag: { (startingPosition, endingPosition) in
