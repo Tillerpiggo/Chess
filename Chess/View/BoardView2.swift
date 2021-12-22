@@ -10,21 +10,29 @@ import SwiftUI
 
 struct BoardView2: View {
     @Binding var board: Board
+    var squareLength: CGFloat
     var dragEnabled: Bool
     var pieceOpacity: CGFloat
     var onSelected: (Position) -> Void = { _ in }
     var onDrag: (Position, Position) -> Void = { _, _ in }
     
     init(board: Binding<Board>,
+         squareLength: CGFloat = 60,
          dragEnabled: Bool = true,
          pieceOpacity: CGFloat = 1.0,
          onSelected: @escaping (Position) -> Void = { _ in },
          onDrag: @escaping (Position, Position) -> Void = { _, _ in }) {
         self._board = board
+        self.squareLength = squareLength
         self.dragEnabled = dragEnabled
         self.pieceOpacity = pieceOpacity
         self.onSelected = onSelected
         self.onDrag = onDrag
+    }
+    
+    var size: CGSize {
+        return CGSize(width: squareLength * CGFloat(board.files),
+                      height: squareLength * CGFloat(board.ranks))
     }
     
     var pieces: [Piece] {
@@ -48,10 +56,13 @@ struct BoardView2: View {
             
             ZStack {
                 // The board
-                BoardSquares(board, type: .light)
-                    .fill(Color.lightSquareColor)
-                BoardSquares(board, type: .dark)
-                    .fill(Color.darkSquareColor)
+                Group {
+                    BoardSquares(board, type: .light)
+                        .fill(Color.lightSquareColor)
+                    BoardSquares(board, type: .dark)
+                        .fill(Color.darkSquareColor)
+                }
+                
 
                 ForEach(pieces) { piece in
                     Image(piece.imageName)
@@ -91,8 +102,7 @@ struct BoardView2: View {
                 }
                     
             }
-            .onTouch(type: .startOrEnd) { location, type in
-                //print("type: \(type)")
+            .onTouch(type: .startOrEnd, size: size) { location, type in
                 if type == .started {
                     touchDownPosition = position(at: location, in: geometry.size)
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
@@ -104,7 +114,7 @@ struct BoardView2: View {
                     touchDownPosition = nil;
                 }
             }
-            .gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+            //.gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
             
         }
     }
@@ -171,10 +181,13 @@ struct BoardView2: View {
         yOriginOffset += CGFloat(position.rank) * sideLength
         
         // Adjust for custom dimensions
-        let xOffset = CGFloat(board.files - board.smallestSide) * sideLength * 0.5
-        let yOffset = CGFloat(board.ranks - board.smallestSide) * sideLength * 0.5
-        xOriginOffset += xOffset
-        yOriginOffset -= yOffset
+//        let xOffset = CGFloat(board.files - board.smallestSide) * sideLength * 0.5
+//        let yOffset = CGFloat(board.ranks - board.smallestSide) * sideLength * 0.5
+//        xOriginOffset += xOffset
+//        yOriginOffset -= yOffset
+        
+        print("ranks: \(board.ranks) (BoardView)")
+        print("files: \(board.files) (BoardView)")
         
         
         return CGSize(
@@ -200,7 +213,9 @@ struct BoardView2: View {
         offset.width /= sideLength
         offset.height /= sideLength
         
-        if board.files % 2 == 0 || board.ranks % 2 == 0 {
+        print("ranks: \(board.ranks), files: \(board.files)")
+        
+        if board.files % 2 == 0 || board.ranks % 2 == 0 || true {
             offset.width += 0.5
             offset.height += 0.5
         }
@@ -208,11 +223,10 @@ struct BoardView2: View {
         offset.width = (offset.width).rounded() * sideLength
         offset.height = (offset.height).rounded() * sideLength
         
-        if board.files % 2 == 0 || board.ranks % 2 == 0 {
+        if board.files % 2 == 0 || board.ranks % 2 == 0 || true {
             offset.width -= sideLength / 2.0
             offset.height -= sideLength / 2.0
         }
-            
         
         return offset
     }
@@ -252,7 +266,7 @@ struct BoardView2: View {
         // 1. Shift it so that it is centered
         let transposition = (length - smallestSide) / 2 // partial length is centered in total length
         print("transposition: \(transposition)")
-        let transposedCoordinate = coordinate - transposition// - transpositionDownwards
+        let transposedCoordinate = coordinate// - transposition// - transpositionDownwards
         
         print("transposed: \(transposedCoordinate)")
         

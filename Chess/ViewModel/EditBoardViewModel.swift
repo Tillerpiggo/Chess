@@ -14,7 +14,7 @@ class EditBoardViewModel: ObservableObject {
     
     var changedGame: (Game) -> Void
     
-    var game: Game
+    @Published var game: Game
     private var ranks: Int { game.board.squares.first?.count ?? 0 }
     private var files: Int { game.board.squares.count }
     
@@ -47,6 +47,12 @@ class EditBoardViewModel: ObservableObject {
             trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
             changedGame(game)
             print("... and changed the game")
+        } else {
+            // since the method is designed for a tap on the ghost board itself, "unmodify" the position
+            let translatedPosition = Position(
+                rank: selectedPosition.rank + 1,
+                file: selectedPosition.file + 1)
+            selectedPositionOnGhostBoard(translatedPosition, type: .light, sideLength: sideLength)
         }
     }
     
@@ -58,6 +64,8 @@ class EditBoardViewModel: ObservableObject {
         let translatedPosition = Position(
             rank: selectedPosition.rank - 1,
             file: selectedPosition.file - 1)
+        //let translatedPosition = selectedPosition
+        print("selected ghost board at rank: \(translatedPosition.rank), file: \(translatedPosition.file)")
         
         let bottomRank = 0
         let topRank = ranks - 1
@@ -71,7 +79,7 @@ class EditBoardViewModel: ObservableObject {
         
         // Tapped on the right
         if translatedPosition.file > rightmostFile {
-            insertFile(at: rightmostFile, selectedPosition: selectedPosition, selectedType: type)
+            insertFile(at: rightmostFile + 1, selectedPosition: selectedPosition, selectedType: type)
         }
         
         // Tapped on the bottom
@@ -81,11 +89,14 @@ class EditBoardViewModel: ObservableObject {
         
         // tapped on the top
         if translatedPosition.rank >= ranks {
-            insertRank(at: topRank, selectedPosition: selectedPosition, selectedType: type)
+            insertRank(at: topRank + 1, selectedPosition: selectedPosition, selectedType: type)
         }
         
         updateSquarePositions()
         changedGame(game)
+        
+        print("game.ranks: \(ranks)")
+        print("game.files: \(files)")
     }
     
     /// Inserts an empty file to the board at the specified file index.
@@ -101,7 +112,7 @@ class EditBoardViewModel: ObservableObject {
                     position: position,
                     type: selectedType
                 ),
-                at: file
+                at: rank
             )
         }
         

@@ -17,7 +17,8 @@ struct BoardListView: View {
 	@State private var isAddBoardViewPresented: Bool = false
 	@State private var isEditBoardViewPresented: Bool = false
 	
-	private let defaultGame = Game.standard()  
+	private let defaultGame = Game.standard()
+    //private let defaultGame = Game(board: Board.empty(ranks: 9, files: 1), pieces: [], players: [.white, .black], name: "")
 	
 	var body: some View {
 		

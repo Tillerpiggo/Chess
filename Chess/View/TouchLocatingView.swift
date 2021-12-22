@@ -31,6 +31,9 @@ struct TouchLocatingView: UIViewRepresentable {
 
     // Whether touch information should continue after the user's finger has left the view
     var limitToBounds = true
+    
+    // The size of the view itself
+    var size: CGSize = .zero
 
     func makeUIView(context: Context) -> TouchLocatingUIView {
         // Create the underlying UIView, passing in our configuration
@@ -38,10 +41,13 @@ struct TouchLocatingView: UIViewRepresentable {
         view.onUpdate = onUpdate
         view.touchTypes = types
         view.limitToBounds = limitToBounds
+        view.size = size
+        
         return view
     }
 
     func updateUIView(_ uiView: TouchLocatingUIView, context: Context) {
+        uiView.size = size
     }
 
     // The internal UIView responsible for catching taps
@@ -50,9 +56,16 @@ struct TouchLocatingView: UIViewRepresentable {
         var onUpdate: ((CGPoint, TouchType) -> Void)?
         var touchTypes: TouchLocatingView.TouchType = .all
         var limitToBounds = true
+        var size: CGSize = .zero
+        
+        override var intrinsicContentSize: CGSize {
+            print("intrinsic size: \(size)")
+            return size
+        }
 
         // Our main initializer, making sure interaction is enabled.
         override init(frame: CGRect) {
+            print("frame: \(frame)")
             super.init(frame: frame)
             isUserInteractionEnabled = true
         }
@@ -108,20 +121,44 @@ struct TouchLocatingView: UIViewRepresentable {
 struct TouchLocater: ViewModifier {
     var type: TouchLocatingView.TouchType = .all
     var limitToBounds = true
+    var size: CGSize = .zero
     let perform: (CGPoint, TouchLocatingView.TouchType) -> Void
+    
+    func offset(in size: CGSize) -> CGSize {
+        var offsetRect: CGSize = .zero
+        
+        // Shift the longer dimension by half the difference between the dimensions
+        let offset = (size.largestSide - size.smallestSide) / 2
+        if size.width > size.height {
+            offsetRect.width = offset
+        } else {
+            offsetRect.height = offset
+        }
+        
+        return offsetRect
+    }
 
     func body(content: Content) -> some View {
-        content
-            .overlay(
-                TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds)
-            )
+        GeometryReader { g in
+            content
+                .overlay(
+                    ZStack {
+                        TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds, size: size)
+                            
+//                        Rectangle()
+//                            .fill(Color.blue)
+//                            .opacity(0.4)
+                    }
+                        .offset(offset(in: g.size))
+                )
+        }
     }
 }
 
 // A new method on View that makes it easier to apply our touch locater view.
 extension View {
-    func onTouch(type: TouchLocatingView.TouchType = .all, limitToBounds: Bool = true, perform: @escaping (CGPoint, TouchLocatingView.TouchType) -> Void) -> some View {
-        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, perform: perform))
+    func onTouch(type: TouchLocatingView.TouchType = .all, limitToBounds: Bool = true, size: CGSize = .zero, perform: @escaping (CGPoint, TouchLocatingView.TouchType) -> Void) -> some View {
+        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, size: size, perform: perform))
     }
 }
 

@@ -23,7 +23,7 @@ struct Board {
 	}
 	
 	var ranks: Int {
-		return squares.first!.count
+		return squares.first?.count ?? 0
 	}
     
     var smallestSide: Int {

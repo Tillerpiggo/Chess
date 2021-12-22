@@ -55,6 +55,6 @@ struct CreateGameView: View {
     init(isPresented: Binding<Bool>, didPressDone: @escaping (Game) -> Void) {
         self._isPresented = isPresented
         self.didPressDone = didPressDone
-        self._board = State<Game>(initialValue: Game.standard())
+        self._board = State<Game>(initialValue: Game(board: Board.empty(ranks: 1, files: 9), pieces: [], players: [.white, .black], name: ""))
     }
 }

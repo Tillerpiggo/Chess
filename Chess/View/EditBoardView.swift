@@ -69,6 +69,7 @@ struct EditBoardView: View {
                 Group {
                     BoardView2(
                         board: .constant(model.emptyBoard),
+                        squareLength: squareLength,
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
@@ -83,6 +84,7 @@ struct EditBoardView: View {
                     
                     BoardView2(
                         board: $model.game.board,
+                        squareLength: squareLength,
                         dragEnabled: isDragEnabled,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
