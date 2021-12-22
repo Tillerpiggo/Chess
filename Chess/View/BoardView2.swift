@@ -200,7 +200,7 @@ struct BoardView2: View {
         offset.width /= sideLength
         offset.height /= sideLength
         
-        if board.files % 2 == 0 && board.ranks % 2 == 0 {
+        if board.files % 2 == 0 || board.ranks % 2 == 0 {
             offset.width += 0.5
             offset.height += 0.5
         }
@@ -208,7 +208,7 @@ struct BoardView2: View {
         offset.width = (offset.width).rounded() * sideLength
         offset.height = (offset.height).rounded() * sideLength
         
-        if board.files % 2 == 0 && board.ranks % 2 == 0 {
+        if board.files % 2 == 0 || board.ranks % 2 == 0 {
             offset.width -= sideLength / 2.0
             offset.height -= sideLength / 2.0
         }
