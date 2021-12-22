@@ -30,6 +30,10 @@ struct Board {
         return min(ranks, files)
     }
     
+    var largestSide: Int {
+        return max(ranks, files)
+    }
+    
     /// Returns the squares from the perspective of black, with black on the bottom side.
     var otherSideSquares: [[Square]] {
         return squares.map { $0.reversed() }.reversed();

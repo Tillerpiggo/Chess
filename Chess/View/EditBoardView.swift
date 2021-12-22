@@ -11,16 +11,16 @@ import SwiftUI
 struct EditBoardView: View {
 	
 	@State var game: Game
-    var changedGame: (Game) -> Void
-    //@StateObject var model: EditBoardViewModel
+    //var changedGame: (Game) -> Void
+    @StateObject var model: EditBoardViewModel
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
     @State var isDragEnabled: Bool = true
     
-//    init(game: Game, changedGame: @escaping (Game) -> Void) {
-//        self._game = State(wrappedValue: game)
-//        self._model = StateObject(wrappedValue: EditBoardViewModel(changedGame: changedGame))
-//    }
+    init(game: Game, changedGame: @escaping (Game) -> Void) {
+        self._game = State(wrappedValue: game)
+        self._model = StateObject(wrappedValue: EditBoardViewModel(changedGame: changedGame))
+    }
     
     private func toggleBottomLeftSquareColor() {
         if self.bottomLeftSquareColor == .light {
@@ -96,7 +96,7 @@ struct EditBoardView: View {
                             if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
                                 game.moveSetup(move)
                                 //changedGame(game)
-                                changedGame(game)
+                                model.changedGame(game)
                                 //print("move: \(move)")
                             }
                         }
@@ -178,7 +178,7 @@ struct EditBoardView: View {
             game.board.squares[selectedPosition.file][selectedPosition.rank].state = .empty
         }
         
-            changedGame(game)
+        model.changedGame(game)
     }
 	
     func selectedPositionOnGhostBoard(_ selectedPosition: Position, type: Square.SquareType, sideLength: CGFloat) {
@@ -313,7 +313,7 @@ struct EditBoardView: View {
             print("they're different")
         }
         
-        changedGame(game)
+        model.changedGame(game)
 	}
     
     private func updateSquarePositions() {

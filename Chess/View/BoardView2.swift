@@ -170,6 +170,13 @@ struct BoardView2: View {
         xOriginOffset += CGFloat(position.file) * sideLength
         yOriginOffset += CGFloat(position.rank) * sideLength
         
+        // Adjust for custom dimensions
+        let xOffset = CGFloat(board.files - board.smallestSide) * sideLength * 0.5
+        let yOffset = CGFloat(board.ranks - board.smallestSide) * sideLength * 0.5
+        xOriginOffset += xOffset
+        yOriginOffset -= yOffset
+        
+        
         return CGSize(
             width: gestureDragOffset.width + xOriginOffset,
             height: gestureDragOffset.height - yOriginOffset
@@ -188,35 +195,35 @@ struct BoardView2: View {
     
     private func circleDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
         var offset = gestureDragOffset(sideLength: sideLength, position: position)
+//        offset.width = (offset.width / sideLength - 0.5).rounded(.up) * sideLength //- sideLength / 2
+//        offset.height = (offset.height / sideLength - 0.5).rounded(.up) * sideLength //- sideLength / 2
         
-        // Quantize values to grid (TODO figure out quantization for dynamic boards)
-        if board.files % 2 == 0 {
-            offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
-        } else {
-            offset.width = (offset.width / sideLength).rounded() * sideLength
-        }
-        
-        if board.ranks % 2 == 0 {
-            offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
-        } else {
-            offset.height = (offset.height / sideLength).rounded() * sideLength
-        }
+        offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+
+        offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
         
         return offset
     }
     
     private func position(at location: CGPoint, in size: CGSize) -> Position {
+        print("width: \(size.width), height: \(size.height)")
+        print("largestSide: \(size.largestSide)")
+        
+        print("file: ")
         let file = position(
             tappedAt: location.x,
             divisions: board.files,
-            totalLength: size.width,
-            partialLength: size.smallestSide)
+            length: size.width,
+            smallestSide: CGFloat(size.smallestSide))
+        print("rank: ")
         var rank = position(
             tappedAt: location.y,
             divisions: board.ranks,
-            totalLength: size.height,
-            partialLength: size.smallestSide)
+            length: size.height,
+            smallestSide: CGFloat(size.smallestSide))
         rank = board.ranks - rank - 1
+        
+        print("")
         
         return Position(rank: rank, file: file)
     }
@@ -227,18 +234,18 @@ struct BoardView2: View {
     // given the location in a certain dimension tapped, the number of divisions
     // along that dimension, the total length of the dimension,
     // and the length of the board that occupies that dimension
-    private func position(tappedAt coordinate: CGFloat, divisions: Int, totalLength: CGFloat, partialLength: CGFloat) -> Int {
+    private func position(tappedAt coordinate: CGFloat, divisions: Int, length: CGFloat, smallestSide: CGFloat) -> Int {
         // Transpose coordinate to the total length:
         
-        // 1. Shift it so that the min coordinate is 0
-        let transpositionDownwards = (totalLength - partialLength) / 2 // partial length is centered in total length
-        var transposedCoordinate = coordinate - transpositionDownwards
+        // 1. Shift it so that it is centered
+        let transposition = (length - smallestSide) / 2 // partial length is centered in total length
+        print("transposition: \(transposition)")
+        let transposedCoordinate = coordinate - transposition// - transpositionDownwards
         
-        // 2. Stretch it so that it maps onto total length
-        transposedCoordinate *= (totalLength / partialLength)
+        print("transposed: \(transposedCoordinate)")
         
         // Calculate the position
-        let position = Int(floor(Double(transposedCoordinate) * Double(divisions) / Double(totalLength)))
+        let position = Int(floor(Double(transposedCoordinate) * Double(divisions) / Double(length)))
         
         return position
     }
