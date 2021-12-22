@@ -197,10 +197,22 @@ struct BoardView2: View {
         var offset = gestureDragOffset(sideLength: sideLength, position: position)
 //        offset.width = (offset.width / sideLength - 0.5).rounded(.up) * sideLength //- sideLength / 2
 //        offset.height = (offset.height / sideLength - 0.5).rounded(.up) * sideLength //- sideLength / 2
+        offset.width /= sideLength
+        offset.height /= sideLength
         
-        offset.width = ((offset.width / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
-
-        offset.height = ((offset.height / sideLength + 0.5).rounded()) * sideLength - sideLength / 2.0
+        if board.files % 2 == 0 && board.ranks % 2 == 0 {
+            offset.width += 0.5
+            offset.height += 0.5
+        }
+        
+        offset.width = (offset.width).rounded() * sideLength
+        offset.height = (offset.height).rounded() * sideLength
+        
+        if board.files % 2 == 0 && board.ranks % 2 == 0 {
+            offset.width -= sideLength / 2.0
+            offset.height -= sideLength / 2.0
+        }
+            
         
         return offset
     }
