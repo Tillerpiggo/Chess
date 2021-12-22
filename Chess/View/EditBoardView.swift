@@ -68,11 +68,11 @@ struct EditBoardView: View {
                 
                 Group {
                     BoardView2(
-                        board: .constant(emptyBoard),
+                        board: .constant(model.emptyBoard),
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
-                            selectedPositionOnGhostBoard(selectedPosition, type: .light, sideLength: squareLength)
+                            model.selectedPositionOnGhostBoard(selectedPosition, type: .light, sideLength: squareLength)
                         }
                     )
                         .opacity(0.2)
@@ -94,12 +94,13 @@ struct EditBoardView: View {
                             }
                         },
                         onDrag: { (startingPosition, endingPosition) in
-                            if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-                                game.moveSetup(move)
-                                //changedGame(game)
-                                model.changedGame(game)
-                                //print("move: \(move)")
-                            }
+                            model.onDrag(from: startingPosition, to: endingPosition)
+//                            if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+//                                game.moveSetup(move)
+//                                //changedGame(game)
+//                                model.changedGame(game)
+//                                //print("move: \(move)")
+//                            }
                         }
                     )
                         .frame(

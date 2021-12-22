@@ -10,11 +10,28 @@
 import SwiftUI
 
 class EditBoardViewModel: ObservableObject {
+    @Published var bottomLeftSquareColor: Square.SquareType
+    
     var changedGame: (Game) -> Void
     
     var game: Game
     private var ranks: Int { game.board.squares.first?.count ?? 0 }
     private var files: Int { game.board.squares.count }
+    
+    var emptyBoard: Board {
+        return Board.empty(
+            ranks: game.board.ranks + 2,
+            files: game.board.files + 2,
+            bottomLeftSquareColor: bottomLeftSquareColor
+        )
+    }
+    
+    func onDrag(from startingPosition: Position, to endingPosition: Position) {
+        if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+            game.moveSetup(move)
+            changedGame(game)
+        }
+    }
     
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
     /// The existence of the square on/off.
@@ -30,6 +47,92 @@ class EditBoardViewModel: ObservableObject {
             trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
             changedGame(game)
             print("... and changed the game")
+        }
+    }
+    
+    /// Selects the position on the ghost board. This should add a square
+    /// at the position tapped.
+    func selectedPositionOnGhostBoard(_ selectedPosition: Position,
+                                      type: Square.SquareType, sideLength: CGFloat) {
+        // Translate the position to the position on the actual board
+        let translatedPosition = Position(
+            rank: selectedPosition.rank - 1,
+            file: selectedPosition.file - 1)
+        
+        let bottomRank = 0
+        let topRank = ranks - 1
+        let leftmostFile = 0
+        let rightmostFile = files - 1
+        
+        // Tapped on the left
+        if translatedPosition.file < leftmostFile {
+            insertFile(at: leftmostFile, selectedPosition: selectedPosition, selectedType: type)
+        }
+        
+        // Tapped on the right
+        if translatedPosition.file > rightmostFile {
+            insertFile(at: rightmostFile, selectedPosition: selectedPosition, selectedType: type)
+        }
+        
+        // Tapped on the bottom
+        if translatedPosition.rank < bottomRank {
+            insertRank(at: bottomRank, selectedPosition: selectedPosition, selectedType: type)
+        }
+        
+        // tapped on the top
+        if translatedPosition.rank >= ranks {
+            insertRank(at: topRank, selectedPosition: selectedPosition, selectedType: type)
+        }
+        
+        updateSquarePositions()
+        changedGame(game)
+    }
+    
+    /// Inserts an empty file to the board at the specified file index.
+    /// Every square is .nonexistent with type 'selectedType'
+    /// Except for the square at 'selectedPosition', which is .empty
+    private func insertFile(at file: Int, selectedPosition: Position, selectedType: Square.SquareType) {
+        var newFile = [Square]()
+        for rank in 0..<ranks {
+            let position = Position(rank: rank, file: file)
+            newFile.insert(
+                Square(
+                    state: .nonexistent,
+                    position: position,
+                    type: selectedType
+                ),
+                at: file
+            )
+        }
+        
+        game.board.squares.insert(newFile, at: file)
+        game.board.squares[selectedPosition]?.state = .empty
+    }
+    
+    /// Inserts an empty rank to the board at the specified file index
+    /// Every square is .nonexistent with type 'selectedType'
+    /// Except for the square at 'selectedPosition', which is .empty
+    private func insertRank(at rank: Int, selectedPosition: Position, selectedType: Square.SquareType) {
+        for file in 0..<files {
+            let position = Position(rank: rank, file: file)
+            game.board.squares[file].insert(
+                Square(
+                    state: .nonexistent,
+                    position: position,
+                    type: selectedType
+                ),
+                at: rank
+            )
+        }
+        
+        game.board.squares[selectedPosition]?.state = .empty
+    }
+    
+    private func updateSquarePositions() {
+        for file in 0..<files {
+            for rank in 0..<ranks {
+                game.board.squares[file][rank].position = Position(rank: rank, file: file)
+            }
         }
     }
     
@@ -102,6 +205,7 @@ class EditBoardViewModel: ObservableObject {
     init(game: Game, changedGame: @escaping (Game) -> Void) {
         self.game = game
         self.changedGame = changedGame
+        self.bottomLeftSquareColor = .dark
     }
 }
 
