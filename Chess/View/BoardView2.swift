@@ -115,10 +115,10 @@ struct BoardView2: View {
 //            )
             .onTouch(type: .startOrEnd) { location, type in
                 if type == .started {
-                    touchDownPosition = position(at: location, in: geometry.size)
+                    touchDownPosition = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
                 } else if type == .ended {
-                    let position = position(at: location, in: geometry.size)
+                    let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                     print("selectedPosition (BoardView): \(position)")
                     if position == touchDownPosition {
                         //print("touchesOnSelected")
@@ -241,28 +241,28 @@ struct BoardView2: View {
         return offset
     }
     
-    private func position(at location: CGPoint, in size: CGSize) -> Position {
+    private func position(at location: CGPoint, in size: CGSize, ranks: Int, files: Int) -> Position {
         //print("width: \(size.width), height: \(size.height)")
         //print("largestSide: \(size.largestSide)")
         
        // print("file: ")
         let file = position(
             tappedAt: location.x,
-            divisions: board.files,
-            length: squareLength * CGFloat(board.files),
+            divisions: files,
+            length: squareLength * CGFloat(files),
             smallestSide: CGFloat(size.smallestSide))
         //print("rank: ")
         var rank = position(
             tappedAt: location.y,
-            divisions: board.ranks,
-            length: squareLength * CGFloat(board.ranks),
+            divisions: ranks,
+            length: squareLength * CGFloat(ranks),
             smallestSide: CGFloat(size.smallestSide))
-        rank = board.ranks - rank - 1
+        rank = ranks - rank - 1
         
         //print("")
         
-        print("BoardView ranks: \(board.ranks) (BoardView)")
-        print("BoardView files: \(board.files) (BoardView)")
+        print("BoardView ranks: \(ranks) (BoardView)")
+        print("BoardView files: \(files) (BoardView)")
         
         return Position(rank: rank, file: file)
     }
