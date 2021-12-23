@@ -148,10 +148,10 @@ struct TouchLocater: ViewModifier {
                     ZStack {
                         TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds)
                             
-                        Rectangle()
-                            .fill(Color.blue)
-                            .opacity(0.4)
-                            .allowsHitTesting(false)
+//                        Rectangle()
+//                            .fill(Color.blue)
+//                            .opacity(0.4)
+//                            .allowsHitTesting(false)
                     }
                         //.offset(offset(in: g.size))
                         //.frame(width: g.size.width, height: g.size.height)

@@ -65,19 +65,19 @@ struct BoardView2: View {
                 
                 
 
-//                ForEach(pieces) { piece in
-//                    Image(piece.imageName)
-//                        .resizable()
-//                        .frame(
-//                            width: sideLength * 0.9,
-//                            height: sideLength * 0.9)
-//                        .offset(
-//                            x: CGFloat(piece.position.file) * sideLength - (geometry.size.smallestSide - sideLength) / 2,
-//                            y: CGFloat(board.ranks - piece.position.rank) * sideLength - (geometry.size.smallestSide + sideLength) / 2
-//                        )
-//                }
-//                .opacity(pieceOpacity)
-//                .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
+                ForEach(pieces) { piece in
+                    Image(piece.imageName)
+                        .resizable()
+                        .frame(
+                            width: squareLength * 0.9,
+                            height: squareLength * 0.9)
+                        .offset(
+                            x: CGFloat(piece.position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
+                            y: CGFloat(board.ranks - piece.position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
+                        )
+                }
+                .opacity(pieceOpacity)
+                .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
                 
                 // The piece being dragged
                 if let dragPiece = dragPiece {
@@ -311,8 +311,8 @@ struct BoardSquares: Shape {
         for file in 0..<board.files {
             for rank in 0..<board.ranks {
                 // To center the board
-                let xOffset: CGFloat = (rect.size.width - rect.size.smallestSide) / 2
-                let yOffset: CGFloat = (rect.size.height - rect.size.smallestSide) / 2
+                //let xOffset: CGFloat = (rect.size.width - rect.size.smallestSide) / 2
+                //let yOffset: CGFloat = (rect.size.height - rect.size.smallestSide) / 2
                 
                 // Only do light squares if it is light
                 // Otherwise only do dark squares
