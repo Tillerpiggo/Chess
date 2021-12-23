@@ -68,7 +68,7 @@ struct EditBoardView: View {
                 
                 Group {
                     BoardView2(
-                        board: .constant(model.emptyBoard),
+                        board: $model.emptyBoard,
                         squareLength: squareLength,
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in

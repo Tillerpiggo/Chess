@@ -18,13 +18,7 @@ class EditBoardViewModel: ObservableObject {
     private var ranks: Int { game.board.squares.first?.count ?? 0 }
     private var files: Int { game.board.squares.count }
     
-    var emptyBoard: Board {
-        return Board.empty(
-            ranks: game.board.ranks + 2,
-            files: game.board.files + 2,
-            bottomLeftSquareColor: bottomLeftSquareColor
-        )
-    }
+    @Published var emptyBoard: Board
     
     func onDrag(from startingPosition: Position, to endingPosition: Position) {
         if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
@@ -94,6 +88,7 @@ class EditBoardViewModel: ObservableObject {
         
         updateSquarePositions()
         changedGame(game)
+        updateEmptyBoard()
         
         print("game.ranks: \(ranks)")
         print("game.files: \(files)")
@@ -213,10 +208,23 @@ class EditBoardViewModel: ObservableObject {
         return false
     }
     
+    func updateEmptyBoard() {
+        self.emptyBoard = Board.empty(
+            ranks: game.board.ranks + 2,
+            files: game.board.files + 2,
+            bottomLeftSquareColor: .light
+        )
+    }
+    
     init(game: Game, changedGame: @escaping (Game) -> Void) {
         self.game = game
         self.changedGame = changedGame
         self.bottomLeftSquareColor = .dark
+        self.emptyBoard = Board.empty(
+            ranks: game.board.ranks + 2,
+            files: game.board.files + 2,
+            bottomLeftSquareColor: .light
+        )
     }
 }
 
