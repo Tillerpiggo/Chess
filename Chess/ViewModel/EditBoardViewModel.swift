@@ -36,7 +36,7 @@ class EditBoardViewModel: ObservableObject {
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
     /// The existence of the square on/off.
     func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {
-        print("selectedPosition")
+        //print("selectedPosition")
         if let square = game.board.squares[selectedPosition] {
             if square.state == .empty {
                 game.board.squares[selectedPosition]?.state = .nonexistent
@@ -46,7 +46,7 @@ class EditBoardViewModel: ObservableObject {
 
             trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
             changedGame(game)
-            print("... and changed the game")
+            //print("... and changed the game")
         } else {
             // since the method is designed for a tap on the ghost board itself, "unmodify" the position
             let translatedPosition = Position(
@@ -74,22 +74,22 @@ class EditBoardViewModel: ObservableObject {
         
         // Tapped on the left
         if translatedPosition.file < leftmostFile {
-            insertFile(at: leftmostFile, selectedPosition: selectedPosition, selectedType: type)
+            insertFile(at: leftmostFile, selectedPosition: translatedPosition, selectedType: type)
         }
         
         // Tapped on the right
         if translatedPosition.file > rightmostFile {
-            insertFile(at: rightmostFile + 1, selectedPosition: selectedPosition, selectedType: type)
+            insertFile(at: rightmostFile + 1, selectedPosition: translatedPosition, selectedType: type)
         }
         
         // Tapped on the bottom
         if translatedPosition.rank < bottomRank {
-            insertRank(at: bottomRank, selectedPosition: selectedPosition, selectedType: type)
+            insertRank(at: bottomRank, selectedPosition: translatedPosition, selectedType: type)
         }
         
         // tapped on the top
-        if translatedPosition.rank >= ranks {
-            insertRank(at: topRank + 1, selectedPosition: selectedPosition, selectedType: type)
+        if translatedPosition.rank > topRank {
+            insertRank(at: topRank + 1, selectedPosition: translatedPosition, selectedType: type)
         }
         
         updateSquarePositions()

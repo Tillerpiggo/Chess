@@ -119,11 +119,12 @@ struct BoardView2: View {
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
                 } else if type == .ended {
                     let position = position(at: location, in: geometry.size)
+                    print("selectedPosition (BoardView): \(position)")
                     if position == touchDownPosition {
-                        print("touchesOnSelected")
+                        //print("touchesOnSelected")
                         onSelected(position)
                     }
-                    touchDownPosition = nil;
+                    touchDownPosition = nil
                 }
             }
             .gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
@@ -198,9 +199,6 @@ struct BoardView2: View {
 //        xOriginOffset += xOffset
 //        yOriginOffset -= yOffset
         
-        print("ranks: \(board.ranks) (BoardView)")
-        print("files: \(board.files) (BoardView)")
-        
         
         return CGSize(
             width: gestureDragOffset.width + xOriginOffset,
@@ -244,16 +242,16 @@ struct BoardView2: View {
     }
     
     private func position(at location: CGPoint, in size: CGSize) -> Position {
-        print("width: \(size.width), height: \(size.height)")
-        print("largestSide: \(size.largestSide)")
+        //print("width: \(size.width), height: \(size.height)")
+        //print("largestSide: \(size.largestSide)")
         
-        print("file: ")
+       // print("file: ")
         let file = position(
             tappedAt: location.x,
             divisions: board.files,
             length: squareLength * CGFloat(board.files),
             smallestSide: CGFloat(size.smallestSide))
-        print("rank: ")
+        //print("rank: ")
         var rank = position(
             tappedAt: location.y,
             divisions: board.ranks,
@@ -261,7 +259,10 @@ struct BoardView2: View {
             smallestSide: CGFloat(size.smallestSide))
         rank = board.ranks - rank - 1
         
-        print("")
+        //print("")
+        
+        print("BoardView ranks: \(board.ranks) (BoardView)")
+        print("BoardView files: \(board.files) (BoardView)")
         
         return Position(rank: rank, file: file)
     }
@@ -294,7 +295,7 @@ struct BoardView2: View {
     
 }
 
-
+// MARK: - Board Squares
 struct BoardSquares: Shape {
     var board: Board
     
@@ -327,6 +328,8 @@ struct BoardSquares: Shape {
                 }
             }
         }
+        
+        print("path ranks: \(board.ranks), files: \(board.files)")
         
         return path
     }

@@ -83,6 +83,7 @@ struct TouchLocatingView: UIViewRepresentable {
             let location = touch.location(in: self)
             send(location, forEvent: .started)
             startLocation = location
+            print("selected location tapped: \(location)")
         }
 
         // Triggered when an existing touch moves.

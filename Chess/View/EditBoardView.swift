@@ -109,6 +109,8 @@ struct EditBoardView: View {
                             width: squareLength * CGFloat(game.files),
                             height: squareLength * CGFloat(game.ranks)
                         )
+                        .opacity(0.3)
+                        .allowsHitTesting(false)
                            
                 }
                 .offset(x: -squareLength, y: squareLength)
