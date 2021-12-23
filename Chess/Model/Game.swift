@@ -19,6 +19,9 @@ struct Game: Identifiable, Hashable {
 	var pieces: [Piece]
     var players: [Player]
     
+    var ranks: Int { board.ranks }
+    var files: Int { board.files }
+    
     private(set) var activePlayer: Player
 	private(set) var gameState: GameState
 	

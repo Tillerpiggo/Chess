@@ -34,3 +34,13 @@ extension CGSize {
 		CGSize(width: lhs.width/rhs, height: lhs.height/rhs)
 	}
 }
+
+extension CGPoint {
+    func CGPointDistanceSquared(to: CGPoint) -> CGFloat {
+        return (self.x - to.x) * (self.x - to.x) + (self.y - to.y) * (self.y - to.y)
+    }
+
+    func distance(to other: CGPoint) -> CGFloat {
+        return sqrt(CGPointDistanceSquared(to: other))
+    }
+}

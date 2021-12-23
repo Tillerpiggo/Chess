@@ -106,10 +106,10 @@ struct EditBoardView: View {
                         }
                     )
                         .frame(
-                            width: squareLength * CGFloat(game.board.files),
-                            height: squareLength * CGFloat(game.board.ranks)
+                            width: squareLength * CGFloat(game.files),
+                            height: squareLength * CGFloat(game.ranks)
                         )
-                        
+                           
                 }
                 .offset(x: -squareLength, y: squareLength)
                 .offset(panOffset)

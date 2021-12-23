@@ -63,20 +63,21 @@ struct BoardView2: View {
                         .fill(Color.darkSquareColor)
                 }
                 
+                
 
-                ForEach(pieces) { piece in
-                    Image(piece.imageName)
-                        .resizable()
-                        .frame(
-                            width: sideLength * 0.9,
-                            height: sideLength * 0.9)
-                        .offset(
-                            x: CGFloat( piece.position.file) * sideLength - (geometry.size.smallestSide - sideLength) / 2,
-                            y: CGFloat(board.ranks - piece.position.rank) * sideLength - (geometry.size.smallestSide + sideLength) / 2
-                        )
-                }
-                .opacity(pieceOpacity)
-                .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
+//                ForEach(pieces) { piece in
+//                    Image(piece.imageName)
+//                        .resizable()
+//                        .frame(
+//                            width: sideLength * 0.9,
+//                            height: sideLength * 0.9)
+//                        .offset(
+//                            x: CGFloat(piece.position.file) * sideLength - (geometry.size.smallestSide - sideLength) / 2,
+//                            y: CGFloat(board.ranks - piece.position.rank) * sideLength - (geometry.size.smallestSide + sideLength) / 2
+//                        )
+//                }
+//                .opacity(pieceOpacity)
+//                .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
                 
                 // The piece being dragged
                 if let dragPiece = dragPiece {
@@ -100,15 +101,26 @@ struct BoardView2: View {
                         .offset(pieceDragOffset(sideLength: sideLength, position: dragPiece.position))
                         
                 }
+                
+//                Rectangle()
+//                    .fill(Color.yellow)
+//                    .opacity(0.5)
                     
             }
-            .onTouch(type: .startOrEnd, size: size) { location, type in
+            .frame(width: squareLength * CGFloat(board.files), height: squareLength * CGFloat(board.ranks))
+//            .overlay(
+//                Rectangle()
+//                    .fill(Color.red)
+//                    .opacity(0.5)
+//            )
+            .onTouch(type: .startOrEnd) { location, type in
                 if type == .started {
                     touchDownPosition = position(at: location, in: geometry.size)
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
                 } else if type == .ended {
                     let position = position(at: location, in: geometry.size)
                     if position == touchDownPosition {
+                        print("touchesOnSelected")
                         onSelected(position)
                     }
                     touchDownPosition = nil;
@@ -239,13 +251,13 @@ struct BoardView2: View {
         let file = position(
             tappedAt: location.x,
             divisions: board.files,
-            length: size.width,
+            length: squareLength * CGFloat(board.files),
             smallestSide: CGFloat(size.smallestSide))
         print("rank: ")
         var rank = position(
             tappedAt: location.y,
             divisions: board.ranks,
-            length: size.height,
+            length: squareLength * CGFloat(board.ranks),
             smallestSide: CGFloat(size.smallestSide))
         rank = board.ranks - rank - 1
         
@@ -269,9 +281,12 @@ struct BoardView2: View {
         let transposedCoordinate = coordinate// - transposition// - transpositionDownwards
         
         print("transposed: \(transposedCoordinate)")
+        print("transdivisions: \(divisions)")
+        print("translength: \(length)")
         
         // Calculate the position
         let position = Int(floor(Double(transposedCoordinate) * Double(divisions) / Double(length)))
+        print("trans POSItion: \(position)")
         
         return position
     }
@@ -302,8 +317,8 @@ struct BoardSquares: Shape {
                 // Only do light squares if it is light
                 // Otherwise only do dark squares
                 if ((file + rank) % 2 == 0) == (type == .light) {
-                    let rect = CGRect(x: sideLength * CGFloat(file) + xOffset,
-                                      y: sideLength * CGFloat(board.ranks - rank - 1) + yOffset,
+                    let rect = CGRect(x: sideLength * CGFloat(file),// + xOffset,
+                                      y: sideLength * CGFloat(board.ranks - rank - 1),// + yOffset,
                                       width: sideLength,
                                       height: sideLength)
                     if (board.squares[file][rank].state != .nonexistent) {

@@ -47,7 +47,11 @@ struct TouchLocatingView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: TouchLocatingUIView, context: Context) {
-        uiView.size = size
+        uiView.setNeedsDisplay()
+        uiView.setNeedsLayout()
+        
+        
+        print("uiView.frame: \(uiView.frame)")
     }
 
     // The internal UIView responsible for catching taps
@@ -58,10 +62,7 @@ struct TouchLocatingView: UIViewRepresentable {
         var limitToBounds = true
         var size: CGSize = .zero
         
-        override var intrinsicContentSize: CGSize {
-            print("intrinsic size: \(size)")
-            return size
-        }
+        private var startLocation: CGPoint?
 
         // Our main initializer, making sure interaction is enabled.
         override init(frame: CGRect) {
@@ -81,6 +82,7 @@ struct TouchLocatingView: UIViewRepresentable {
             guard let touch = touches.first else { return }
             let location = touch.location(in: self)
             send(location, forEvent: .started)
+            startLocation = location
         }
 
         // Triggered when an existing touch moves.
@@ -92,6 +94,7 @@ struct TouchLocatingView: UIViewRepresentable {
 
         // Triggered when the user lifts a finger.
         override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+            print("touchesEnded")
             guard let touch = touches.first else { return }
             let location = touch.location(in: self)
             send(location, forEvent: .ended)
@@ -101,7 +104,7 @@ struct TouchLocatingView: UIViewRepresentable {
         override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
             guard let touch = touches.first else { return }
             let location = touch.location(in: self)
-            send(location, forEvent: .ended)
+            //send(location, forEvent: .ended) don't want this to trigger touches
         }
 
         // Send a touch location only if the user asked for it
@@ -121,7 +124,7 @@ struct TouchLocatingView: UIViewRepresentable {
 struct TouchLocater: ViewModifier {
     var type: TouchLocatingView.TouchType = .all
     var limitToBounds = true
-    var size: CGSize = .zero
+    //var size: CGSize = .zero
     let perform: (CGPoint, TouchLocatingView.TouchType) -> Void
     
     func offset(in size: CGSize) -> CGSize {
@@ -142,8 +145,17 @@ struct TouchLocater: ViewModifier {
         GeometryReader { g in
             content
                 .overlay(
-                    TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds, size: size)
-                        .offset(offset(in: g.size))
+                    ZStack {
+                        TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds)
+                            
+                        Rectangle()
+                            .fill(Color.blue)
+                            .opacity(0.4)
+                            .allowsHitTesting(false)
+                    }
+                        //.offset(offset(in: g.size))
+                        //.frame(width: g.size.width, height: g.size.height)
+                    
                 )
         }
     }
@@ -151,8 +163,8 @@ struct TouchLocater: ViewModifier {
 
 // A new method on View that makes it easier to apply our touch locater view.
 extension View {
-    func onTouch(type: TouchLocatingView.TouchType = .all, limitToBounds: Bool = true, size: CGSize = .zero, perform: @escaping (CGPoint, TouchLocatingView.TouchType) -> Void) -> some View {
-        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, size: size, perform: perform))
+    func onTouch(type: TouchLocatingView.TouchType = .all, limitToBounds: Bool = true, perform: @escaping (CGPoint, TouchLocatingView.TouchType) -> Void) -> some View {
+        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, perform: perform))
     }
 }
 
