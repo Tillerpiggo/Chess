@@ -12,12 +12,19 @@ import Foundation
 struct Board {
 	/// A 2D array of squares - a list of files ([file][rank]
 	var squares: [[Square]]
+    
+    var bottomLeftSquareColor: Square.SquareType {
+        let bottomLeftSquareColor = squares[Position(rank: 0, file: 0)]?.type ?? .dark
+        print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
+        return bottomLeftSquareColor
+    }
 	
 	/*
 	lazy var squareStateForPosition: (Position) -> Square.SquareState = { (position) -> Square.SquareState in
 		return square(at: position, in: squares)?.state ?? .nonexistent
 	}
 */
+    
 	var files: Int {
 		return squares.count
 	}

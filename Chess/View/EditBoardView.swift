@@ -69,11 +69,21 @@ struct EditBoardView: View {
                 Group {
                     BoardView2(
                         board: $model.emptyBoard,
+                        bottomLeftSquareColor: model.bottomLeftSquareColor,
                         squareLength: squareLength,
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
-                            model.selectedPositionOnGhostBoard(selectedPosition, type: .light, sideLength: squareLength)
+                            let directionAdded = model.selectedPositionOnGhostBoard(selectedPosition, sideLength: squareLength)
+                            
+                            // It will only offset if added on the left/bottom
+                            if directionAdded.rank > 0 {
+                                steadyStatePanOffset.height -= squareLength
+                            }
+                            
+                            if directionAdded.file < 0 {
+                                steadyStatePanOffset.width -= squareLength
+                            }
                         }
                     )
                         .opacity(0.2)
@@ -109,8 +119,8 @@ struct EditBoardView: View {
                             width: squareLength * CGFloat(game.files),
                             height: squareLength * CGFloat(game.ranks)
                         )
-                        .opacity(0.3)
-                        .allowsHitTesting(false)
+//                        .opacity(0.3)
+//                        .allowsHitTesting(false)
                            
                 }
                 .offset(x: -squareLength, y: squareLength)

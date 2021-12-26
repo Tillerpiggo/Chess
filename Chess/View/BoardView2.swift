@@ -10,6 +10,7 @@ import SwiftUI
 
 struct BoardView2: View {
     @Binding var board: Board
+    var bottomLeftSquareColor: Square.SquareType
     var squareLength: CGFloat
     var dragEnabled: Bool
     var pieceOpacity: CGFloat
@@ -17,12 +18,14 @@ struct BoardView2: View {
     var onDrag: (Position, Position) -> Void = { _, _ in }
     
     init(board: Binding<Board>,
+         bottomLeftSquareColor: Square.SquareType? = nil,
          squareLength: CGFloat = 60,
          dragEnabled: Bool = true,
          pieceOpacity: CGFloat = 1.0,
          onSelected: @escaping (Position) -> Void = { _ in },
          onDrag: @escaping (Position, Position) -> Void = { _, _ in }) {
         self._board = board
+        self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
         self.squareLength = squareLength
         self.dragEnabled = dragEnabled
         self.pieceOpacity = pieceOpacity
@@ -52,15 +55,15 @@ struct BoardView2: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let sideLength: CGFloat = geometry.size.smallestSide / CGFloat(board.smallestSide)
+            //let sideLength: CGFloat = geometry.size.smallestSide / CGFloat(board.smallestSide)
             
             ZStack {
                 // The board
                 Group {
                     BoardSquares(board, type: .light)
-                        .fill(Color.lightSquareColor)
+                        .fill(bottomLeftSquareColor == .dark ? Color.lightSquareColor : Color.darkSquareColor)
                     BoardSquares(board, type: .dark)
-                        .fill(Color.darkSquareColor)
+                        .fill(bottomLeftSquareColor == .dark ? Color.darkSquareColor : Color.lightSquareColor)
                 }
                 
                 
@@ -82,23 +85,23 @@ struct BoardView2: View {
                 // The piece being dragged
                 if let dragPiece = dragPiece {
                     if let selectedSquare = selectedSquare,
-                       let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: sideLength, startingPosition: selectedSquare.position)],
+                       let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: squareLength, startingPosition: selectedSquare.position)],
                        square.state != .nonexistent {
                         Group {
                             Rectangle()
                                 .fill(Color.selectedSquareColor)
-                                .frame(width: sideLength, height: sideLength)
+                                .frame(width: squareLength, height: squareLength)
                                 .opacity(0.5)
                             Circle()
                                 .fill(Color.black.opacity(0.2))
-                                .frame(width: sideLength * 2 + 16, height: sideLength * 2 + 16)
+                                .frame(width: squareLength * 2 + 16, height: squareLength * 2 + 16)
                         }
-                        .offset(circleDragOffset(sideLength: sideLength, position: dragPiece.position))
+                        .offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position))
                     }
                     Image(dragPiece.imageName)
                         .resizable()
-                        .frame(width: sideLength * 2, height: sideLength * 2)
-                        .offset(pieceDragOffset(sideLength: sideLength, position: dragPiece.position))
+                        .frame(width: squareLength * 2, height: squareLength * 2)
+                        .offset(pieceDragOffset(sideLength: squareLength, position: dragPiece.position))
                         
                 }
                 
@@ -127,7 +130,7 @@ struct BoardView2: View {
                     touchDownPosition = nil
                 }
             }
-            .gesture(dragEnabled ? dragPieceGesture(sideLength: sideLength, square: selectedSquare) : nil)
+            .gesture(dragEnabled ? dragPieceGesture(sideLength: squareLength, square: selectedSquare) : nil)
             
         }
     }
@@ -225,16 +228,22 @@ struct BoardView2: View {
         
         print("ranks: \(board.ranks), files: \(board.files)")
         
-        if board.files % 2 == 0 || board.ranks % 2 == 0 || true {
+        if board.files % 2 == 0 {
             offset.width += 0.5
+        }
+        
+        if board.ranks % 2 == 0 {
             offset.height += 0.5
         }
         
         offset.width = (offset.width).rounded() * sideLength
         offset.height = (offset.height).rounded() * sideLength
         
-        if board.files % 2 == 0 || board.ranks % 2 == 0 || true {
+        if board.files % 2 == 0 {
             offset.width -= sideLength / 2.0
+        }
+        
+        if board.ranks % 2 == 0 {
             offset.height -= sideLength / 2.0
         }
         
@@ -346,6 +355,6 @@ struct BoardSquares: Shape {
 
 struct BoardView2_Previews: PreviewProvider {
     static var previews: some View {
-        BoardView2(board: .constant(Game.standard().board))
+        BoardView2(board: .constant(Game.standard().board), bottomLeftSquareColor: .dark)
     }
 }
