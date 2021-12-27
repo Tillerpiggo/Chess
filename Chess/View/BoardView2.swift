@@ -12,6 +12,7 @@ struct BoardView2: View {
     @Binding var board: Board
     var bottomLeftSquareColor: Square.SquareType
     var squareLength: CGFloat
+    var cornerRadius: CGFloat
     var dragEnabled: Bool
     var pieceOpacity: CGFloat
     var onSelected: (Position) -> Void = { _ in }
@@ -20,6 +21,7 @@ struct BoardView2: View {
     init(board: Binding<Board>,
          bottomLeftSquareColor: Square.SquareType? = nil,
          squareLength: CGFloat = 60,
+         cornerRadius: CGFloat = 0,
          dragEnabled: Bool = true,
          pieceOpacity: CGFloat = 1.0,
          onSelected: @escaping (Position) -> Void = { _ in },
@@ -27,6 +29,7 @@ struct BoardView2: View {
         self._board = board
         self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
         self.squareLength = squareLength
+        self.cornerRadius = cornerRadius
         self.dragEnabled = dragEnabled
         self.pieceOpacity = pieceOpacity
         self.onSelected = onSelected
@@ -65,7 +68,8 @@ struct BoardView2: View {
                     BoardSquares(board, type: .dark)
                         .fill(bottomLeftSquareColor == .dark ? Color.darkSquareColor : Color.lightSquareColor)
                 }
-                
+                .cornerRadius(cornerRadius)
+                .drawingGroup()
                 
 
                 ForEach(pieces) { piece in

@@ -31,7 +31,11 @@ class EditBoardViewModel: ObservableObject {
     
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
     /// The existence of the square on/off.
-    func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {
+    /// Returns a Position corresponding to the direction the square was removed (0, 0) if it wasn't
+    /// (rank, file): (1, 1) would be the top right
+    func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) -> Position{
+        var directionRemoved = Position(rank: 0, file: 0)
+        
         //print("selectedPosition")
         if let square = game.board.squares[selectedPosition] {
             if square.state == .empty {
@@ -40,8 +44,10 @@ class EditBoardViewModel: ObservableObject {
                 game.board.squares[selectedPosition]?.state = .empty
             }
 
-            trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
+            directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
             changedGame(game)
+            updateSquarePositions()
+            updateEmptyBoard()
             //print("... and changed the game")
         } else {
             // since the method is designed for a tap on the ghost board itself, "unmodify" the position
@@ -49,16 +55,19 @@ class EditBoardViewModel: ObservableObject {
                 rank: selectedPosition.rank + 1,
                 file: selectedPosition.file + 1)
             selectedPositionOnGhostBoard(translatedPosition, sideLength: sideLength)
+            fatalError()
         }
+        
+        return directionRemoved
     }
     
     /// Selects the position on the ghost board. This should add a square
     /// at the position tapped.
-    /// Returns a Position corresponding to the direction the square was added
+    /// Returns a Position corresponding to the direction the square was added ((rank, file))
     /// (-1, -1) would be the bottom left, (1, 1) would be the top right, (-1, 0) would be the bottom
     func selectedPositionOnGhostBoard(_ selectedPosition: Position, sideLength: CGFloat) -> Position {
         // Translate the position to the position on the actual board
-        let translatedPosition = Position(
+        var translatedPosition = Position(
             rank: selectedPosition.rank - 1,
             file: selectedPosition.file - 1)
         //let translatedPosition = selectedPosition
@@ -75,6 +84,7 @@ class EditBoardViewModel: ObservableObject {
         // Tapped on the left
         if translatedPosition.file < leftmostFile {
             insertFile(at: leftmostFile, selectedPosition: translatedPosition.rank, selectedType: type)
+            translatedPosition.file += 1
             directionAdded.file = -1
         }
         
@@ -110,6 +120,7 @@ class EditBoardViewModel: ObservableObject {
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertFile(at file: Int, selectedPosition: Int, selectedType: Square.SquareType) {
+        print("inserting file at \(file), selectedRank: \(selectedPosition)")
         var newFile = [Square]()
         for rank in 0..<ranks {
             let position = Position(rank: rank, file: file)
@@ -125,13 +136,17 @@ class EditBoardViewModel: ObservableObject {
         }
         
         game.board.squares.insert(newFile, at: file)
-        game.board.squares[file][selectedPosition].state = .empty
+        
+        if (0..<ranks).contains(selectedPosition) {
+            game.board.squares[file][selectedPosition].state = .empty
+        }
     }
     
     /// Inserts an empty rank to the board at the specified file index
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertRank(at rank: Int, selectedPosition: Int, selectedType: Square.SquareType) {
+        print("inserting rank at \(rank), selectedFile: \(selectedPosition)")
         for file in 0..<files {
             let position = Position(rank: rank, file: file)
             let type = abs(file - selectedPosition) % 2 == 0 ? selectedType : selectedType.opposite
@@ -145,7 +160,9 @@ class EditBoardViewModel: ObservableObject {
             )
         }
         
-        game.board.squares[selectedPosition][rank].state = .empty
+        if (0..<files).contains(selectedPosition) {
+            game.board.squares[selectedPosition][rank].state = .empty
+        }
     }
     
     private func updateSquarePositions() {
@@ -158,8 +175,11 @@ class EditBoardViewModel: ObservableObject {
     
     /// Given a position where a square was removed, checks if the associated ranks are
     /// empty, and removes them if they are.
-    private func trimSquaresIfNecessary(afterSquareRemovedAt removedPosition: Position, sideLength: CGFloat) {
-        var removedSquare: Bool = false
+    /// Returns a Position corresponding to the direction the square was added ((rank, file))
+    /// (-1, -1) would be the bottom left, (1, 1) would be the top right, (-1, 0) would be the bottom
+    private func trimSquaresIfNecessary(afterSquareRemovedAt removedPosition: Position, sideLength: CGFloat) -> Position {
+        var directionRemoved = Position(rank: 0, file: 0)
+        //var removedSquare: Bool = false
 
         let bottomRank = 0
         let topRank = ranks - 1
@@ -168,23 +188,37 @@ class EditBoardViewModel: ObservableObject {
 
         // Removed from bottom
         if removedPosition.rank == bottomRank {
-            if removeRankIfEmpty(bottomRank) { removedSquare = true }
+            if removeRankIfEmpty(bottomRank) {
+                //removedSquare = true
+                directionRemoved.rank = -1
+            }
         }
 
         // Removed from top
         if removedPosition.rank == topRank {
-            if removeRankIfEmpty(topRank) { removedSquare = true }
+            if removeRankIfEmpty(topRank) {
+                //removedSquare = true
+                directionRemoved.rank = 1
+            }
         }
 
         // Removed from left
         if removedPosition.file == leftmostFile {
-            if removeFileIfEmpty(leftmostFile) { removedSquare = true }
+            if removeFileIfEmpty(leftmostFile) {
+                //removedSquare = true
+                directionRemoved.file = -1
+            }
         }
 
         // Removed from right
         if removedPosition.file == rightmostFile {
-            if removeFileIfEmpty(rightmostFile) { removedSquare = true }
+            if removeFileIfEmpty(rightmostFile) {
+                //removedSquare = true
+                directionRemoved.file = 1
+            }
         }
+        
+        return directionRemoved
 
         //updateBottomLeftSquareColor() // Implement later
     }

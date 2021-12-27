@@ -71,6 +71,7 @@ struct EditBoardView: View {
                         board: $model.emptyBoard,
                         bottomLeftSquareColor: model.bottomLeftSquareColor,
                         squareLength: squareLength,
+                        cornerRadius: 14,
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
@@ -101,8 +102,15 @@ struct EditBoardView: View {
                             //print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
                             //print("selectedPosition: \(selectedPosition)")
                             if gesturePanOffset == .zero {
-                                model.selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                                let directionRemoved = model.selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
                                 //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                                if directionRemoved.rank > 0 {
+                                    steadyStatePanOffset.height += squareLength
+                                }
+                                
+                                if directionRemoved.file < 0 {
+                                    steadyStatePanOffset.width += squareLength
+                                }
                             }
                         },
                         onDrag: { (startingPosition, endingPosition) in
