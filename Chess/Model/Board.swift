@@ -182,7 +182,7 @@ struct Board {
 	}
     
     static func squareType(position: Position, bottomLeftSquareColor: Square.SquareType = .dark) -> Square.SquareType {
-        let squareTypeNumber = bottomLeftSquareColor == .dark ? 1 : 0
+        let squareTypeNumber = bottomLeftSquareColor == .dark ? 0 : 1
         return (position.rank + position.file) % 2 == squareTypeNumber ? .light : .dark
     }
 	

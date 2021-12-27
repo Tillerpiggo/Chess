@@ -72,7 +72,7 @@ class EditBoardViewModel: ObservableObject {
             rank: selectedPosition.rank - 1,
             file: selectedPosition.file - 1)
         //let translatedPosition = selectedPosition
-        let type = emptyBoard.squares[selectedPosition]?.type ?? .dark
+        let type = emptyBoard.squares[selectedPosition]!.type// ?? .dark
         print("selected ghost board at rank: \(translatedPosition.rank), file: \(translatedPosition.file)")
         
         var directionAdded = Position(rank: 0, file: 0)
@@ -121,11 +121,12 @@ class EditBoardViewModel: ObservableObject {
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertFile(at file: Int, selectedPosition: Int, selectedType: Square.SquareType) {
+        print("selectedType: \(selectedType)")
         print("inserting file at \(file), selectedRank: \(selectedPosition)")
         var newFile = [Square]()
         for rank in 0..<ranks {
             let position = Position(rank: rank, file: file)
-            let type = abs(rank - selectedPosition) % 2 == 0 ? selectedType : selectedType.opposite
+            let type = abs(rank - selectedPosition) % 2 == 1 ? selectedType : selectedType.opposite
             newFile.insert(
                 Square(
                     state: .nonexistent,
@@ -147,10 +148,11 @@ class EditBoardViewModel: ObservableObject {
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertRank(at rank: Int, selectedPosition: Int, selectedType: Square.SquareType) {
+        print("selectedType: \(selectedType)")
         print("inserting rank at \(rank), selectedFile: \(selectedPosition)")
         for file in 0..<files {
             let position = Position(rank: rank, file: file)
-            let type = abs(file - selectedPosition) % 2 == 0 ? selectedType : selectedType.opposite
+            let type = abs(file - selectedPosition) % 2 == 1 ? selectedType : selectedType.opposite
             game.board.squares[file].insert(
                 Square(
                     state: .nonexistent,
