@@ -79,11 +79,11 @@ struct EditBoardView: View {
                             
                             // It will only offset if added on the left/bottom
                             if directionAdded.rank > 0 {
-                                steadyStatePanOffset.height -= squareLength * CGFloat(abs(directionAdded.rank))
+                                steadyStatePanOffset.height -= squareLength * zoomScale
                             }
                             
                             if directionAdded.file < 0 {
-                                steadyStatePanOffset.width -= squareLength * CGFloat(abs(directionAdded.file))
+                                steadyStatePanOffset.width -= squareLength * zoomScale
                             }
                         }
                     )
@@ -105,11 +105,11 @@ struct EditBoardView: View {
                                 let directionRemoved = model.selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
                                 //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
                                 if directionRemoved.rank > 0 {
-                                    steadyStatePanOffset.height += squareLength
+                                    steadyStatePanOffset.height += squareLength * CGFloat(abs(directionRemoved.rank)) * zoomScale
                                 }
                                 
                                 if directionRemoved.file < 0 {
-                                    steadyStatePanOffset.width += squareLength
+                                    steadyStatePanOffset.width += squareLength * CGFloat(abs(directionRemoved.file)) * zoomScale
                                 }
                             }
                         },
