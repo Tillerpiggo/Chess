@@ -44,7 +44,8 @@ class EditBoardViewModel: ObservableObject {
                 game.board.squares[selectedPosition]?.state = .empty
             }
 
-            directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
+            //directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
+            directionRemoved = trimSquaresIfNecessary()
             changedGame(game)
             updateSquarePositions()
             updateEmptyBoard()
@@ -176,52 +177,103 @@ class EditBoardViewModel: ObservableObject {
     /// Given a position where a square was removed, checks if the associated ranks are
     /// empty, and removes them if they are.
     /// Returns a Position corresponding to the direction the square was added ((rank, file))
+    /// and number of squares added
     /// (-1, -1) would be the bottom left, (1, 1) would be the top right, (-1, 0) would be the bottom
-    private func trimSquaresIfNecessary(afterSquareRemovedAt removedPosition: Position, sideLength: CGFloat) -> Position {
+    private func trimSquaresIfNecessary() -> Position {
         var directionRemoved = Position(rank: 0, file: 0)
-        //var removedSquare: Bool = false
-
+        return trimSquaresIfNecessary(directionRemoved: &directionRemoved)
+    }
+    
+    /// Given a position where a square was removed, checks if the associated ranks are
+    /// empty, and removes them if they are.
+    /// Returns a Position corresponding to the direction the square was added ((rank, file))
+    /// and number of squares added
+    /// (-1, -1) would be the bottom left, (1, 1) would be the top right, (-1, 0) would be the bottom
+    private func trimSquaresIfNecessary(directionRemoved: inout Position) -> Position {
+        var didTrim = false
+        
         let bottomRank = 0
         let topRank = ranks - 1
         let leftmostFile = 0
         let rightmostFile = files - 1
 
-        // Removed from bottom
-        if removedPosition.rank == bottomRank {
-            if removeRankIfEmpty(bottomRank) {
-                //removedSquare = true
-                directionRemoved.rank = -1
-            }
+        // Check all sides
+        
+        // Bottom
+        if removeRankIfEmpty(bottomRank) {
+            didTrim = true
+            directionRemoved.rank += -1
         }
 
-        // Removed from top
-        if removedPosition.rank == topRank {
-            if removeRankIfEmpty(topRank) {
-                //removedSquare = true
-                directionRemoved.rank = 1
-            }
+        // Top
+        if removeRankIfEmpty(topRank) {
+            didTrim = true
+            directionRemoved.rank += 1
         }
 
-        // Removed from left
-        if removedPosition.file == leftmostFile {
-            if removeFileIfEmpty(leftmostFile) {
-                //removedSquare = true
-                directionRemoved.file = -1
-            }
+        // Left
+        if removeFileIfEmpty(leftmostFile) {
+            didTrim = true
+            directionRemoved.file += -1
         }
 
-        // Removed from right
-        if removedPosition.file == rightmostFile {
-            if removeFileIfEmpty(rightmostFile) {
-                //removedSquare = true
-                directionRemoved.file = 1
-            }
+        // Right
+        if removeFileIfEmpty(rightmostFile) {
+            didTrim = true
+            directionRemoved.file += 1
         }
         
-        return directionRemoved
-
-        //updateBottomLeftSquareColor() // Implement later
+        if didTrim {
+            return trimSquaresIfNecessary(directionRemoved: &directionRemoved)
+        } else {
+            return directionRemoved
+        }
     }
+//    private func trimSquaresIfNecessary(afterSquareRemovedAt removedPosition: Position, sideLength: CGFloat) -> Position {
+//        var directionRemoved = Position(rank: 0, file: 0)
+//        //var removedSquare: Bool = false
+//
+//        let bottomRank = 0
+//        let topRank = ranks - 1
+//        let leftmostFile = 0
+//        let rightmostFile = files - 1
+//
+//        // Removed from bottom
+//        if removedPosition.rank == bottomRank {
+//            if removeRankIfEmpty(bottomRank) {
+//                //removedSquare = true
+//                directionRemoved.rank = -1
+//            }
+//        }
+//
+//        // Removed from top
+//        if removedPosition.rank == topRank {
+//            if removeRankIfEmpty(topRank) {
+//                //removedSquare = true
+//                directionRemoved.rank = 1
+//            }
+//        }
+//
+//        // Removed from left
+//        if removedPosition.file == leftmostFile {
+//            if removeFileIfEmpty(leftmostFile) {
+//                //removedSquare = true
+//                directionRemoved.file = -1
+//            }
+//        }
+//
+//        // Removed from right
+//        if removedPosition.file == rightmostFile {
+//            if removeFileIfEmpty(rightmostFile) {
+//                //removedSquare = true
+//                directionRemoved.file = 1
+//            }
+//        }
+//
+//        return directionRemoved
+//
+//        //updateBottomLeftSquareColor() // Implement later
+//    }
     
     /// Removes the rank in game.board if all squares in it are nonexistent.
     /// If the rank is not in the board, does nothing and returns false

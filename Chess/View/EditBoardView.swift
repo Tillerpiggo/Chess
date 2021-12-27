@@ -79,11 +79,11 @@ struct EditBoardView: View {
                             
                             // It will only offset if added on the left/bottom
                             if directionAdded.rank > 0 {
-                                steadyStatePanOffset.height -= squareLength
+                                steadyStatePanOffset.height -= squareLength * CGFloat(abs(directionAdded.rank))
                             }
                             
                             if directionAdded.file < 0 {
-                                steadyStatePanOffset.width -= squareLength
+                                steadyStatePanOffset.width -= squareLength * CGFloat(abs(directionAdded.file))
                             }
                         }
                     )
