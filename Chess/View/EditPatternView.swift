@@ -23,6 +23,9 @@ struct EditPatternView: View {
 	var didPressDone: (Pattern) -> Void
 	
 	@State var isOn: Bool = false
+    
+    private let lengthPercent: CGFloat = 0.82//0.908 // percent of the width that views in the list take up
+    private let totalMargin: CGFloat = 0
 	
 	var body: some View {
 		GeometryReader { geometry in
@@ -42,20 +45,22 @@ struct EditPatternView: View {
 				)
 				
 				Form {
-					Section {
-                        BoardView2(board: .constant(viewModel.board))
-//						BoardView(
-//                            squares: .constant(viewModel.squares),
-//							selectedSquares: viewModel.selectedSquares,
-//							legalMoves: [],
-//							onSelected: { _ in },
-//							makeSelectedSquaresRed: viewModel.isRestricting
-//						)
-						// TODO: refactor this into a custom BoardView styling view modifier
-						.listRowBackground(Color.backgroundColor)
-						.cornerRadius(8)
-						.frame(width: geometry.size.width - 64, height: geometry.size.width - 64)
-					}
+                    Section {
+                        HStack {
+                            Spacer()
+                            BoardView2(
+                                board: .constant(viewModel.board),
+                                selectedSquares: viewModel.selectedSquares,
+                                squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),
+                                cornerRadius: 8)
+                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files))
+                            Spacer()
+                        }
+                        
+                    }
+                    .listRowBackground(Color.backgroundColor)
+                    .listRowInsets(EdgeInsets())
+                    .disabled(true)
 					
 					Picker("", selection: $viewModel.type) {
 						ForEach(Pattern.PatternType.types, id: \.self) { type in

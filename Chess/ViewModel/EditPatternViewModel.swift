@@ -78,6 +78,8 @@ class EditPatternViewModel: ObservableObject {
 				}
 			}
 		}
+        
+        sevenBySevenPositionGrid.append(Position(rank: 3, file: 3))
 		
 		return sevenBySevenPositionGrid
 	}
