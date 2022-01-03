@@ -150,7 +150,7 @@ struct Board {
                    let pieceOwner = square.startingPieceOwner {
 					var piece = pieces.first(where: { $0.id == pieceID })
 					//piece?.position = Position(rank: rankIndex, file: fileIndex)
-                    piece?.id = UUID() // needs to be unique for ForEach()
+                    //piece?.id = UUID() // needs to be unique for ForEach()
                     piece?.position = square.position
 					piece?.owner = pieceOwner
 					squares[fileIndex][rankIndex].setPiece(piece)

@@ -15,4 +15,5 @@ extension Color {
 	static var boardGreen = Color("boardGreen")
 	static var backgroundColor = Color("backgroundColor")
 	static var rowColor = Color("rowColor")
+    static var separatorColor = Color("separatorColor")
 }

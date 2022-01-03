@@ -48,6 +48,9 @@ struct ChessApp: App {
                         Text("Play")
                     }
             }
+            .onAppear {
+                UITableView.appearance().separatorColor = UIColor(Color.separatorColor)
+            }
              
             //GameView(game: game)
 		}

@@ -31,12 +31,14 @@ class PieceDetailViewModel: ObservableObject {
 				}
 			}
 		}
+        
+        sevenBySevenPositionGrid.append(Position(rank: 3, file: 3))
 		
 		return sevenBySevenPositionGrid
 	}
     
     var board: Board {
-        var board = Board.empty(ranks: 8, files: 8)
+        var board = Board.empty(ranks: 7, files: 7)
         board.squares[3][3].setPiece(positionPiece)
         
         return board

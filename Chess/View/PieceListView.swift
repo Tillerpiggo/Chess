@@ -42,8 +42,8 @@ struct PieceListView: View {
 								.frame(width: 32, height: 32)
 							Text(piece.name)
 						}
-						.listRowBackground(rowColor)
 					}
+                    .listRowBackground(rowColor)
 				}
 				.onMove { (source, destination) in
 					pieceManager.movePiece(from: source, to: destination)

@@ -20,7 +20,31 @@ class EditBoardViewModel: ObservableObject {
     private var ranks: Int { game.board.squares.first?.count ?? 0 }
     private var files: Int { game.board.squares.count }
     
+    @Published var selectedPlayer: Player = .white
+    
+    @Published var selectedPiece: UUID?
+    
     @Published var emptyBoard: Board
+    
+    var pieces: [Piece] {
+        if selectedPlayer == .white {
+            return game.pieces
+        } else {
+            return game.pieces.map { piece in
+                var blackPiece = piece
+                blackPiece.owner = .black
+                return blackPiece
+            }
+        }
+    }
+    
+    func selectedPiece(_ piece: Piece) {
+        if selectedPiece == piece.id {
+            selectedPiece = nil
+        } else {
+            selectedPiece = piece.id
+        }
+    }
     
     func onDrag(from startingPosition: Position, to endingPosition: Position) {
         if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
@@ -33,21 +57,34 @@ class EditBoardViewModel: ObservableObject {
     /// The existence of the square on/off.
     /// Returns a Position corresponding to the direction the square was removed (0, 0) if it wasn't
     /// (rank, file): (1, 1) would be the top right
-    func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) -> Position{
+    func selectedPositionOnBoard(_ selectedPosition: Position) -> Position {
         var directionRemoved = Position(rank: 0, file: 0)
         
         //print("selectedPosition")
         if let square = game.board.squares[selectedPosition] {
-            if square.state == .empty {
-                game.board.squares[selectedPosition]?.state = .nonexistent
-            } else if square.state == .nonexistent {
-                game.board.squares[selectedPosition]?.state = .empty
-            }
+            if let selectedPiece = selectedPiece {
+                if square.state == .empty {
+//                    var piece =
+//                    piece.id = UUID()
+                    var piece = piece(selectedPiece.uuidString)!
+                    piece.owner = selectedPlayer
+                    game.board.squares[selectedPosition]?.setStartingPiece(piece)
+                } else if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
+                    game.board.squares[selectedPosition]?.setStartingPiece(nil)
+                }
+            } else {
+                if square.state == .empty {
+                    game.board.squares[selectedPosition]?.state = .nonexistent
+                } else if square.state == .nonexistent {
+                    game.board.squares[selectedPosition]?.state = .empty
+                }
 
-            //directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
-            directionRemoved = trimSquaresIfNecessary()
+                //directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
+                directionRemoved = trimSquaresIfNecessary()
+                updateSquarePositions()
+            }
+            
             changedGame(game)
-            updateSquarePositions()
             updateEmptyBoard()
             //print("... and changed the game")
         } else {
@@ -55,18 +92,22 @@ class EditBoardViewModel: ObservableObject {
             let translatedPosition = Position(
                 rank: selectedPosition.rank + 1,
                 file: selectedPosition.file + 1)
-            selectedPositionOnGhostBoard(translatedPosition, sideLength: sideLength)
+            selectedPositionOnGhostBoard(translatedPosition)
             fatalError()
         }
         
         return directionRemoved
     }
     
+    private func piece(_ id: String) -> Piece? {
+        return game.pieces.first(where: { $0.id.uuidString == id })
+    }
+    
     /// Selects the position on the ghost board. This should add a square
     /// at the position tapped.
     /// Returns a Position corresponding to the direction the square was added ((rank, file))
     /// (-1, -1) would be the bottom left, (1, 1) would be the top right, (-1, 0) would be the bottom
-    func selectedPositionOnGhostBoard(_ selectedPosition: Position, sideLength: CGFloat) -> Position {
+    func selectedPositionOnGhostBoard(_ selectedPosition: Position) -> Position {
         // Translate the position to the position on the actual board
         var translatedPosition = Position(
             rank: selectedPosition.rank - 1,

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct BoardView2: View {
     @Binding var board: Board
+    var selectedSquares: [Position]
     var bottomLeftSquareColor: Square.SquareType
     var squareLength: CGFloat
     var cornerRadius: CGFloat
@@ -17,16 +18,20 @@ struct BoardView2: View {
     var pieceOpacity: CGFloat
     var onSelected: (Position) -> Void = { _ in }
     var onDrag: (Position, Position) -> Void = { _, _ in }
+    var onDrop: ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }
     
     init(board: Binding<Board>,
+         selectedSquares: [Position] = [],
          bottomLeftSquareColor: Square.SquareType? = nil,
          squareLength: CGFloat = 60,
          cornerRadius: CGFloat = 0,
          dragEnabled: Bool = true,
          pieceOpacity: CGFloat = 1.0,
          onSelected: @escaping (Position) -> Void = { _ in },
-         onDrag: @escaping (Position, Position) -> Void = { _, _ in }) {
+         onDrag: @escaping (Position, Position) -> Void = { _, _ in },
+         onDrop: @escaping ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }) {
         self._board = board
+        self.selectedSquares = selectedSquares
         self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
         self.squareLength = squareLength
         self.cornerRadius = cornerRadius
@@ -50,7 +55,6 @@ struct BoardView2: View {
                 }
             }
         }
-        
         return pieces
     }
     
@@ -71,8 +75,18 @@ struct BoardView2: View {
                 .cornerRadius(cornerRadius)
                 .drawingGroup()
                 
+                ForEach(selectedSquares.compactMap { $0 }, id: \.self) { position in
+                    Rectangle()
+                        .fill(Color.selectedSquareColor)
+                        .opacity(0.5)
+                        .frame(width: squareLength, height: squareLength)
+                        .offset(
+                            x: CGFloat(position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
+                            y: CGFloat(board.ranks - position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
+                        )
+                }
 
-                ForEach(pieces) { piece in
+                ForEach(pieces, id: \.position) { piece in
                     Image(piece.imageName)
                         .resizable()
                         .frame(
@@ -82,6 +96,7 @@ struct BoardView2: View {
                             x: CGFloat(piece.position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
                             y: CGFloat(board.ranks - piece.position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
                         )
+                        .transition(.opacity)
                 }
                 .opacity(pieceOpacity)
                 .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)

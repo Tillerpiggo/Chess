@@ -14,6 +14,9 @@ struct PieceDetailView: View {
 	@ObservedObject var viewModel: PieceDetailViewModel
 	
 	@State var isAddPatternViewShowing = false
+    
+    private let lengthPercent: CGFloat = 0.82//0.908 // percent of the width that views in the list take up
+    private let totalMargin: CGFloat = 0
 	
     var body: some View {
 		GeometryReader { geometry in
@@ -32,12 +35,31 @@ struct PieceDetailView: View {
 				}
 				
 				List {
+//                    Section {
+//                        BoardView2(board: .constant(viewModel.board))
+//                            .listRowBackground(Color.backgroundColor)
+//                            .frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files)))
+//                            .disabled(true)
+//                    }
+                    
+                    
+                    // TODO: somehow refcator this, especially lengthPercent and totalMargin
                     Section {
-                        BoardView2(board: .constant(viewModel.board))
-                            .listRowBackground(Color.backgroundColor)
-                            .frame(width: geometry.size.width - 64, height: (geometry.size.width - 64) * (CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files)))
-                            .disabled(true)
+                        HStack {
+                            Spacer()
+                            BoardView2(
+                                board: .constant(viewModel.board),
+                                selectedSquares: viewModel.selectedSquares,
+                                squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),
+                                cornerRadius: 8)
+                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files))
+                            Spacer()
+                        }
+                        
                     }
+                    .listRowBackground(Color.backgroundColor)
+                    .listRowInsets(EdgeInsets())
+                    .disabled(true)
 					//Section {
 //						BoardView(
 //                            squares: .constant(viewModel.squares),
@@ -53,6 +75,7 @@ struct PieceDetailView: View {
 					Section(header: Text("Patterns")) {
 						ForEach(viewModel.patterns) { pattern in
 							patternView(pattern)
+                                .listRowBackground(Color.rowColor)
 						}
 						
 						.onDelete { (patternIndex) in

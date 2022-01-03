@@ -62,9 +62,10 @@ struct EditBoardView: View {
         GeometryReader { geometry in
             let squareLength = CGFloat(geometry.size.smallestSide) / 8
             ZStack {
-                Rectangle()
-                    .fill(Color.white)
-                    .ignoresSafeArea()
+//                Rectangle()
+//                    .fill(Color.white)
+//                    .ignoresSafeArea()
+                
                 
                 Group {
                     BoardView2(
@@ -75,7 +76,7 @@ struct EditBoardView: View {
                         dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
-                            let directionAdded = model.selectedPositionOnGhostBoard(selectedPosition, sideLength: squareLength)
+                            let directionAdded = model.selectedPositionOnGhostBoard(selectedPosition)
                             
                             // It will only offset if added on the left/bottom
                             if directionAdded.rank > 0 {
@@ -102,15 +103,18 @@ struct EditBoardView: View {
                             //print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
                             //print("selectedPosition: \(selectedPosition)")
                             if gesturePanOffset == .zero {
-                                let directionRemoved = model.selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
-                                //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
-                                if directionRemoved.rank > 0 {
-                                    steadyStatePanOffset.height += squareLength * CGFloat(abs(directionRemoved.rank)) * zoomScale
-                                }
+                                //withAnimation(.easeInOut) {
+                                    let directionRemoved = model.selectedPositionOnBoard(selectedPosition)
+                                    //selectedPositionOnBoard(selectedPosition, sideLength: squareLength)
+                                    if directionRemoved.rank > 0 {
+                                        steadyStatePanOffset.height += squareLength * CGFloat(abs(directionRemoved.rank)) * zoomScale
+                                    }
+                                    
+                                    if directionRemoved.file < 0 {
+                                        steadyStatePanOffset.width += squareLength * CGFloat(abs(directionRemoved.file)) * zoomScale
+                                    }
+                                //}
                                 
-                                if directionRemoved.file < 0 {
-                                    steadyStatePanOffset.width += squareLength * CGFloat(abs(directionRemoved.file)) * zoomScale
-                                }
                             }
                         },
                         onDrag: { (startingPosition, endingPosition) in
@@ -134,38 +138,71 @@ struct EditBoardView: View {
                 .offset(x: -squareLength, y: squareLength)
                 .offset(panOffset)
                 .scaleEffect(zoomScale)
+                
                 //.animation(.easeInOut(duration: 0.05), value: panOffset)
                 
                 VStack {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.white.opacity(0.3))
-                            .cornerRadius(12)
+                    Spacer()
+                    HStack {
+//                        Rectangle()
+//                            .fill(Color(white: 0.0))
                         
-                        VisualEffectView(effect: UIBlurEffect(style: .regular))
+                        //VisualEffectView(effect: UIBlurEffect(style: .regular))
+                        Picker("Test", selection: $model.selectedPlayer) {
+                            ForEach([Player.white, Player.black], id: \.self) { player in
+                                Text(player.string)
+                            }
+                        }
+                        .padding(.leading, 32)
+                        .tint(.boardGreen)
+                        .pickerStyle(.menu)
+                        
                         
                         ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(game.pieces) { piece in
-                                    Image(piece.imageName)
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
-                                        .onDrag { NSItemProvider(object: piece.id.uuidString as NSString) }
+                            HStack(spacing: 0) {
+                                ForEach(model.pieces) { piece in
+                                    ZStack {
+                                        if model.selectedPiece == piece.id {
+                                            Rectangle()
+                                                .fill(Color(white: 0.4))
+                                                .opacity(0.3)
+                                                .frame(width: 48, height: 48)
+                                                .cornerRadius(12)
+                                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                                .zIndex(0)
+                                        }
+                                        
+                                        Image(piece.imageName)
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .onTapGesture {
+                                                print("selectedPiece!")
+                                                model.selectedPiece(piece)
+                                            }
+                                            .padding(4)
+                                            //.onDrag { NSItemProvider(object: piece.id.uuidString as NSString) }
+                                    }
                                 }
                                 
                             }
                         }
                             .padding()
+                            
                     }
-                    .frame(height: 60)
+                    .background(.thinMaterial)
                     
-                    Spacer()
                 }
                 
                 
             }
-            .gesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
             .gesture(!isDragEnabled ? zoomGesture() : nil)
+            .highPriorityGesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
+            .gesture(!isDragEnabled ? TapGesture(count: 2).onEnded {
+                withAnimation {
+                    steadyStateZoomScale = 1
+                    steadyStatePanOffset = .zero
+                }
+            } : nil)
             .toolbar {
                 Button(isDragEnabled ? "Drag Board" : "Drag Pieces") {
                     isDragEnabled.toggle()
@@ -187,6 +224,9 @@ struct EditBoardView: View {
                 print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitle("")
+//        .navigationBarHidden(true)
     }
     
     func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {

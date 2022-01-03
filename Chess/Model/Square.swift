@@ -11,7 +11,7 @@ import Foundation
 
 struct Square: Equatable, Identifiable, Hashable {
     var state: SquareState
-	private(set) var piece: Piece?
+    private(set) var piece: Piece?
 	var startingPieceID: UUID?
 	var startingPieceOwner: Player?
     var position: Position {
@@ -38,7 +38,12 @@ struct Square: Equatable, Identifiable, Hashable {
         var newPiece = piece
         newPiece?.position = self.position
 		self.piece = newPiece
-		state = .occupied
+        
+        if piece == nil {
+            state = .empty
+        } else {
+            state = .occupied
+        }
 	}
     
     // Sets the piece and also sets the square's startingPieceID and owner
@@ -47,6 +52,12 @@ struct Square: Equatable, Identifiable, Hashable {
         self.setPiece(piece)
         startingPieceID = piece?.id
         startingPieceOwner = piece?.owner
+        
+        if piece == nil {
+            state = .empty
+        } else {
+            state = .occupied
+        }
     }
 	
 	// Updates the square's piece so that it knows that piece has moved
