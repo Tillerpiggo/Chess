@@ -12,6 +12,7 @@ extension Color {
 	static var lightSquareColor = Color("lightSquareColor")
 	static var darkSquareColor = Color("darkSquareColor")
 	static var selectedSquareColor = Color("selectedSquareColor")
+    static var excludedSquareColor = Color("excludedSquareColor")
 	static var boardGreen = Color("boardGreen")
 	static var backgroundColor = Color("backgroundColor")
 	static var rowColor = Color("rowColor")

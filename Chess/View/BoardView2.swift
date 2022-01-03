@@ -11,6 +11,7 @@ import SwiftUI
 struct BoardView2: View {
     @Binding var board: Board
     var selectedSquares: [Position]
+    var selectionColor: Color
     var bottomLeftSquareColor: Square.SquareType
     var squareLength: CGFloat
     var cornerRadius: CGFloat
@@ -22,6 +23,7 @@ struct BoardView2: View {
     
     init(board: Binding<Board>,
          selectedSquares: [Position] = [],
+         selectionColor: Color = .selectedSquareColor,
          bottomLeftSquareColor: Square.SquareType? = nil,
          squareLength: CGFloat = 60,
          cornerRadius: CGFloat = 0,
@@ -32,6 +34,7 @@ struct BoardView2: View {
          onDrop: @escaping ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }) {
         self._board = board
         self.selectedSquares = selectedSquares
+        self.selectionColor = selectionColor
         self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
         self.squareLength = squareLength
         self.cornerRadius = cornerRadius
@@ -77,7 +80,7 @@ struct BoardView2: View {
                 
                 ForEach(selectedSquares.compactMap { $0 }, id: \.self) { position in
                     Rectangle()
-                        .fill(Color.selectedSquareColor)
+                        .fill(selectionColor)
                         .opacity(0.5)
                         .frame(width: squareLength, height: squareLength)
                         .offset(

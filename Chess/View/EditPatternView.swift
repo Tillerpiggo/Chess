@@ -51,6 +51,7 @@ struct EditPatternView: View {
                             BoardView2(
                                 board: .constant(viewModel.board),
                                 selectedSquares: viewModel.selectedSquares,
+                                selectionColor: viewModel.isRestricting ? .excludedSquareColor : .selectedSquareColor,
                                 squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),
                                 cornerRadius: 8)
                                 .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files))
