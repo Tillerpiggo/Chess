@@ -68,6 +68,7 @@ struct GameDetailView: View {
                         })
                         ) {
                             Text("Board")
+                                .foregroundColor(.rowTextColor)
                         }
                                        
                         NavigationLink(destination:
@@ -76,8 +77,10 @@ struct GameDetailView: View {
                         ) {
                             HStack {
                                 Text("Pieces")
+                                    .foregroundColor(.rowTextColor)
                                 Spacer()
                                 Text("\(game.pieces.count)")
+                                    .foregroundColor(.rowTextColor)
                                     .opacity(0.2)
                             }
                         }

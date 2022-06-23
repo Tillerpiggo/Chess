@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-class PieceDetailViewModel: ObservableObject {
+class PieceMovementEditorViewModel: ObservableObject {
 	@Published var selectedMovementType: Piece.MovementType = .normal
 	var movementTypes: [Piece.MovementType] = [.normal, .firstMove, .captures]
 	

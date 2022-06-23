@@ -31,6 +31,7 @@ struct BoardListView: View {
 					) {
 						HStack {
 							Text(game.name)
+                                .foregroundColor(.rowTextColor)
 							Spacer()
 						}//.contentShape(Rectangle())
 						

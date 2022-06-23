@@ -63,14 +63,13 @@ class EditBoardViewModel: ObservableObject {
         //print("selectedPosition")
         if let square = game.board.squares[selectedPosition] {
             if let selectedPiece = selectedPiece {
-                if square.state == .empty {
-//                    var piece =
-//                    piece.id = UUID()
+                
+                if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
+                    game.board.squares[selectedPosition]?.setStartingPiece(nil)
+                } else {
                     var piece = piece(selectedPiece.uuidString)!
                     piece.owner = selectedPlayer
                     game.board.squares[selectedPosition]?.setStartingPiece(piece)
-                } else if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
-                    game.board.squares[selectedPosition]?.setStartingPiece(nil)
                 }
             } else {
                 if square.state == .empty {

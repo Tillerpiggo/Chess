@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02389F0B2864E53200A2B098 /* PieceMovementEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */; };
 		024928E4275030B2002FAA46 /* BoardView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView2.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
 		028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028193782754BAEE009BBBB9 /* OffsetTransition.swift */; };
+		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
 		23079A6626D9FAC200A343CE /* MoverModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6526D9FAC200A343CE /* MoverModel.swift */; };
 		23123D2525D5E07200F2B813 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23123D2425D5E07200F2B813 /* GameView.swift */; };
@@ -22,7 +24,7 @@
 		23294DAF26C8933500F45EE9 /* ConfirmDismissActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23294DAE26C8933500F45EE9 /* ConfirmDismissActionSheet.swift */; };
 		23294DBB26C8BB2700F45EE9 /* AutofocusTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23294DBA26C8BB2700F45EE9 /* AutofocusTextField.swift */; };
 		23294DC126C9CF7F00F45EE9 /* PieceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */; };
-		23311FEF26D979F9003D45FF /* PieceDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23311FEE26D979F9003D45FF /* PieceDetailViewModel.swift */; };
+		23311FEF26D979F9003D45FF /* PieceMovementEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23311FEE26D979F9003D45FF /* PieceMovementEditorViewModel.swift */; };
 		23311FF326D98F31003D45FF /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23311FF226D98F31003D45FF /* String+Extensions.swift */; };
 		23311FF726D99753003D45FF /* EditPatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23311FF626D99753003D45FF /* EditPatternView.swift */; };
 		233932F625DCE7FB0050235F /* Mover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233932F525DCE7FB0050235F /* Mover.swift */; };
@@ -80,9 +82,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceMovementEditorView.swift; sourceTree = "<group>"; };
 		024928E3275030B2002FAA46 /* BoardView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView2.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
 		028193782754BAEE009BBBB9 /* OffsetTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetTransition.swift; sourceTree = "<group>"; };
+		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
 		23079A6526D9FAC200A343CE /* MoverModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverModel.swift; sourceTree = "<group>"; };
 		23123D2425D5E07200F2B813 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -97,7 +101,7 @@
 		23294DAE26C8933500F45EE9 /* ConfirmDismissActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmDismissActionSheet.swift; sourceTree = "<group>"; };
 		23294DBA26C8BB2700F45EE9 /* AutofocusTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutofocusTextField.swift; sourceTree = "<group>"; };
 		23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceDetailView.swift; sourceTree = "<group>"; };
-		23311FEE26D979F9003D45FF /* PieceDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceDetailViewModel.swift; sourceTree = "<group>"; };
+		23311FEE26D979F9003D45FF /* PieceMovementEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceMovementEditorViewModel.swift; sourceTree = "<group>"; };
 		23311FF226D98F31003D45FF /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		23311FF626D99753003D45FF /* EditPatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPatternView.swift; sourceTree = "<group>"; };
 		233932F525DCE7FB0050235F /* Mover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mover.swift; sourceTree = "<group>"; };
@@ -227,6 +231,7 @@
 				23C427AF26E29F7E00E7D31C /* PieceChooser.swift */,
 				2391B26526C3782400349054 /* PieceListView.swift */,
 				23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */,
+				02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */,
 				23311FF626D99753003D45FF /* EditPatternView.swift */,
 				2367FE1D26BC74B2001BF1A2 /* EditGameView.swift */,
 				2391B26926C4544100349054 /* EditPieceView.swift */,
@@ -255,8 +260,9 @@
 				23262ECB26BA11B300EA7FBE /* EditGameViewModel.swift */,
 				2391B26F26C4583200349054 /* EditPieceViewModel.swift */,
 				23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */,
-				23311FEE26D979F9003D45FF /* PieceDetailViewModel.swift */,
+				23311FEE26D979F9003D45FF /* PieceMovementEditorViewModel.swift */,
 				23F1D44426BB526A00C364ED /* GameCoreDataManager.swift */,
+				02BA035527A755C200A47338 /* GameBoardModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -419,7 +425,7 @@
 				23E8553D26B88CE5009E34B9 /* Main.xcdatamodeld in Sources */,
 				238182A326B9060B00F056F8 /* CGSize+Extensions.swift in Sources */,
 				024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */,
-				23311FEF26D979F9003D45FF /* PieceDetailViewModel.swift in Sources */,
+				23311FEF26D979F9003D45FF /* PieceMovementEditorViewModel.swift in Sources */,
 				234BE2B924C8F34C00580B6B /* Square.swift in Sources */,
 				2371E28E25D1DC6F009D4D21 /* BoardView.swift in Sources */,
 				233932F625DCE7FB0050235F /* Mover.swift in Sources */,
@@ -444,6 +450,7 @@
 				2371E28825D104CB009D4D21 /* Move.swift in Sources */,
 				028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */,
 				23C427AC26E1E04400E7D31C /* EditBoardView.swift in Sources */,
+				02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */,
 				234BE2AF24C8E9EB00580B6B /* Piece.swift in Sources */,
 				234BE2B524C8F12A00580B6B /* Player.swift in Sources */,
 				23311FF326D98F31003D45FF /* String+Extensions.swift in Sources */,
@@ -455,6 +462,7 @@
 				23262EC426BA06CA00EA7FBE /* AddCancelHeader.swift in Sources */,
 				2381829A26B8F7C600F056F8 /* Array+Extensions.swift in Sources */,
 				234BE2B324C8EC6600580B6B /* Board.swift in Sources */,
+				02389F0B2864E53200A2B098 /* PieceMovementEditorView.swift in Sources */,
 				234BE2AD24C8E7F700580B6B /* Game.swift in Sources */,
 				23DA467726ED83E60000E024 /* VisualEffectView.swift in Sources */,
 				23262ECF26BA153000EA7FBE /* ModalView.swift in Sources */,

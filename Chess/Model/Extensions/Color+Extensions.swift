@@ -15,6 +15,7 @@ extension Color {
     static var excludedSquareColor = Color("excludedSquareColor")
 	static var boardGreen = Color("boardGreen")
 	static var backgroundColor = Color("backgroundColor")
+    static var rowTextColor = Color("rowTextColor")
 	static var rowColor = Color("rowColor")
     static var separatorColor = Color("separatorColor")
 }

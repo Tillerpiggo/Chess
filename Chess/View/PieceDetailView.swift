@@ -11,7 +11,7 @@ import SwiftUI
 struct PieceDetailView: View {
 	
 	@StateObject var moverManager: MoverManager
-	@ObservedObject var viewModel: PieceDetailViewModel
+	@ObservedObject var viewModel: PieceMovementEditorViewModel
 	
 	@State var isAddPatternViewShowing = false
     
@@ -121,7 +121,7 @@ struct PieceDetailView: View {
 	
 	init(moverManager: MoverManager) {
 		self._moverManager = StateObject(wrappedValue: moverManager)
-		self.viewModel = PieceDetailViewModel(moverManager: moverManager)
+		self.viewModel = PieceMovementEditorViewModel(moverManager: moverManager)
 		//self.piece = piece
 		//self.piece.position = Position(rank: 3, file: 3)
 		
