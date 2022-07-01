@@ -32,6 +32,8 @@ class PieceManager: ObservableObject {
 	
 	// MARK: - Interface
 	
+    // TODO: Refactor gameModel to be a property of this class itself, so it isn't always recalculated
+    
 	func addPiece(_ piece: Piece) {
 		if let gameModel = converter.retrieveGameModel(game) {
 			gameModel.addToPieces(converter.pieceModel(from: piece, in: gameModel))
@@ -56,12 +58,20 @@ class PieceManager: ObservableObject {
 	}
 	
 	func renamePiece(_ piece: Piece, to name: String) {
-		if	let gameModel = converter.retrieveGameModel(game),
+		if let gameModel = converter.retrieveGameModel(game),
 			let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
 			pieceModel.name = name
 			saveContext()
 		}
 	}
+    
+    func setPieceIsImportant(_ piece: Piece, to isImportant: Bool) {
+        if let gameModel = converter.retrieveGameModel(game),
+           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+            pieceModel.isImportant = isImportant
+            saveContext();
+        }
+    }
 	
 	func movePiece(from source: IndexSet, to destination: Int) {
 		let startingPosition = source.map { $0 }.first!

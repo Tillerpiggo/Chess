@@ -15,7 +15,12 @@ struct EditBoardView: View {
     @StateObject var model: EditBoardViewModel
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
+    
+    // Allow the pieces, not the board, to be dragged
     @State var isDragEnabled: Bool = true
+    
+    // True if isDraggingPiece
+    @State var isDraggingPiece: Bool = true
     
     init(game: Game, changedGame: @escaping (Game) -> Void) {
         self._game = State(wrappedValue: game)
@@ -31,16 +36,6 @@ struct EditBoardView: View {
         
         print("toggled to \(self.bottomLeftSquareColor)")
     }
-	
-//	var emptySquares: [[Square]] {
-//        //let ranks = game.board.ranks + 2
-//        //let files = game.board.files + 2
-//        let emptyBoard = Board.empty(ranks: game.board.ranks + 2, files: game.board.files + 2, bottomLeftSquareColor: bottomLeftSquareColor)
-//
-//        //print("bot")
-//
-//		return emptyBoard.squares
-//	}
     
     var emptyBoard: Board {
         return Board.empty(
@@ -60,12 +55,9 @@ struct EditBoardView: View {
 	
     var body: some View {
         GeometryReader { geometry in
-            let squareLength = CGFloat(geometry.size.smallestSide) / 8
+            let squareLength = CGFloat(geometry.size.smallestSide) / 10
             ZStack {
-//                Rectangle()
-//                    .fill(Color.white)
-//                    .ignoresSafeArea()
-                
+                Color.white
                 
                 Group {
                     BoardView2(
@@ -119,35 +111,34 @@ struct EditBoardView: View {
                         },
                         onDrag: { (startingPosition, endingPosition) in
                             model.onDrag(from: startingPosition, to: endingPosition)
-//                            if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-//                                game.moveSetup(move)
-//                                //changedGame(game)
-//                                model.changedGame(game)
-//                                //print("move: \(move)")
-//                            }
+                        },
+                        onDrop: { providers, position in
+                            drop(providers: providers, position: position)
+                        },
+                        updateIsDraggingPiece: { isDraggingPiece in
+                            self.isDraggingPiece = isDraggingPiece
+                            print("isDraggingPiece: \(isDraggingPiece)")
                         }
                     )
+//                        .onDrop(of: ["public.text"], isTargeted: nil, perform: { _, _ in
+//                            let position =
+//                            //drop(providers: providers, rank: )
+//                            return true
+//                        })
                         .frame(
                             width: squareLength * CGFloat(game.files),
                             height: squareLength * CGFloat(game.ranks)
                         )
-//                        .opacity(0.3)
-//                        .allowsHitTesting(false)
                            
                 }
-                .offset(x: -squareLength, y: squareLength)
+                .offset(x: 0, y: -squareLength)
                 .offset(panOffset)
+                .animation(.spring(), value: panOffset)
                 .scaleEffect(zoomScale)
-                
-                //.animation(.easeInOut(duration: 0.05), value: panOffset)
-                
+                              
                 VStack {
                     Spacer()
                     HStack {
-//                        Rectangle()
-//                            .fill(Color(white: 0.0))
-                        
-                        //VisualEffectView(effect: UIBlurEffect(style: .regular))
                         Picker("Test", selection: $model.selectedPlayer) {
                             ForEach([Player.white, Player.black], id: \.self) { player in
                                 Text(player.string)
@@ -180,7 +171,9 @@ struct EditBoardView: View {
                                                 model.selectedPiece(piece)
                                             }
                                             .padding(4)
-                                            //.onDrag { NSItemProvider(object: piece.id.uuidString as NSString) }
+                                            .onDrag {
+                                                return NSItemProvider(object: piece.id.uuidString as NSString)
+                                            }
                                     }
                                 }
                                 
@@ -195,14 +188,16 @@ struct EditBoardView: View {
                 
                 
             }
-            .gesture(!isDragEnabled ? zoomGesture() : nil)
-            .highPriorityGesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
-            .gesture(!isDragEnabled ? TapGesture(count: 2).onEnded {
-                withAnimation {
-                    steadyStateZoomScale = 1
-                    steadyStatePanOffset = .zero
-                }
-            } : nil)
+            //.gesture(!isDragEnabled ? zoomGesture() : nil)
+            //.highPriorityGesture(!isDragEnabled ? panGesture(sideLength: squareLength) : nil)
+            //
+            .simultaneousGesture(panGesture(sideLength: squareLength))
+            .simultaneousGesture(zoomGesture())
+            
+            // Double tap to toggle isDragEnabled
+//            .gesture(TapGesture(count: 2).onEnded {
+//                isDragEnabled.toggle()
+//            })
             .toolbar {
                 Button(isDragEnabled ? "Drag Board" : "Drag Pieces") {
                     isDragEnabled.toggle()
@@ -225,8 +220,6 @@ struct EditBoardView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-//        .navigationBarTitle("")
-//        .navigationBarHidden(true)
     }
     
     func selectedPositionOnBoard(_ selectedPosition: Position, sideLength: CGFloat) {
@@ -339,16 +332,9 @@ struct EditBoardView: View {
                 let squareType = (selectedPosition.file - fileIndex) % 2 == 0 ? type : type.opposite
                 let newSquare = Square(state: state, position: position, type: type)
                 
-                //print("Added square: \(newSquare.state), to file: \(fileIndex), at: \(position)")
-                
-                //print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
                 squares[fileIndex].insert(newSquare, at: ranks)
-                //print("squares[\(fileIndex)]: \(squares[fileIndex].count)")
             }
             isTranslatedPositionInBoard = false
-            //steadyStatePanOffset.height -= sideLength
-            
-            //print("squares[0]: \(squares[0].count)")
         }
         
         // Square tapped inside existing board
@@ -491,24 +477,28 @@ struct EditBoardView: View {
 	}
 	
     private func panGesture(sideLength: CGFloat) -> some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 12)
 			.updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, transaction in
-				gesturePanOffset = latestDragGestureValue.translation
+                if !isDraggingPiece {
+                    gesturePanOffset = latestDragGestureValue.translation
+                }
 			}
 			.onEnded { finalDragGestureValue in
-                // Quantize translation
-//                let translationX = (finalDragGestureValue.predictedEndTranslation.width / sideLength).rounded() * sideLength
-//                let translationY = finalDragGestureValue.predictedEndTranslation.height
-                
-                steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
+                if !isDraggingPiece {
+                    //let predictedExtraTranslation = finalDragGestureValue.predictedEndTranslation - finalDragGestureValue.translation
+                    steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
+//                    withAnimation(.spring(response: 0.5, dampingFraction: 1.0, blendDuration: 0.2)) {
+//                        steadyStatePanOffset = steadyStatePanOffset + predictedExtraTranslation
+//                    }
+                }
 			}
 	}
 	
-	private func drop(providers: [NSItemProvider], rank: Int, file: Int) {
+    private func drop(providers: [NSItemProvider], position: Position) {
         _ = providers.loadObjects(ofType: String.self) { id in
+            print("id: \(id)")
 			if let piece = piece(id) {
-				print("rank: \(rank), file: \(file)")
-				game.board.squares[file][rank].setPiece(piece)
+                model.onDrop(piece, at: position)
 			}
 		}
 	}
@@ -525,11 +515,3 @@ struct EditBoardView: View {
 		return game.pieces.first(where: { $0.id.uuidString == id })
 	}
 }
-
-/*
-struct EditBoardView_Previews: PreviewProvider {
-    static var previews: some View {
-		EditBoardView(board: Game.standard().board)
-    }
-}
-*/

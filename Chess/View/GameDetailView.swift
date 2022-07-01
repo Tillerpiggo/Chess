@@ -10,7 +10,7 @@ import SwiftUI
 
 struct GameDetailView: View {
 	
-	@EnvironmentObject var gameStore: GameManager
+	@EnvironmentObject var gameManager: GameManager
 	@Environment(\.presentationMode) var presentationMode: Binding
 
 	@Binding var game: Game
@@ -72,8 +72,8 @@ struct GameDetailView: View {
                         }
                                        
                         NavigationLink(destination:
-                            PieceListView(pieceManager: gameStore.pieceManager(for: game), game: $game)
-                                .environmentObject(gameStore)
+                            PieceListView(pieceManager: gameManager.pieceManager(for: game), game: $game)
+                                .environmentObject(gameManager)
                         ) {
                             HStack {
                                 Text("Pieces")

@@ -53,6 +53,11 @@ class EditBoardViewModel: ObservableObject {
         }
     }
     
+    func onDrop(_ piece: Piece, at position: Position) {
+        game.board.squares[position]?.setPiece(piece)
+        changedGame(game)
+    }
+    
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
     /// The existence of the square on/off.
     /// Returns a Position corresponding to the direction the square was removed (0, 0) if it wasn't

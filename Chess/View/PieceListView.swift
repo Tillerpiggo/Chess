@@ -34,7 +34,8 @@ struct PieceListView: View {
 			List {
 				ForEach(game.pieces) { piece in
 					NavigationLink(destination:
-									PieceDetailView(moverManager: pieceManager.moverManager(for: piece))
+									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
+                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(from: piece))
 					) {
 						HStack {
 							Image(piece.imageName)

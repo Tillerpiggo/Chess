@@ -19,7 +19,8 @@ struct BoardView2: View {
     var pieceOpacity: CGFloat
     var onSelected: (Position) -> Void = { _ in }
     var onDrag: (Position, Position) -> Void = { _, _ in }
-    var onDrop: ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }
+    var onDrop: ([NSItemProvider], Position) -> Void = { _, _ in }
+    var updateIsDraggingPiece: (Bool) -> Void
     
     init(board: Binding<Board>,
          selectedSquares: [Position] = [],
@@ -31,7 +32,9 @@ struct BoardView2: View {
          pieceOpacity: CGFloat = 1.0,
          onSelected: @escaping (Position) -> Void = { _ in },
          onDrag: @escaping (Position, Position) -> Void = { _, _ in },
-         onDrop: @escaping ([NSItemProvider], Int, Int) -> Void = { _, _, _ in }) {
+         onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
+         updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
+    {
         self._board = board
         self.selectedSquares = selectedSquares
         self.selectionColor = selectionColor
@@ -42,6 +45,8 @@ struct BoardView2: View {
         self.pieceOpacity = pieceOpacity
         self.onSelected = onSelected
         self.onDrag = onDrag
+        self.onDrop = onDrop
+        self.updateIsDraggingPiece = updateIsDraggingPiece
     }
     
     var size: CGSize {
@@ -105,55 +110,81 @@ struct BoardView2: View {
                 .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
                 
                 // The piece being dragged
-                if let dragPiece = dragPiece {
-                    if let selectedSquare = selectedSquare,
-                       let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: squareLength, startingPosition: selectedSquare.position)],
-                       square.state != .nonexistent {
-                        Group {
-                            Rectangle()
-                                .fill(Color.selectedSquareColor)
-                                .frame(width: squareLength, height: squareLength)
-                                .opacity(0.5)
-                            Circle()
-                                .fill(Color.black.opacity(0.2))
-                                .frame(width: squareLength * 2 + 16, height: squareLength * 2 + 16)
+                ZStack {
+                    if let dragPiece = dragPiece {
+                        if let selectedSquare = selectedSquare,
+                           let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: squareLength, startingPosition: selectedSquare.position)],
+                           square.state != .nonexistent {
+                            Group {
+                                Rectangle()
+                                    .fill(Color.selectedSquareColor)
+                                    .frame(width: squareLength, height: squareLength)
+                                    .opacity(0.5)
+                                Circle()
+                                    .fill(Color.black.opacity(0.2))
+                                    .frame(width: squareLength * 2 + 16, height: squareLength * 2 + 16)
+//                                    .transition(
+//                                        AnyTransition.scale(scale: 0.0).combined(with:
+//                                                                                AnyTransition.offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position)))
+//                                    )
+                            }
+                            .offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position))
+                            
                         }
-                        .offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position))
+                        Image(dragPiece.imageName)
+                            .resizable()
+                            .frame(width: squareLength * 2, height: squareLength * 2)
+                            .offset(pieceDragOffset(sideLength: squareLength, position: dragPiece.position))
+                            .transition(
+                                AnyTransition.scale(scale: 0.0).combined(with:
+                                                                        AnyTransition.offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position)))
+                            )
+                            .animation(.interactiveSpring(), value: gestureDragOffset)
                     }
-                    Image(dragPiece.imageName)
-                        .resizable()
-                        .frame(width: squareLength * 2, height: squareLength * 2)
-                        .offset(pieceDragOffset(sideLength: squareLength, position: dragPiece.position))
-                        
                 }
-                
-//                Rectangle()
-//                    .fill(Color.yellow)
-//                    .opacity(0.5)
+                //.animation(.default, value: dragPiece)
                     
             }
             .frame(width: squareLength * CGFloat(board.files), height: squareLength * CGFloat(board.ranks))
-//            .overlay(
-//                Rectangle()
-//                    .fill(Color.red)
-//                    .opacity(0.5)
-//            )
             .onTouch(type: .startOrEnd) { location, type in
                 if type == .started {
                     touchDownPosition = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                     selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
+                    updateIsDraggingPiece(selectedSquare?.piece != nil)
+                    
+                    if let square = selectedSquare {
+                        if dragPiece == nil {
+                            // animate piece up
+                            //withAnimation(.spring()) {
+                                dragPiece = square.piece
+                            //}
+                        }
+                    }
                 } else if type == .ended {
                     let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                     print("selectedPosition (BoardView): \(position)")
                     if position == touchDownPosition {
-                        //print("touchesOnSelected")
                         onSelected(position)
                     }
                     touchDownPosition = nil
+                    if dragPiece != nil {
+                        // animate piece down
+                    }
+                    
+                    
+                    selectedSquare = nil
+                    dragPiece = nil
+                    updateIsDraggingPiece(false)
                 }
             }
-            .gesture(dragEnabled ? dragPieceGesture(sideLength: squareLength, square: selectedSquare) : nil)
-            
+            .onDrop(of: ["public.text"], isTargeted: nil, perform: { providers, location in
+                let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
+                
+                onDrop(providers, position)
+                print("You dropped something!")
+                return true
+            })
+            .gesture(dragPieceGesture(sideLength: squareLength))
         }
     }
     // Make sure that dragging doesn't trigger tapping on the ghost board
@@ -164,37 +195,40 @@ struct BoardView2: View {
     @GestureState private var gestureDragOffset: CGSize = .zero
     @GestureState private var canPlaceDragPiece: Bool = true
     @State private var dragPiece: Piece? = nil
-    @State private var dragPieceStartingLocation: CGSize = .zero
     
-    private func dragPieceGesture(sideLength: CGFloat, square: Square?) -> some Gesture {
-        DragGesture(minimumDistance: 12)
+    private func dragPieceGesture(sideLength: CGFloat) -> some Gesture {
+        
+        // TODO: make this gesture faster. Right now, it makes the overall dragging laggy
+        let dragGesture = DragGesture(minimumDistance: 1) // doesn't work when 0
             .updating($gestureDragOffset) { latestDragGestureValue, pieceDragOffset, transaction in
                 pieceDragOffset = latestDragGestureValue.translation
+                print("ondrag pieceDragOffset: \(pieceDragOffset)")
             }
-            .onChanged { latestDragGestureValue in
-                if let square = square {
-                    if dragPiece == nil {
-                        dragPiece = square.piece
-                    }
-                }
-            }
+//            .onChanged { latestDragGestureValue in
+//                if let square = selectedSquare {
+//                    if dragPiece == nil {
+//                        dragPiece = square.piece
+//                    }
+//                }
+//            }
             .onEnded { finalDragGestureValue in
-                if let square = square, square.state != .nonexistent {
-                    print("onDrag!!!")
+                if let square = selectedSquare, square.state != .nonexistent {
+                    print("onDrag!!!: \(finalDragGestureValue.translation)")
                     onDrag(square.position, endingPosition(for: finalDragGestureValue.translation, sideLength: sideLength, startingPosition: square.position))
                 }
                 
                 selectedSquare = nil
                 dragPiece = nil
+                
+                updateIsDraggingPiece(false)
             }
+        
+        return dragGesture
+        //return longPressGesture.sequenced(before: dragGesture)//LongPressGesture(minimumDuration: 0.1).sequenced(before: dragGesture)
     }
     
     private func endingPosition(for translation: CGSize, sideLength: CGFloat, startingPosition: Position) -> Position {
         let finalDragLocation: (Int, Int) = location(for: translation, sideLength: sideLength)
-//        if isReversed {
-//            finalDragLocation.0 *= -1
-//            finalDragLocation.1 *= -1
-//        }
         
         let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
         return endingPosition
@@ -218,13 +252,6 @@ struct BoardView2: View {
         xOriginOffset += CGFloat(position.file) * sideLength
         yOriginOffset += CGFloat(position.rank) * sideLength
         
-        // Adjust for custom dimensions
-//        let xOffset = CGFloat(board.files - board.smallestSide) * sideLength * 0.5
-//        let yOffset = CGFloat(board.ranks - board.smallestSide) * sideLength * 0.5
-//        xOriginOffset += xOffset
-//        yOriginOffset -= yOffset
-        
-        
         return CGSize(
             width: gestureDragOffset.width + xOriginOffset,
             height: gestureDragOffset.height - yOriginOffset
@@ -236,7 +263,7 @@ struct BoardView2: View {
     private func pieceDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
         // Place it above the finger
         var offset = gestureDragOffset(sideLength: sideLength, position: position)
-        offset.height -= 40
+        offset.height -= 50
         
         return offset
     }
