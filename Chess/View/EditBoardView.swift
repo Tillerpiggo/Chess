@@ -65,7 +65,6 @@ struct EditBoardView: View {
                         bottomLeftSquareColor: model.bottomLeftSquareColor,
                         squareLength: squareLength,
                         cornerRadius: 14,
-                        dragEnabled: isDragEnabled,
                         onSelected: { selectedPosition in
                             print("selected: \(selectedPosition)")
                             let directionAdded = model.selectedPositionOnGhostBoard(selectedPosition)
@@ -89,7 +88,6 @@ struct EditBoardView: View {
                     BoardView2(
                         board: $model.game.board,
                         squareLength: squareLength,
-                        dragEnabled: isDragEnabled,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in
                             //print("game.board.squares: \(game.board.squares.flatMap { $0 }.count)")
@@ -193,16 +191,6 @@ struct EditBoardView: View {
             //
             .simultaneousGesture(panGesture(sideLength: squareLength))
             .simultaneousGesture(zoomGesture())
-            
-            // Double tap to toggle isDragEnabled
-//            .gesture(TapGesture(count: 2).onEnded {
-//                isDragEnabled.toggle()
-//            })
-            .toolbar {
-                Button(isDragEnabled ? "Drag Board" : "Drag Pieces") {
-                    isDragEnabled.toggle()
-                }
-            }
             .onAppear {
                 // Find the square type
                 let coloredSquareFile = game.board.squares.first(where: { $0.contains { $0.state != .nonexistent } })

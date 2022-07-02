@@ -11,59 +11,84 @@ import SwiftUI
 struct GameView: View {
 	@ObservedObject var game: GameViewModel
 	
+    // TODO: Refactor GameView and EditBoardView to use the same code for dragging the board vs the pieces
+    
 	var body: some View {
         GeometryReader { geometry in
-//
-//                VStack(spacing: 0) {
-//                    Spacer()
-//                    HStack(spacing: 0) {
-//                        Spacer()
-//                        BoardView(
-//                            squares: .constant(game.squares),
-//                            isReversed: game.isReversed,
-//                            activePlayer: game.activePlayer,
-//                            selectedSquares: game.selectedSquares,
-//                            legalMoves: game.legalMoves,
-//                            onSelected: { position in
-//                                print("selected square!")
-//                                game.selectSquare(at: position)
-//                            },
-//                            onDrag: { startingPosition, endingPosition in
-//                                game.selectSquare(at: startingPosition)
-//                                game.selectSquare(at: endingPosition)
-//                            }
-//                        )
-//                        .frame(width: geometry.size.width, height: (geometry.size.width) * (CGFloat(game.ranks) / CGFloat(game.files)))
-//
-//                        Spacer()
-//                    }
-//                    Spacer()
-//                }
-//            }
-            VStack(spacing: 0) {
-                Spacer()
-                Text(victoryText)
-                BoardView(
-                    squares: .constant(game.squares),
-                    isReversed: game.isReversed,
-                    activePlayer: game.activePlayer,
+            let squareLength = CGFloat(geometry.size.smallestSide) / 10
+            ZStack {
+                Color.white
+                
+                BoardView2(
+                    board: $game.game.board,
                     selectedSquares: game.selectedSquares,
                     legalMoves: game.legalMoves,
-                    onSelected: { position in
-                        print("selected square!")
-                        game.selectSquare(at: position)
+                    squareLength: squareLength,
+                    onSelected: { selectedPosition in
+                        game.selectSquare(at: selectedPosition)
                     },
-                    onDrag: { startingPosition, endingPosition in
-                        game.selectSquare(at: startingPosition)
-                        game.selectSquare(at: endingPosition)
+                    onDrag: { (startingPosition, endingPosition) in
+                        game.onDrag(from: startingPosition, to: endingPosition)
+                    },
+                    updateIsDraggingPiece: { isDraggingPiece in
+                        self.isDraggingPiece = isDraggingPiece
                     }
                 )
-                .frame(width: geometry.size.width, height: (geometry.size.width) * (CGFloat(game.ranks) / CGFloat(game.files)))
-                
-                Spacer()
+                .frame(width: squareLength * CGFloat(game.files),
+                       height: squareLength * CGFloat(game.ranks)
+                )
             }
+            .offset(x: 0, y: -squareLength)
+            .offset(panOffset)
+            .animation(.spring(), value: panOffset)
+            .scaleEffect(zoomScale)
+            .simultaneousGesture(panGesture(sideLength: squareLength))
+            .simultaneousGesture(zoomGesture())
         }
 	}
+    
+    // Gestures
+    @State var isDraggingPiece = false
+    
+    @GestureState private var gestureZoomScale: CGFloat = 1.0
+    @State var steadyStateZoomScale: CGFloat = 1.0
+    
+    private var zoomScale: CGFloat {
+        gestureZoomScale *  steadyStateZoomScale
+    }
+    
+    private func zoomGesture() -> some Gesture {
+        MagnificationGesture()
+            .updating($gestureZoomScale) { latestGestureScale, gestureZoomScale, transaction in
+                gestureZoomScale = latestGestureScale
+                
+                print("GestureZoomScale: \(gestureZoomScale)")
+            }
+            .onEnded { finalGestureScale in
+                steadyStateZoomScale *= finalGestureScale
+            }
+    }
+    
+    @GestureState private var gesturePanOffset: CGSize = .zero
+    @State private var steadyStatePanOffset: CGSize = .zero
+    
+    private var panOffset: CGSize {
+        return (steadyStatePanOffset + gesturePanOffset) / zoomScale
+    }
+    
+    private func panGesture(sideLength: CGFloat) -> some Gesture {
+        DragGesture(minimumDistance: 12)
+            .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, transaction in
+                if !isDraggingPiece {
+                    gesturePanOffset = latestDragGestureValue.translation
+                }
+            }
+            .onEnded { finalDragGestureValue in
+                if !isDraggingPiece {
+                    steadyStatePanOffset = steadyStatePanOffset + finalDragGestureValue.translation
+                }
+            }
+    }
 	
 	var victoryText: String {
 		switch game.gameState {

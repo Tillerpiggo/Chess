@@ -10,23 +10,32 @@ import SwiftUI
 
 // Handles the Game View, where you can test a game or play it (only worries about the board)
 class GameViewModel: ObservableObject {
-	@Published private(set) var game: Game
-	
-	var squares: [[Square]] {
-//        if game.activePlayer == .white {
-//            return game.board.squares
-//        } else {
-//            return game.board.otherSideSquares
-//        }
+    
+    // TODO: Refactor BoardView2 to not require a Binding (?)
+    // I'm doing it for now because im not 100% on if the updating will work without it
+    @Published var game: Game
+    @Published private(set) var selectedSquares: [Position] = []
+    
+    var squares: [[Square]] {
         return game.board.squares
-	}
+    }
     
     var ranks: Int {
         return game.board.ranks
     }
-    
+
     var files: Int {
         return game.board.files
+    }
+    
+    var bottomLeftSquareColor: Square.SquareType {
+        return game.board.squares[Position(rank: 0, file: 0)]?.type ?? .dark
+    }
+    
+    func onDrag(from startingPosition: Position, to endingPosition: Position) {
+        if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
+            game.move(move)
+        }
     }
     
     var isReversed: Bool {
@@ -36,33 +45,31 @@ class GameViewModel: ObservableObject {
     var activePlayer: Player {
         return game.activePlayer
     }
-	
-	var legalMoves: [Position] {
-		if let selectedSquare = selectedSquares.first, let piece = squares[selectedSquare]?.piece {
-			return game.legalMoves(for: piece)
-		} else {
-			return []
-		}
-	}
-	
-	var gameState: Game.GameState { game.gameState }
-	
-	@Published private(set) var selectedSquares: [Position] = []
-	
+    
+    var legalMoves: [Position] {
+        if let selectedSquare = selectedSquares.first, let piece = squares[selectedSquare]?.piece {
+            return game.legalMoves(for: piece)
+        } else {
+            return []
+        }
+    }
+    
+    var gameState: Game.GameState { game.gameState }
+    
 	init(game: Game) {
 		self.game = game
 	}
-	
+    
 	func selectSquare(at position: Position) {
 		print("selectedPosition: \(position)")
-		
+
 		// If you selected your own piece
 		if game.board.squares[position]?.piece?.owner == game.activePlayer {
 			selectedSquares = [position]
-            
+
 		// You selected an empty square or an enemy piece
 		} else {
-			
+
 			// You already selected a square
 			if let selectedSquare = selectedSquares.first, let move = Move(start: selectedSquare, end: position) {
 				// Try to move and reset selected square
@@ -72,61 +79,6 @@ class GameViewModel: ObservableObject {
 			}
 		}
 	}
-	
+
 	func legalMoves(for piece: Piece) -> [Position] { game.legalMoves(for: piece) }
 }
-
-/*
-class StandardChessGame {
-    var chessGame: Game = StandardChessGame.createNewStandardChessGame()
-    
-    private static func createNewStandardChessGame() -> Game {
-        // TODO: - Fix this; produces random players each new game
-        return Game(board: Board(pieces: []), players: [Player(), Player()])
-    }
-    
-    struct StandardBoard: ChessBoard {
-        
-        // MARK: - Interface
-        var allPieces: [Piece] {
-            return pieces
-        }
-        
-        func move(_ piece: Piece, to position: Position) -> Bool {
-            let squareStateForPosition: (Position) -> SquareState = { position in
-                self.squareState(of: position)
-            }
-            return piece.canMove(to: position, squareStateForPosition: squareStateForPosition)
-        }
-        
-        init(pieces: [Piece]) {
-            self.pieces = pieces
-        }
-        
-        // MARK: - Private stuff
-        private var pieces: [Piece]
-        
-        // Returns whether a given square is empty, occupied, or nonexitsent
-        private func squareState(of position: Position) -> SquareState {
-            guard position.rank < 8, position.file < 8 else { return .nonexistent }
-            for piece in pieces {
-                if piece.position == position {
-                    return .occupied
-                }
-            }
-            
-            return .empty
-        }
-    }
-    
-    init() {
-        // TODO - import players from some outside source
-    }
-}
-
-enum SquareState {
-    case nonexistent
-    case empty
-    case occupied
-}
-*/

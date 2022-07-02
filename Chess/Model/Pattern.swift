@@ -201,7 +201,7 @@ extension Pattern {
 					if square.state != .empty { isPathObstructed = true }
 				}
 				
-				return !isPathObstructed
+                return !isPathObstructed
 			} else { // You're moving to an adjacent square
 				return true
 			}

@@ -49,12 +49,17 @@ struct Piece: Identifiable {
 	
 	private func canMove(move: Move, in board: Board) -> Bool {
 		if board.squares[move.end]?.piece?.owner != self.owner { // You are moving to an empty square or capturing a piece
-			if let _ = board.squares[move.end]?.piece { // You are capturing a piece
-				return mover.canCapture(move, board)
-			} else { // You are moving to an empty square
-				// If it's the first move, use the firstMoveMover. If you've already moved, use the normal mover.
-				return hasMoved ? mover.canMove(move, board) : firstMoveMover.canMove(move, board)
-			}
+//            if board.squares[move.end]?.state == .occupied { // You are capturing a piece
+//				return mover.canCapture(move, board)
+//			} else { // You are moving to an empty square
+//				// If it's the first move, use the firstMoveMover. If you've already moved, use the normal mover.
+//				return hasMoved ? mover.canMove(move, board) : firstMoveMover.canMove(move, board)
+//			}
+            switch board.squares[move.end]?.state {
+            case .occupied: return mover.canCapture(move, board)
+            case .nonexistent: return false // TODO: add bool to allow some pieces to create squares
+            default: return hasMoved ? mover.canMove(move, board) : firstMoveMover.canMove(move, board)
+            }
 		} else { // You are trying to capture your own piece
 			// TODO: - insert cannibal check here (if piece is cannibal, then it can capture its own kind
 			print("false")

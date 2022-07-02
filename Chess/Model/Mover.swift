@@ -46,7 +46,7 @@ struct Mover {
 			}
 		}
 		
-		return canMove
+        return canMove
 	}
 	
 	func appendingPatterns(canMovePatterns: [Pattern], canCapturePatterns: [Pattern]) -> Mover {

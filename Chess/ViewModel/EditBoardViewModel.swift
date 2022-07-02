@@ -9,6 +9,8 @@
 
 import SwiftUI
 
+// Manages an interface to modifying a board by adding or removing squares,
+// By moving pieces, and by managing the empty "ghost" board
 class EditBoardViewModel: ObservableObject {
     var bottomLeftSquareColor: Square.SquareType {
         return game.board.squares[Position(rank: 0, file: 0)]?.type ?? .dark
