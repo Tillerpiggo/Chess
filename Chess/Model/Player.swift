@@ -17,13 +17,15 @@ struct Player: Identifiable, Equatable {
 */
 
 // Might add stuff like red, blue, green, and yellow for 4-player
+// blackOrWhite means either black or white (for archetype pieces)
 enum Player: Int, Equatable {
-	case white = 0, black = 1 
+	case white = 0, black = 1, blackOrWhite = 2
 	
 	var string: String {
 		switch self {
 		case .black: return "Black"
 		case .white: return "White"
+        default: return "Implement/fix this; see enum Player"
 		}
 	}
 }

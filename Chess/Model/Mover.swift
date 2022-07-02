@@ -55,10 +55,16 @@ struct Mover {
 			canCapturePatterns: self.canCapturePatterns.appending(canCapturePatterns)
 		)
 	}
-	
+    
+	// For convenience on appendingPatterns
 	func appendingPatterns(_ patterns: [Pattern]) -> Mover {
 		return self.appendingPatterns(canMovePatterns: patterns, canCapturePatterns: patterns)
 	}
+    
+    // For even more convenience
+    func appendingPattern(_ pattern: Pattern) -> Mover {
+        return self.appendingPatterns([pattern])
+    }
 	
 	init(canMovePatterns: [Pattern], canCapturePatterns: [Pattern]) {
 		self.canMove = Mover.canMove(patterns: canMovePatterns)
@@ -136,31 +142,81 @@ extension Mover {
 		return [Pattern(.forwardSlash), Pattern(.backslash), oneSquareDistanceRestriction]
 	}()
 	
-	static let pawn: Mover = {
+	static let whitePawn: Mover = {
 		var oneSquareDistanceRestriction = Pattern(
 			.outsideDistance,
 			isRestricting: true,
 			rankDistance: 1,
 			fileDistance: 0
-		)
+        )
+        
+        var directionRestriction = Pattern(
+            .inDirections,
+            isRestricting: true,
+            directions: [.down]
+        )
 		
 		let canMovePatterns = [Pattern(.vertical), oneSquareDistanceRestriction]
 		
-		return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns)
+        return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns).appendingPattern(directionRestriction)
 	}()
 	
-	static let pawnFirstMove: Mover = {
+	static let whitePawnFirstMove: Mover = {
 		var twoSquareDistanceRestriction = Pattern(
 			.outsideDistance,
 			isRestricting: true,
 			rankDistance: 2,
 			fileDistance: 0
 		)
+        
+        var directionRestriction = Pattern(
+            .inDirections,
+            isRestricting: true,
+            directions: [.down]
+        )
 		
 		let canMovePatterns = [Pattern(.vertical), twoSquareDistanceRestriction]
 		
-		return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns)
+        return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns).appendingPattern(directionRestriction)
 	}()
+    
+    static let blackPawn: Mover = {
+        var oneSquareDistanceRestriction = Pattern(
+            .outsideDistance,
+            isRestricting: true,
+            rankDistance: 1,
+            fileDistance: 0
+        )
+        
+        let canMovePatterns = [Pattern(.vertical), oneSquareDistanceRestriction]
+        
+        var directionRestriction = Pattern(
+            .inDirections,
+            isRestricting: true,
+            directions: [.up]
+        )
+        
+        return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns).appendingPattern(directionRestriction)
+    }()
+    
+    static let blackPawnFirstMove: Mover = {
+        var twoSquareDistanceRestriction = Pattern(
+            .outsideDistance,
+            isRestricting: true,
+            rankDistance: 2,
+            fileDistance: 0
+        )
+        
+        let canMovePatterns = [Pattern(.vertical), twoSquareDistanceRestriction]
+        
+        var directionRestriction = Pattern(
+            .inDirections,
+            isRestricting: true,
+            directions: [.up]
+        )
+        
+        return Mover(canMovePatterns: canMovePatterns, canCapturePatterns: pawnCapturePatterns).appendingPattern(directionRestriction)
+    }()
 	
 	static let knight: Mover = { Mover(patterns: [Pattern(.knight)]) }()
 	static let bishop: Mover = { Mover(patterns: [Pattern(.forwardSlash), Pattern(.backslash)]) }()

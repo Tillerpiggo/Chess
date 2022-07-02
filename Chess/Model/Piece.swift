@@ -13,6 +13,7 @@ struct Piece: Identifiable {
 	
 	var id: UUID
 	
+    /// Who owns the piece. If this piece is placed on a board, this is literal. If this is in the games "pieces" field, then this denotes what owners the piece can have.
 	var owner: Player
     
     /// Whether the piece has moved yet (mainly useful for pieces such as the Pawn)
@@ -30,6 +31,12 @@ struct Piece: Identifiable {
 	var firstMoveMover: Mover // Tells the piece how to move if it is on the first move
 	var isFirstMoveSameAsNormal: Bool
 	var isCapturesSameAsNormal: Bool
+    
+    /// This determines where the piece needs to go in order to be promoted
+    var promotionZone: [Position]
+    
+    /// This determines what pieces that piece can promote into
+    var promotionPieces: [UUID]
 	
 	var name: String
 	
@@ -67,7 +74,7 @@ struct Piece: Identifiable {
 		}
 	}
 	
-	init(name: String, image: PieceImage, mover: Mover, position: Position, owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, position: Position, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -75,11 +82,13 @@ struct Piece: Identifiable {
 		self.isFirstMoveSameAsNormal = true
 		self.isCapturesSameAsNormal = (mover.canMovePatterns == mover.canCapturePatterns)
 		self.position = position
+        self.promotionZone = promotionZone
+        self.promotionPieces = promotionPieces
 		self.owner = owner
 		self.id = id
 	}
 	
-	init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -87,6 +96,8 @@ struct Piece: Identifiable {
 		self.isFirstMoveSameAsNormal = (mover == firstMoveMover)
 		self.isCapturesSameAsNormal = (mover.canMovePatterns == mover.canCapturePatterns)
 		self.position = position
+        self.promotionZone = promotionZone
+        self.promotionPieces = promotionPieces
 		self.owner = owner
 		self.id = id
 	}
@@ -97,6 +108,8 @@ struct Piece: Identifiable {
 			let image = PieceImage(rawValue: Int(pieceModel.pieceImage)),
 			let positionModel = pieceModel.position, let position = Position(positionModel: positionModel),
 			let playerModel = pieceModel.owner, let owner = Player(rawValue: Int(playerModel.player)),
+            let promotionZoneModels = pieceModel.promotionZone?.array as? [PositionModel],
+            let promotionPieceModels = pieceModel.promotionPieces as? [UUID],
 			let id = pieceModel.id
 			//let moverModel = pieceModel.mover, let mover = Mover(moverModel: moverModel),
 			//let firstMoveMoverModel = pieceModel.firstMoveMover, let firstMoveMover = Mover(moverModel: firstMoveMoverModel)
@@ -120,12 +133,20 @@ struct Piece: Identifiable {
 		self.name = name
 		self.image = image
 		
+        // Movers
 		self.mover = mover
 		self.firstMoveMover = firstMoveMover
 		self.isFirstMoveSameAsNormal = pieceModel.isFirstMoveSameAsNormal
 		self.isCapturesSameAsNormal = pieceModel.isCapturesSameAsNormal
+        
+        
 		
-		self.position = position
+        
+        // Promotion
+        self.promotionZone = promotionZoneModels.compactMap { Position(positionModel: $0) }
+        self.promotionPieces = promotionPieceModels
+        
+        self.position = position
 		self.owner = owner
 		self.hasMoved = pieceModel.hasMoved
 		self.isImportant = pieceModel.isImportant
@@ -179,24 +200,53 @@ struct Piece: Identifiable {
 			owner: owner
 		)
 	}
+    
+    // For both pawns, promotion pieces must be specified in terms of the ID's of the other pieces
+    static func whitePawn(position: Position) -> Piece {
+        let promotionZone = (0...7).map { Position(rank: 7, file: $0) }
+        
+        return Piece(
+            name: "Pawn (white)",
+            image: .pawn,
+            mover: Mover.whitePawn,
+            firstMoveMover: Mover.whitePawnFirstMove,
+            position: position,
+            promotionZone: promotionZone,
+            owner: .white
+        )
+    }
+    
+    static func blackPawn(position: Position) -> Piece {
+        let promotionZone = (0...7).map { Position(rank: 0, file: $0) }
+        
+        return Piece(
+            name: "Pawn (black)",
+            image: .pawn,
+            mover: Mover.blackPawn,
+            firstMoveMover: Mover.blackPawnFirstMove,
+            position: position,
+            promotionZone: promotionZone,
+            owner: .black
+        )
+    }
 	
-	static func pawn(position: Position, owner: Player) -> Piece {
-		// If pawns are white, they should only go up, and if they are black they should only go down
-		let directionRestrictionPattern = Pattern(
-			.inDirections,
-			isRestricting: true,
-			directions: (owner == .white) ? [.down] : [.up]
-		)
-		
-		return Piece(
-			name: "Pawn",
-			image: .pawn,
-			mover: Mover.pawn.appendingPatterns([directionRestrictionPattern]),
-			firstMoveMover: Mover.pawnFirstMove.appendingPatterns([directionRestrictionPattern]),
-			position: position,
-			owner: owner
-		)
-	}
+//	static func pawn(position: Position, owner: Player) -> Piece {
+//		// If pawns are white, they should only go up, and if they are black they should only go down
+//		let directionRestrictionPattern = Pattern(
+//			.inDirections,
+//			isRestricting: true,
+//			directions: (owner == .white) ? [.down] : [.up]
+//		)
+//
+//		return Piece(
+//			name: "Pawn",
+//			image: .pawn,
+//			mover: Mover.pawn.appendingPatterns([directionRestrictionPattern]),
+//			firstMoveMover: Mover.pawnFirstMove.appendingPatterns([directionRestrictionPattern]),
+//			position: position,
+//			owner: owner
+//		)
+//	}
 	
 	enum PieceImage: Int {
 		case king = 0, queen = 1, bishop = 2,

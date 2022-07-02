@@ -78,8 +78,10 @@ struct Square: Equatable, Identifiable, Hashable {
 			piece = Piece.knight(position: position, owner: owner)
 		case .rook:
 			piece = Piece.rook(position: position, owner: owner)
-		case .pawn:
-			piece = Piece.pawn(position: position, owner: owner)
+		case .whitePawn:
+			piece = Piece.whitePawn(position: position)
+        case .blackPawn:
+            piece = Piece.blackPawn(position: position)
 		}
 		
 		piece?.id = id
@@ -90,7 +92,7 @@ struct Square: Equatable, Identifiable, Hashable {
 	}
 	
 	enum StandardPieceType: Hashable {
-		case king, queen, bishop, knight, rook, pawn
+		case king, queen, bishop, knight, rook, whitePawn, blackPawn
 	}
 	///
     

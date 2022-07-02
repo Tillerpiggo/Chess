@@ -98,6 +98,8 @@ struct ModelConverter {
 		pieceModel.id = piece.id
 		pieceModel.position = positionModel(from: piece.position)
 		pieceModel.pieceImage = Int16(piece.image.rawValue)
+        pieceModel.promotionZone = positionModelSet(from: piece.promotionZone)
+        pieceModel.promotionPieces = piece.promotionPieces
 		pieceModel.owner = playerModel(from: piece.owner)
 		pieceModel.mover = moverModel(from: piece.mover, piece: pieceModel, firstMove: false)
 		pieceModel.firstMoveMover = moverModel(from: piece.firstMoveMover, piece: pieceModel, firstMove: true)
@@ -140,6 +142,11 @@ struct ModelConverter {
 		return moverModel
 		
 	}
+    
+    /// Creates a new NSOrderedSet from [Position]
+    func positionModelSet(from positions: [Position]) -> NSOrderedSet {
+        return NSOrderedSet(array: positions.map { positionModel(from: $0) })
+    }
 	
 	/// Creates a new NSOrderedSet from [Pattern]
 	func patternModelSet(from patterns: [Pattern], mover: MoverModel, captures: Bool) -> NSOrderedSet {

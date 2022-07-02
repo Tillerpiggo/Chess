@@ -350,21 +350,21 @@ extension Pattern {
 		withinDistance(ranks: 1, files: 1)(move, board)
 	}
 	
-	// Returns all the squares within (inclusive) a certain number of ranks/files
+	/// Returns all the squares within (inclusive) a certain number of ranks/files
 	static func withinDistance(ranks: Int, files: Int) -> ((Move, Board) -> Bool) {
 		return { (move, board) in
 			move.horizontalDistance <= files && move.verticalDistance <= ranks
 		}
 	}
 	
-	// Returns all the squares beyond (exclusive) a certain number of ranks/files. Primarily used as a restriction.
+	/// Returns all the squares beyond (exclusive) a certain number of ranks/files. Primarily used as a restriction.
 	static func outsideDistance(ranks: Int, files: Int) -> ((Move, Board) -> Bool) {
 		return { (move, board) in
 			return move.horizontalDistance > files || move.verticalDistance > ranks
 		}
 	}
 	
-	// Returns all squares in a certain direction. Primarily used as a restriction.
+	/// Returns all squares in a certain direction. Primarily used as a restriction.
 	static func inDirections(_ directions: [Move.Direction]) -> ((Move, Board) -> Bool) {
 		return { (move, board) in
 			

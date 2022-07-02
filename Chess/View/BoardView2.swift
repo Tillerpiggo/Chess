@@ -94,16 +94,6 @@ struct BoardView2: View {
                         )
                 }
                 
-                ForEach(legalMoves.compactMap { $0 }, id: \.self) { position in
-                    Circle()
-                        .fill(.black.opacity(0.2))
-                        .frame(width: squareLength * 0.3, height: squareLength * 0.3)
-                        .offset(
-                            x: CGFloat(position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
-                            y: CGFloat(board.ranks - position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
-                        )
-                }
-                
                 if let selectedSquare = selectedSquare,
                    let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: squareLength, startingPosition: selectedSquare.position)],
                    square.state != .nonexistent, selectedSquare.piece != nil {
@@ -138,6 +128,16 @@ struct BoardView2: View {
                 .opacity(pieceOpacity)
                 .animation(Animation.easeInOut(duration: 0.3), value: pieceOpacity)
                 
+                ForEach(legalMoves.compactMap { $0 }, id: \.self) { position in
+                    Circle()
+                        .fill(.black.opacity(0.2))
+                        .frame(width: squareLength * 0.3, height: squareLength * 0.3)
+                        .offset(
+                            x: CGFloat(position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
+                            y: CGFloat(board.ranks - position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
+                        )
+                }
+                
                 // The piece being dragged
                     
                     
@@ -170,9 +170,9 @@ struct BoardView2: View {
 //                            //}
 //                        }
 //                    }
-                    if let position = touchDownPosition {
-                        onSelected(position)
-                    }
+//                    if let position = touchDownPosition {
+//                        onSelected(position)
+//                    }
                 } else if type == .ended {
                     let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                     print("selectedPosition (BoardView): \(position)")

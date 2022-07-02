@@ -16,7 +16,7 @@ struct PieceListView: View {
 	@State var isAddPieceViewShowing = false
 	
 	var defaultPiece: Piece = {
-		var pawn = Piece.pawn(position: Position(rank: 0, file: 0), owner: .white)
+		var pawn = Piece.whitePawn(position: Position(rank: 0, file: 0))
 		pawn.name = ""
 		
 		return pawn

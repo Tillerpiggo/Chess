@@ -38,6 +38,11 @@ class GameViewModel: ObservableObject {
         }
     }
     
+    // If the game is promoting, promotes the promoting piece to the given choice
+    func promoteTo(_ piece: Piece) {
+        game.promoteTo(piece)
+    }
+    
     var isReversed: Bool {
         return game.activePlayer == .black
     }
@@ -55,6 +60,18 @@ class GameViewModel: ObservableObject {
     }
     
     var gameState: Game.GameState { game.gameState }
+    var promotablePieces: [Piece] {
+        switch game.gameState {
+        case let .promoting(piece):
+            return piece.promotionPieces.compactMap { id in
+                var promotionOption = game.piece(id.uuidString)
+                promotionOption?.owner = activePlayer
+                
+                return promotionOption
+            }
+        default: return []
+        }
+    }
     
 	init(game: Game) {
 		self.game = game

@@ -54,7 +54,7 @@ struct EditPieceView_Previews: PreviewProvider {
     static var previews: some View {
         EditPieceView(
 			title: "Add Piece",
-			piece: Piece.pawn(position: Position(rank: 0, file: 0), owner: .white),
+			piece: Piece.rook(position: Position(rank: 0, file: 0), owner: .white),
 			isPresented: .constant(true),
 			didPressDone: { piece in }
 		)

@@ -56,6 +56,12 @@ struct Board {
 		}
 	}
     
+    /// Promotes the piece at the given square to the other piece
+    mutating func promotePiece(at position: Position, to piece: Piece) {
+        squares[position]?.setPiece(piece)
+        squares[position]?.state = .occupied // just to make sure
+    }
+    
     /// Moves a piece and changes the startingPieceIDs
     mutating func moveSetup(move: Move) {
         if let boardState = boardStateSetup(after: move) {
@@ -193,17 +199,31 @@ struct Board {
 		// This is just a fast way to get a position with a specific rank.
 		let p: (Int) -> Position = { rank in Position(rank: rank, file: 0) }
 		
-		// The owner of the piece. Irrelevant since these are in Game.pieces.
-		let o: Player = .white
+		// The owner of the piece. All but the pawn can be either black or white
+		let o: Player = .blackOrWhite
 		
-		let pieces: [Square.StandardPieceType: Piece] = [
-			.pawn: .pawn(position: p(0), owner: o),
-			.knight: .knight(position: p(1), owner: o),
-			.bishop: .bishop(position: p(2), owner: o),
-			.rook: .rook(position: p(3), owner: o),
-			.queen: .queen(position: p(4), owner: o),
-			.king: .king(position: p(5), owner: o)
+		var pieces: [Square.StandardPieceType: Piece] = [
+			.whitePawn: .whitePawn(position: p(0)),
+            .blackPawn: .blackPawn(position: p(0)),
+			.knight: .knight(position: p(2), owner: o),
+			.bishop: .bishop(position: p(3), owner: o),
+			.rook: .rook(position: p(4), owner: o),
+			.queen: .queen(position: p(5), owner: o),
+			.king: .king(position: p(6), owner: o)
 		]
+        
+        
+        // Set up promotion pieces for white and black
+        let promotionPieceTypes: [Square.StandardPieceType] = [.knight, .bishop, .rook, .queen]
+        let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
+        
+        var whitePawn = pieces[.whitePawn]!
+        whitePawn.promotionPieces = promotionPieces
+        pieces[.whitePawn] = whitePawn
+        
+        var blackPawn = pieces[.blackPawn]!
+        blackPawn.promotionPieces = promotionPieces
+        pieces[.blackPawn] = blackPawn
 		
 		return pieces
 	}
@@ -249,9 +269,9 @@ struct Board {
 		
 		for (fileIndex, _) in squares.enumerated() {
 			squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
-			squares[fileIndex][1].setPiece(.pawn, owner: .white, id: ids[.pawn]!)
+			squares[fileIndex][1].setPiece(.whitePawn, owner: .white, id: ids[.whitePawn]!)
 			squares[fileIndex][7].setPiece(backRank[fileIndex], owner: .black, id: ids[backRank[fileIndex]]!)
-            squares[fileIndex][6].setPiece(.pawn, owner: .black, id: ids[.pawn]!)
+            squares[fileIndex][6].setPiece(.blackPawn, owner: .black, id: ids[.blackPawn]!)
 		}
 		
 		return Board(squares: squares)

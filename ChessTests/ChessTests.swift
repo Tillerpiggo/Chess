@@ -50,7 +50,7 @@ class ChessTests: XCTestCase {
 	func testSquareConversionToCoreData() throws {
 		let position = Position(rank: 3, file: 2)
 
-		let pawn = Piece.pawn(position: position, owner: .black)
+		let pawn = Piece.blackPawn(position: position)
 		let square = Square(state: .occupied, piece: pawn, startingPieceID: pawn.id, position: position, type: .dark)
 		let otherSquare = Square(state: .occupied, piece: pawn, startingPieceID: pawn.id, position: position, type: .dark)
 

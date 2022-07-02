@@ -29,9 +29,21 @@ struct Game: Identifiable, Hashable {
 	
 	enum GameState {
 		case onGoing, draw
+        case promoting(Piece)
 		case victory(Player)
 	}
     
+    // If the game is promoting, promotes the promoting piece to the given piece
+    mutating func promoteTo(_ piece: Piece) {
+        switch gameState {
+        case let .promoting(promotingPiece):
+            board.promotePiece(at: promotingPiece.position, to: piece)
+            gameState = .onGoing
+            nextTurn()
+        default: return
+        }
+    }
+
     // Performs a move on the board and changes the turn (if legal). If illegal, does nothing.
     mutating func move(_ move: Move, onlyAllowLegalMoves: Bool = true) {
         
@@ -40,18 +52,30 @@ struct Game: Identifiable, Hashable {
 		
         // Proceed if the move is legal OR if we don't care about move legality (and make sure it's possible on the board)
         if (isMoveLegal(move) || !onlyAllowLegalMoves), board.move(move: move) {
-			let previousPlayer = activePlayer
-			activePlayer = player(after: activePlayer)!
-			
-			if playerHasLegalMoves(activePlayer) == false {
-				if importantPiecesThreatened(forPlayer: activePlayer, board: board) > 0 {
-					// Checkmate
-					gameState = .victory(previousPlayer)
-				} else {
-					// Stalemate
-					gameState = .draw
-				}
-			}
+            
+            // Check for promotion
+            if let piece = board.squares[move.end]?.piece,
+               piece.promotionZone.contains(move.end) {
+                gameState = .promoting(piece)
+            } else {
+                nextTurn()
+            }
+        }
+    }
+    
+    // Goes to the next turn, by changing the active player and checking for stalemate/victory
+    private mutating func nextTurn() {
+        let previousPlayer = activePlayer
+        activePlayer = player(after: activePlayer)!
+        
+        if playerHasLegalMoves(activePlayer) == false {
+            if importantPiecesThreatened(forPlayer: activePlayer, board: board) > 0 {
+                // Checkmate
+                gameState = .victory(previousPlayer)
+            } else {
+                // Stalemate
+                gameState = .draw
+            }
         }
     }
     
@@ -112,6 +136,13 @@ struct Game: Identifiable, Hashable {
 		
 		return numberOfImportantPiecesThreatened
 	}
+    
+    func piece(_ id: String) -> Piece? {
+        return pieces.first(where: { $0.id.uuidString == id })
+    }
+    
+    // Convenience
+    private func piece(_ id: UUID) -> Piece? { piece(id.uuidString) }
 	
 	init(board: Board, pieces: [Piece], players: [Player], name: String) {
 		self.name = name

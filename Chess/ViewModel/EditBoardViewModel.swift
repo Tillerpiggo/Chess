@@ -29,14 +29,21 @@ class EditBoardViewModel: ObservableObject {
     @Published var emptyBoard: Board
     
     var pieces: [Piece] {
-        if selectedPlayer == .white {
-            return game.pieces
-        } else {
-            return game.pieces.map { piece in
-                var blackPiece = piece
-                blackPiece.owner = .black
-                return blackPiece
-            }
+//        if selectedPlayer == .white {
+//            return game.pieces.filter { $0.owner == .white || $0.owner == .blackOrWhite }
+//        } else {
+//            return game.pieces.map { piece in
+//                var blackPiece = piece
+//                blackPiece.owner = .black
+//                return blackPiece
+//            }
+//        }
+        let selectedPieces = game.pieces.filter { $0.owner == selectedPlayer || $0.owner == .blackOrWhite }
+        
+        return selectedPieces.map { piece in
+            var newPiece = piece
+            newPiece.owner = selectedPlayer
+            return newPiece
         }
     }
     
@@ -56,7 +63,9 @@ class EditBoardViewModel: ObservableObject {
     }
     
     func onDrop(_ piece: Piece, at position: Position) {
-        game.board.squares[position]?.setPiece(piece)
+        var droppedPiece = piece
+        droppedPiece.owner = selectedPlayer
+        game.board.squares[position]?.setStartingPiece(droppedPiece)
         changedGame(game)
     }
     
@@ -74,7 +83,7 @@ class EditBoardViewModel: ObservableObject {
                 if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
                     game.board.squares[selectedPosition]?.setStartingPiece(nil)
                 } else {
-                    var piece = piece(selectedPiece.uuidString)!
+                    var piece = game.piece(selectedPiece.uuidString)!
                     piece.owner = selectedPlayer
                     game.board.squares[selectedPosition]?.setStartingPiece(piece)
                 }
@@ -103,10 +112,6 @@ class EditBoardViewModel: ObservableObject {
         }
         
         return directionRemoved
-    }
-    
-    private func piece(_ id: String) -> Piece? {
-        return game.pieces.first(where: { $0.id.uuidString == id })
     }
     
     /// Selects the position on the ghost board. This should add a square

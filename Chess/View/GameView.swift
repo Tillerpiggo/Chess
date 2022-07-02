@@ -13,6 +13,8 @@ struct GameView: View {
 	
     // TODO: Refactor GameView and EditBoardView to use the same code for dragging the board vs the pieces
     
+    @State private var isPromoting = false
+    
 	var body: some View {
         GeometryReader { geometry in
             let squareLength = CGFloat(geometry.size.smallestSide) / 10
@@ -26,9 +28,21 @@ struct GameView: View {
                     squareLength: squareLength,
                     onSelected: { selectedPosition in
                         game.selectSquare(at: selectedPosition)
+                        
+                        switch game.gameState {
+                        case .promoting:
+                            isPromoting = true
+                        default: break
+                        }
                     },
                     onDrag: { (startingPosition, endingPosition) in
                         game.onDrag(from: startingPosition, to: endingPosition)
+                        
+                        switch game.gameState {
+                        case .promoting:
+                            isPromoting = true
+                        default: break
+                        }
                     },
                     updateIsDraggingPiece: { isDraggingPiece in
                         self.isDraggingPiece = isDraggingPiece
@@ -44,6 +58,19 @@ struct GameView: View {
             .scaleEffect(zoomScale)
             .simultaneousGesture(panGesture(sideLength: squareLength))
             .simultaneousGesture(zoomGesture())
+        }
+        .alert("Important message", isPresented: $isPromoting) {
+            ForEach(game.promotablePieces, id: \.id) { piece in
+                Button {
+                    game.promoteTo(piece)
+                } label: {
+                    HStack {
+                        Image(piece.imageName)
+                        Text(piece.name)
+                    }
+                }
+
+            }
         }
 	}
     
@@ -93,7 +120,7 @@ struct GameView: View {
 	var victoryText: String {
 		switch game.gameState {
 		case let .victory(player): return "\(player.string) Won!"
-		case .onGoing: return ""
+        case .onGoing, .promoting: return ""
 		case .draw: return "Draw!"
 		}
 	}
