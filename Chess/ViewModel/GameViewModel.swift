@@ -63,9 +63,9 @@ class GameViewModel: ObservableObject {
     var promotablePieces: [Piece] {
         switch game.gameState {
         case let .promoting(piece):
-            return piece.promotionPieces.compactMap { id in
-                var promotionOption = game.piece(id.uuidString)
-                promotionOption?.owner = activePlayer
+            return piece.promotionPieces.compactMap { promotionPiece in
+                var promotionOption = promotionPiece
+                promotionOption.owner = activePlayer
                 
                 return promotionOption
             }

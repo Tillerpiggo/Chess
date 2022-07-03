@@ -8,34 +8,44 @@
 
 import SwiftUI
 
-struct PieceListView: View {
+struct PieceListView<Content>: View where Content: View {
 	
 	@StateObject var pieceManager: PieceManager
 	
-	@Binding var game: Game
+	//@Binding var game: Game
+    @State var pieces: [Piece]
+    var pieceBinding: (Piece) -> (Binding<Piece>)
+    var removePiece: (IndexSet) -> Void
+    var addView: (Binding<Bool>) -> Content
+    
 	@State var isAddPieceViewShowing = false
-	
-	var defaultPiece: Piece = {
-		var pawn = Piece.whitePawn(position: Position(rank: 0, file: 0))
-		pawn.name = ""
-		
-		return pawn
-	}()
 	
 	let rowColor = Color.rowColor
 	
-	func pieceBinding(from piece: Piece) -> Binding<Piece> {
-		let index = game.pieces.firstIndex(where: { $0.id == piece.id })!
-		return $game.pieces[index]
-	}
-	
+//	func pieceBinding(from piece: Piece) -> Binding<Piece> {
+//		let index = game.pieces.firstIndex(where: { $0.id == piece.id })!
+//		return $game.pieces[index]
+//	}
+    
+    init(pieceManager: PieceManager,
+         pieces: [Piece],
+         pieceBinding: @escaping (Piece) -> (Binding<Piece>),
+         removePiece: @escaping (IndexSet) -> Void,
+         addView: @escaping (Binding<Bool>) -> Content) {
+        self._pieceManager = StateObject<PieceManager>(wrappedValue: pieceManager)
+        self._pieces = State(wrappedValue: pieces)
+        self.pieceBinding = pieceBinding
+        self.removePiece = removePiece
+        self.addView = addView
+    }
+//
     var body: some View {
 		ZStack {
 			List {
-				ForEach(game.pieces) { piece in
+                ForEach(pieces) { piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
-                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(from: piece))
+                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(piece))
 					) {
 						HStack {
 							Image(piece.imageName)
@@ -50,7 +60,8 @@ struct PieceListView: View {
 					pieceManager.movePiece(from: source, to: destination)
 				}
 				.onDelete { (pieceIndex) in
-					pieceManager.removePiece(at: pieceIndex)
+					//pieceManager.removePiece(at: pieceIndex)
+                    removePiece(pieceIndex)
 				}
 				
 				Button(action: {
@@ -74,13 +85,14 @@ struct PieceListView: View {
 			.toolbar { EditButton() }
 			.listStyle(InsetGroupedListStyle())
 			.sheet(isPresented: $isAddPieceViewShowing) {
-				EditPieceView(
-					title: "Add Piece",
-					piece: defaultPiece,
-					isPresented: $isAddPieceViewShowing
-				) { piece in
-					pieceManager.addPiece(piece)
-				}
+//				EditPieceView(
+//					title: "Add Piece",
+//					piece: defaultPiece,
+//					isPresented: $isAddPieceViewShowing
+//				) { piece in
+//					pieceManager.addPiece(piece)
+//				}
+                addView($isAddPieceViewShowing)
 			}
 		}
 		

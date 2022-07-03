@@ -37,7 +37,7 @@ class PieceManager: ObservableObject {
 	
 	// MARK: - Interface
 	
-    // TODO: Refactor gameModel to be a property of this class itself, so it isn't always recalculated
+    // TODO: Refactor gameModel to be a property of this class itself, so it isn't always recalculated (or just refactor the whole get game model and get pieceModel thing)
     
 	func addPiece(_ piece: Piece) {
 		if let gameModel = converter.retrieveGameModel(game) {
@@ -74,7 +74,7 @@ class PieceManager: ObservableObject {
         if let gameModel = converter.retrieveGameModel(game),
            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
             pieceModel.isImportant = isImportant
-            saveContext();
+            saveContext()
         }
     }
     
@@ -82,7 +82,21 @@ class PieceManager: ObservableObject {
         if let gameModel = converter.retrieveGameModel(game),
            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
             pieceModel.canPromote = canPromote
-            saveContext();
+            saveContext()
+        }
+    }
+    
+    func removePromotionPiece(at indices: IndexSet, from piece: Piece) {
+        print("removing piece")
+        if let gameModel = converter.retrieveGameModel(game),
+           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+//            let index = pieceModel.promotionPieces as [PieceModel]
+//            pieceModel.removeFrreomPromotionPieces
+            let index = indices.map { $0 }.first!
+            pieceModel.removeFromPromotionPieces(at: index)
+//            pieceModel.promotion
+            objectWillChange.send()
+            saveContext()
         }
     }
 	
@@ -106,7 +120,7 @@ class PieceManager: ObservableObject {
 		}
 	}
     
-    
+    // Update the piece with the matching ID to have all of the same fields as the piece passed in to this function
     func updatePiece(_ piece: Piece) {
         if let gameModel = converter.retrieveGameModel(game),
             let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {

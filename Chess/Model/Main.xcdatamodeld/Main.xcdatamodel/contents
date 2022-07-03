@@ -41,12 +41,12 @@
         <attribute name="isImportant" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="pieceImage" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="promotionPieces" optional="YES" attributeType="Transformable" customClassName="[UUID]"/>
         <relationship name="firstMoveMover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="pieceFirstMove" inverseEntity="MoverModel"/>
         <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="pieces" inverseEntity="GameModel"/>
         <relationship name="mover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="piece" inverseEntity="MoverModel"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="piece" inverseEntity="PlayerModel"/>
         <relationship name="position" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel"/>
+        <relationship name="promotionPieces" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PieceModel"/>
         <relationship name="promotionZone" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PositionModel"/>
         <relationship name="square" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="piece" inverseEntity="SquareModel"/>
     </entity>
@@ -76,14 +76,14 @@
         <relationship name="startingPieceOwner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="square" inverseEntity="PlayerModel"/>
     </entity>
     <elements>
-        <element name="BoardModel" positionX="-63" positionY="0" width="128" height="73"/>
-        <element name="GameModel" positionX="-63" positionY="-18" width="128" height="133"/>
-        <element name="MoveModel" positionX="18" positionY="90" width="128" height="73"/>
-        <element name="MoverModel" positionX="-27" positionY="81" width="128" height="103"/>
-        <element name="PatternModel" positionX="-18" positionY="90" width="128" height="163"/>
-        <element name="PieceModel" positionX="-36" positionY="27" width="128" height="269"/>
-        <element name="PlayerModel" positionX="0" positionY="81" width="128" height="103"/>
-        <element name="PositionModel" positionX="-18" positionY="72" width="128" height="134"/>
-        <element name="SquareModel" positionX="-54" positionY="9" width="128" height="163"/>
+        <element name="BoardModel" positionX="-712.05078125" positionY="8.59375" width="128" height="73"/>
+        <element name="GameModel" positionX="-536.78515625" positionY="-213.62890625" width="128" height="133"/>
+        <element name="MoveModel" positionX="-656" positionY="752.55078125" width="128" height="73"/>
+        <element name="MoverModel" positionX="-222.82421875" positionY="-45.50390625" width="128" height="103"/>
+        <element name="PatternModel" positionX="-300.51953125" positionY="240.4375" width="128" height="163"/>
+        <element name="PieceModel" positionX="-1355.828125" positionY="150.3515625" width="128" height="269"/>
+        <element name="PlayerModel" positionX="-247.7890625" positionY="446.96875" width="128" height="103"/>
+        <element name="PositionModel" positionX="-879.33984375" positionY="436.26171875" width="128" height="134"/>
+        <element name="SquareModel" positionX="-464.9609375" positionY="529.984375" width="128" height="163"/>
     </elements>
 </model>

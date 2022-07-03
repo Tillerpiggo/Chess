@@ -39,7 +39,7 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
         let pieceManager = ModelManager<PieceModel>(
             persistenceController: persistenceController,
             sortDescriptors: [NSSortDescriptor(keyPath: \PieceModel.position!.rank, ascending: true)],
-            predicate: NSPredicate(format: "%K IN %@", (\PieceModel.id)._kvcKeyPathString!, piece.promotionPieces)
+            predicate: NSPredicate(format: "%K IN %@", (\PieceModel.id)._kvcKeyPathString!, piece.promotionPieces.map { $0.id })
         )
         
         return pieceManager

@@ -17,9 +17,18 @@ struct GameDetailView: View {
     
     private let lengthPercent: CGFloat = 0.82//0.908 // percent of the width that views in the list take up
     private let totalMargin: CGFloat = 0
+    
+    var defaultPiece: Piece = {
+        var pawn = Piece.whitePawn(position: Position(rank: 0, file: 0))
+        pawn.name = ""
+        
+        return pawn
+    }()
 	
     var body: some View {
-		GeometryReader { geometry in
+        let pieceManager = gameManager.pieceManager(for: game)
+        
+		return GeometryReader { geometry in
 //            ScrollView {
 //                VStack {
 //                    BoardView2(board: $game.board, squareLength: geometry.size.width - 48)
@@ -71,10 +80,8 @@ struct GameDetailView: View {
                                 .foregroundColor(.rowTextColor)
                         }
                                        
-                        NavigationLink(destination:
-                            PieceListView(pieceManager: gameManager.pieceManager(for: game), game: $game)
-                                .environmentObject(gameManager)
-                        ) {
+                        NavigationLink(destination: pieceList(pieceManager: pieceManager))
+                        {
                             HStack {
                                 Text("Pieces")
                                     .foregroundColor(.rowTextColor)
@@ -95,6 +102,32 @@ struct GameDetailView: View {
 		}
 		.navigationBarTitle(game.name, displayMode: .inline)
 		
+    }
+    
+    func pieceList(pieceManager: PieceManager) -> some View {
+        PieceListView<EditPieceView>(
+            pieceManager: pieceManager,
+            pieces: game.pieces,
+            pieceBinding: { piece in
+                let index = game.pieces.firstIndex(where: { $0.id == piece.id })!
+                return $game.pieces[index]
+            },
+            
+            removePiece: { index in
+                pieceManager.removePiece(at: index)
+            },
+            
+            addView: { isPresented in
+                EditPieceView(
+                    title: "Add Piece",
+                    piece: defaultPiece,
+                    isPresented: isPresented
+                ) { piece in
+                    pieceManager.addPiece(piece)
+                }
+            }
+        )
+        .environmentObject(gameManager)
     }
 
 }

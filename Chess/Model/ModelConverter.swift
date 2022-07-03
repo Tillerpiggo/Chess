@@ -98,8 +98,9 @@ struct ModelConverter {
 		pieceModel.id = piece.id
 		pieceModel.position = positionModel(from: piece.position)
 		pieceModel.pieceImage = Int16(piece.image.rawValue)
+        pieceModel.canPromote = piece.canPromote
         pieceModel.promotionZone = positionModelSet(from: piece.promotionZone)
-        pieceModel.promotionPieces = piece.promotionPieces
+        pieceModel.promotionPieces = pieceModelSet(from: piece.promotionPieces, in: game)
 		pieceModel.owner = playerModel(from: piece.owner)
 		pieceModel.mover = moverModel(from: piece.mover, piece: pieceModel, firstMove: false)
 		pieceModel.firstMoveMover = moverModel(from: piece.firstMoveMover, piece: pieceModel, firstMove: true)

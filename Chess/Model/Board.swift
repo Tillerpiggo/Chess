@@ -215,7 +215,7 @@ struct Board {
         
         // Set up promotion pieces for white and black
         let promotionPieceTypes: [Square.StandardPieceType] = [.knight, .bishop, .rook, .queen]
-        let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
+        let promotionPieces = promotionPieceTypes.compactMap { pieces[$0] }
         
         var whitePawn = pieces[.whitePawn]!
         whitePawn.promotionPieces = promotionPieces

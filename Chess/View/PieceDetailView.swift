@@ -61,14 +61,41 @@ struct PieceDetailView: View {
                     NavigationLink(destination: EditZoneView()) {
                         Text("Promotion Zone")
                     }
-//                    NavigationLink("Can promote to", destination: PieceListView(pieceManager: promotionPieceManager, pieceBinding: {
-//                            makePieceBinding($0)!
-//                        })
-//                    )
+                    NavigationLink("Can promote to", destination: pieceList(promotionPieceManager: promotionPieceManager)
+                    )
                 }
             }
         }.listStyle(InsetGroupedListStyle())
             .navigationTitle(piece.name == "" ? "Untitled Piece" : piece.name)
+    }
+    
+    func pieceList(promotionPieceManager: PieceManager) -> some View {
+        PieceListView<EmptyView>(
+            pieceManager: pieceManager,
+            pieces: pieceManager.pieces.first { $0.id == piece.id }!.promotionPieces,//Binding.constant(pieceManager.pieces.filter { piece.promotionPieces.contains($0) }),
+            pieceBinding: { piece in
+                makePieceBinding(piece)!
+            },
+            
+            removePiece: { indices in
+                pieceManager.removePromotionPiece(at: indices, from: piece)
+//                let index = indices.map { $0 }.first!
+//                let removedPiece = promotionPieceManager.pieces[index]
+//                piece.promotionPieces.removeAll { $0 == pieceID }
+//                pieceManager.removePromotionPiece(removedPiece, from: piece)
+            },
+            
+            addView: { isPresented in
+                EmptyView()
+//                EditPieceView(
+//                    title: "Add Piece",
+//                    piece: defaultPiece,
+//                    isPresented: isPresented
+//                ) { piece in
+//                    pieceManager.addPiece(piece)
+//                }
+            }
+        )
     }
                                    
     func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
