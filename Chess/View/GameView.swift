@@ -51,6 +51,13 @@ struct GameView: View {
                 .frame(width: squareLength * CGFloat(game.files),
                        height: squareLength * CGFloat(game.ranks)
                 )
+                
+                if case .victory(let player) = game.gameState {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.8))
+                        .frame(width: 200, height: 50)
+                    Text("\(player.string) won the game!")
+                }
             }
             .offset(x: 0, y: -squareLength)
             .offset(panOffset)

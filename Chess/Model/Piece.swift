@@ -32,6 +32,8 @@ struct Piece: Identifiable {
 	var isFirstMoveSameAsNormal: Bool
 	var isCapturesSameAsNormal: Bool
     
+    var canPromote: Bool = false
+    
     /// This determines where the piece needs to go in order to be promoted
     var promotionZone: [Position]
     
@@ -74,7 +76,7 @@ struct Piece: Identifiable {
 		}
 	}
 	
-    init(name: String, image: PieceImage, mover: Mover, position: Position, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -82,13 +84,14 @@ struct Piece: Identifiable {
 		self.isFirstMoveSameAsNormal = true
 		self.isCapturesSameAsNormal = (mover.canMovePatterns == mover.canCapturePatterns)
 		self.position = position
+        self.canPromote = canPromote
         self.promotionZone = promotionZone
         self.promotionPieces = promotionPieces
 		self.owner = owner
 		self.id = id
 	}
 	
-    init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -96,6 +99,7 @@ struct Piece: Identifiable {
 		self.isFirstMoveSameAsNormal = (mover == firstMoveMover)
 		self.isCapturesSameAsNormal = (mover.canMovePatterns == mover.canCapturePatterns)
 		self.position = position
+        self.canPromote = canPromote
         self.promotionZone = promotionZone
         self.promotionPieces = promotionPieces
 		self.owner = owner
@@ -139,10 +143,8 @@ struct Piece: Identifiable {
 		self.isFirstMoveSameAsNormal = pieceModel.isFirstMoveSameAsNormal
 		self.isCapturesSameAsNormal = pieceModel.isCapturesSameAsNormal
         
-        
-		
-        
         // Promotion
+        self.canPromote = pieceModel.canPromote
         self.promotionZone = promotionZoneModels.compactMap { Position(positionModel: $0) }
         self.promotionPieces = promotionPieceModels
         
@@ -211,6 +213,7 @@ struct Piece: Identifiable {
             mover: Mover.whitePawn,
             firstMoveMover: Mover.whitePawnFirstMove,
             position: position,
+            canPromote: true,
             promotionZone: promotionZone,
             owner: .white
         )
@@ -225,6 +228,7 @@ struct Piece: Identifiable {
             mover: Mover.blackPawn,
             firstMoveMover: Mover.blackPawnFirstMove,
             position: position,
+            canPromote: true,
             promotionZone: promotionZone,
             owner: .black
         )

@@ -11,6 +11,7 @@
 		024928E4275030B2002FAA46 /* BoardView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView2.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
 		028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028193782754BAEE009BBBB9 /* OffsetTransition.swift */; };
+		02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF340728712F8400C87CC0 /* EditZoneView.swift */; };
 		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
 		23079A6626D9FAC200A343CE /* MoverModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6526D9FAC200A343CE /* MoverModel.swift */; };
@@ -86,6 +87,7 @@
 		024928E3275030B2002FAA46 /* BoardView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView2.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
 		028193782754BAEE009BBBB9 /* OffsetTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetTransition.swift; sourceTree = "<group>"; };
+		02AF340728712F8400C87CC0 /* EditZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditZoneView.swift; sourceTree = "<group>"; };
 		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
 		23079A6526D9FAC200A343CE /* MoverModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverModel.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				23C427AF26E29F7E00E7D31C /* PieceChooser.swift */,
 				2391B26526C3782400349054 /* PieceListView.swift */,
 				23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */,
+				02AF340728712F8400C87CC0 /* EditZoneView.swift */,
 				02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */,
 				23311FF626D99753003D45FF /* EditPatternView.swift */,
 				2367FE1D26BC74B2001BF1A2 /* EditGameView.swift */,
@@ -458,6 +461,7 @@
 				2391B26626C3782400349054 /* PieceListView.swift in Sources */,
 				024928E4275030B2002FAA46 /* BoardView2.swift in Sources */,
 				234BE2B724C8F20400580B6B /* Identifiable+Extensions.swift in Sources */,
+				02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */,
 				2FA14685270F952A007B110D /* CreateGameView.swift in Sources */,
 				23262EC426BA06CA00EA7FBE /* AddCancelHeader.swift in Sources */,
 				2381829A26B8F7C600F056F8 /* Array+Extensions.swift in Sources */,

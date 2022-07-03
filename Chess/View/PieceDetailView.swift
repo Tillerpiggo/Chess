@@ -30,6 +30,15 @@ struct PieceDetailView: View {
             piece.isImportant = $0
         })
         
+        let canPromoteBinding = Binding<Bool>(get: {
+            piece.canPromote
+        }, set: {
+            pieceManager.setPieceCanPromote(piece, to: $0)
+            piece.canPromote = $0
+        })
+        
+        let promotionPieceManager = pieceManager.promotionPieceManager(for: piece)
+        
         return List {
             Section {
                 TextField("Piece name", text: nameBinding)
@@ -45,7 +54,26 @@ struct PieceDetailView: View {
                     Text("Movement")
                 }
             }
+            
+            Section {
+                Toggle("Can Promote", isOn: canPromoteBinding)
+                if piece.canPromote {
+                    NavigationLink(destination: EditZoneView()) {
+                        Text("Promotion Zone")
+                    }
+//                    NavigationLink("Can promote to", destination: PieceListView(pieceManager: promotionPieceManager, pieceBinding: {
+//                            makePieceBinding($0)!
+//                        })
+//                    )
+                }
+            }
         }.listStyle(InsetGroupedListStyle())
             .navigationTitle(piece.name == "" ? "Untitled Piece" : piece.name)
+    }
+                                   
+    func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
+        guard let index = pieceManager.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
+        return .init(get: { pieceManager.pieces[index] },
+                     set: { pieceManager.updatePiece($0) })
     }
 }

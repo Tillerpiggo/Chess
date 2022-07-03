@@ -33,6 +33,17 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
 		
 		return pieceManager
 	}
+    
+    // For managing the list of pieces that a given piece can promote into
+    func promotionPieceManager(for piece: Piece) -> ModelManager<PieceModel> {
+        let pieceManager = ModelManager<PieceModel>(
+            persistenceController: persistenceController,
+            sortDescriptors: [NSSortDescriptor(keyPath: \PieceModel.position!.rank, ascending: true)],
+            predicate: NSPredicate(format: "%K IN %@", (\PieceModel.id)._kvcKeyPathString!, piece.promotionPieces)
+        )
+        
+        return pieceManager
+    }
 	
 	func moverManager(for piece: Piece, firstMove: Bool) -> ModelManager<MoverModel> {
 		let predicate: NSPredicate =

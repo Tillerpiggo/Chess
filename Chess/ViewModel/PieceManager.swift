@@ -29,6 +29,11 @@ class PieceManager: ObservableObject {
 		
 		return moverManager
 	}
+    
+    func promotionPieceManager(for piece: Piece) -> PieceManager {
+        let modelManager = pieceManager.promotionPieceManager(for: piece)
+        return PieceManager(pieceManager: modelManager, converter: converter, game: game)
+    }
 	
 	// MARK: - Interface
 	
@@ -72,6 +77,14 @@ class PieceManager: ObservableObject {
             saveContext();
         }
     }
+    
+    func setPieceCanPromote(_ piece: Piece, to canPromote: Bool) {
+        if let gameModel = converter.retrieveGameModel(game),
+           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+            pieceModel.canPromote = canPromote
+            saveContext();
+        }
+    }
 	
 	func movePiece(from source: IndexSet, to destination: Int) {
 		let startingPosition = source.map { $0 }.first!
@@ -92,6 +105,15 @@ class PieceManager: ObservableObject {
 			saveContext()
 		}
 	}
+    
+    
+    func updatePiece(_ piece: Piece) {
+        if let gameModel = converter.retrieveGameModel(game),
+            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+            pieceModel.name = piece.name
+            saveContext()
+        }
+    }
 	
 	init(pieceManager: ModelManager<PieceModel>, converter: ModelConverter, game: Game) {
 		self.pieceManager = pieceManager
