@@ -105,6 +105,8 @@ struct ModelConverter {
         pieceModel.mover = moverModel(from: piece.mover, piece: pieceModel, firstMove: false)
         pieceModel.firstMoveMover = moverModel(from: piece.firstMoveMover, piece: pieceModel, firstMove: true)
         pieceModel.game = game
+        
+        print("# of pieces: \(piece.promotionPieces.count)")
 		
 		if pieceModel.mover == nil {
 			print("pieceModel.mover is nil")

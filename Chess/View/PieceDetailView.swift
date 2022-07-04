@@ -38,6 +38,7 @@ struct PieceDetailView: View {
         })
         
         let promotionPieceManager = pieceManager.promotionPieceManager(for: piece)
+        print("# of pieces: \(promotionPieceManager.pieces.count)")
         
         return List {
             Section {
@@ -72,7 +73,7 @@ struct PieceDetailView: View {
     func pieceList(promotionPieceManager: PieceManager) -> some View {
         //Text("promotion pieces")
         PieceListView<EmptyView>(
-            pieceManager: pieceManager,
+            pieceManager: promotionPieceManager,
             pieces: piece.promotionPieces,
 //            pieceBinding: { promotionPiece in
 //                guard let index = piece.promotionPieces.firstIndex(where: { $0.id == promotionPiece.id }) else { return nil }
