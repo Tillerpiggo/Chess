@@ -120,14 +120,16 @@ class PieceManager: ObservableObject {
 		}
 	}
     
-    // Update the piece with the matching ID to have all of the same fields as the piece passed in to this function
-    func updatePiece(_ piece: Piece) {
-        if let gameModel = converter.retrieveGameModel(game),
-            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
-            pieceModel.name = piece.name
-            saveContext()
-        }
-    }
+//    /// Update the piece with the matching ID to have all of the same fields as the piece passed in to this function
+//    func updatePiece(_ piece: Piece) {
+//        if let gameModel = converter.retrieveGameModel(game),
+//           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+//            pieceModel.name = piece.name
+//            print("updating piece")
+//            //converter.updatePieceModel(pieceModel, toMatch: piece, in: gameModel)
+//            saveContext()
+//        }
+//    }
 	
 	init(pieceManager: ModelManager<PieceModel>, converter: ModelConverter, game: Game) {
 		self.pieceManager = pieceManager

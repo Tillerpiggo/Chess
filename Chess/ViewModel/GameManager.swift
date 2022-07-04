@@ -50,7 +50,10 @@ class GameManager: ObservableObject {
 			gameModel.name = game.name
 			gameModel.board = converter.boardModel(from: game.board)
 			gameModel.players = converter.playerModelSet(from: game.players)
+            //gameModel.pieces = converter.pieceModelSet(from: game.pieces, in: gameModel)
 			saveContext()
+            
+            print("updating game!")
 		}
 	}
 	

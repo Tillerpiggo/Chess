@@ -108,11 +108,11 @@ struct GameDetailView: View {
         PieceListView<EditPieceView>(
             pieceManager: pieceManager,
             pieces: game.pieces,
-            pieceBinding: { piece in
-                let index = game.pieces.firstIndex(where: { $0.id == piece.id })!
-                return $game.pieces[index]
-            },
-            
+//            pieceBinding: { piece in
+//                guard let index = game.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
+//                return .init(get: { game.pieces[index] },
+//                             set: { pieceManager.updatePiece($0) })
+//            },
             removePiece: { index in
                 pieceManager.removePiece(at: index)
             },

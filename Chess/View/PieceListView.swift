@@ -14,7 +14,7 @@ struct PieceListView<Content>: View where Content: View {
 	
 	//@Binding var game: Game
     @State var pieces: [Piece]
-    var pieceBinding: (Piece) -> (Binding<Piece>)
+    //var pieceBinding: (Piece) -> (Binding<Piece>)
     var removePiece: (IndexSet) -> Void
     var addView: (Binding<Bool>) -> Content
     
@@ -29,12 +29,10 @@ struct PieceListView<Content>: View where Content: View {
     
     init(pieceManager: PieceManager,
          pieces: [Piece],
-         pieceBinding: @escaping (Piece) -> (Binding<Piece>),
          removePiece: @escaping (IndexSet) -> Void,
          addView: @escaping (Binding<Bool>) -> Content) {
         self._pieceManager = StateObject<PieceManager>(wrappedValue: pieceManager)
         self._pieces = State(wrappedValue: pieces)
-        self.pieceBinding = pieceBinding
         self.removePiece = removePiece
         self.addView = addView
     }
@@ -42,10 +40,10 @@ struct PieceListView<Content>: View where Content: View {
     var body: some View {
 		ZStack {
 			List {
-                ForEach(pieces) { piece in
+                ForEach(pieceManager.pieces) { piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
-                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(piece))
+                                   PieceDetailView(pieceManager: pieceManager, piece: piece)
 					) {
 						HStack {
 							Image(piece.imageName)

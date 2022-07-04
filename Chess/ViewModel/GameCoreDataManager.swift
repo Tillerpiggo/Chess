@@ -304,6 +304,12 @@ class GameCoreDataManager: NSObject, ObservableObject {
 		pieceModel.isImportant = piece.isImportant
 		pieceModel.id = piece.id
 		pieceModel.position = positionModel(from: piece.position)
+        
+        // Promotion
+        pieceModel.canPromote = piece.canPromote
+        pieceModel.promotionZone = positionModelSet(from: piece.promotionZone)
+        pieceModel.promotionPieces = pieceModelSet(from: piece.promotionPieces)
+        
 		pieceModel.pieceImage = Int16(piece.image.rawValue)
 		pieceModel.owner = playerModel(from: piece.owner)
 		pieceModel.mover = moverModel(from: piece.mover)

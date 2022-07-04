@@ -12,7 +12,7 @@ struct PieceDetailView: View {
 	
     @StateObject var pieceManager: PieceManager
     
-    @Binding var piece: Piece
+    @State var piece: Piece
     
     var body: some View {
         let nameBinding = Binding<String>(get: {
@@ -70,21 +70,27 @@ struct PieceDetailView: View {
     }
     
     func pieceList(promotionPieceManager: PieceManager) -> some View {
+        //Text("promotion pieces")
         PieceListView<EmptyView>(
             pieceManager: pieceManager,
-            pieces: pieceManager.pieces.first { $0.id == piece.id }!.promotionPieces,//Binding.constant(pieceManager.pieces.filter { piece.promotionPieces.contains($0) }),
-            pieceBinding: { piece in
-                makePieceBinding(piece)!
-            },
-            
+            pieces: piece.promotionPieces,
+//            pieceBinding: { promotionPiece in
+//                guard let index = piece.promotionPieces.firstIndex(where: { $0.id == promotionPiece.id }) else { return nil }
+//                return .init(get: { piece.promotionPieces[index] },
+//                             set: {
+//                    pieceManager.updatePiece($0)
+//                    print("updating piece!!!")
+//                })
+//            },
             removePiece: { indices in
-                pieceManager.removePromotionPiece(at: indices, from: piece)
-//                let index = indices.map { $0 }.first!
+                //let index = indices.map { $0 }.first!
+                //piece.promotionPieces.remove(at: index)
+                
 //                let removedPiece = promotionPieceManager.pieces[index]
 //                piece.promotionPieces.removeAll { $0 == pieceID }
 //                pieceManager.removePromotionPiece(removedPiece, from: piece)
             },
-            
+
             addView: { isPresented in
                 EmptyView()
 //                EditPieceView(
@@ -98,9 +104,9 @@ struct PieceDetailView: View {
         )
     }
                                    
-    func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
-        guard let index = pieceManager.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
-        return .init(get: { pieceManager.pieces[index] },
-                     set: { pieceManager.updatePiece($0) })
-    }
+//    func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
+//        guard let index = pieceManager.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
+//        return .init(get: { pieceManager.pieces[index] },
+//                     set: { pieceManager.updatePiece($0) })
+//    }
 }

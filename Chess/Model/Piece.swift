@@ -112,7 +112,7 @@ struct Piece: Identifiable {
 			let image = PieceImage(rawValue: Int(pieceModel.pieceImage)),
 			let positionModel = pieceModel.position, let position = Position(positionModel: positionModel),
 			let playerModel = pieceModel.owner, let owner = Player(rawValue: Int(playerModel.player)),
-            let promotionZoneModels = pieceModel.promotionZone?.array as? [PositionModel],
+            let promotionZoneModels = pieceModel.promotionZone?.allObjects as? [PositionModel],
             let promotionPieceModels = pieceModel.promotionPieces?.array as? [PieceModel],
 			let id = pieceModel.id
 			//let moverModel = pieceModel.mover, let mover = Mover(moverModel: moverModel),

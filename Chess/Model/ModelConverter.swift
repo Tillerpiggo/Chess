@@ -92,19 +92,19 @@ struct ModelConverter {
 		
 		let pieceModel = PieceModel(context: context)
 		
-		pieceModel.name = piece.name
-		pieceModel.hasMoved = piece.hasMoved
-		pieceModel.isImportant = piece.isImportant
-		pieceModel.id = piece.id
-		pieceModel.position = positionModel(from: piece.position)
-		pieceModel.pieceImage = Int16(piece.image.rawValue)
+        pieceModel.name = piece.name
+        pieceModel.hasMoved = piece.hasMoved
+        pieceModel.isImportant = piece.isImportant
+        pieceModel.id = piece.id
+        pieceModel.position = positionModel(from: piece.position)
+        pieceModel.pieceImage = Int16(piece.image.rawValue)
         pieceModel.canPromote = piece.canPromote
         pieceModel.promotionZone = positionModelSet(from: piece.promotionZone)
         pieceModel.promotionPieces = pieceModelSet(from: piece.promotionPieces, in: game)
-		pieceModel.owner = playerModel(from: piece.owner)
-		pieceModel.mover = moverModel(from: piece.mover, piece: pieceModel, firstMove: false)
-		pieceModel.firstMoveMover = moverModel(from: piece.firstMoveMover, piece: pieceModel, firstMove: true)
-		pieceModel.game = game
+        pieceModel.owner = playerModel(from: piece.owner)
+        pieceModel.mover = moverModel(from: piece.mover, piece: pieceModel, firstMove: false)
+        pieceModel.firstMoveMover = moverModel(from: piece.firstMoveMover, piece: pieceModel, firstMove: true)
+        pieceModel.game = game
 		
 		if pieceModel.mover == nil {
 			print("pieceModel.mover is nil")
@@ -114,7 +114,7 @@ struct ModelConverter {
 			print("pieceModel.firstMoveMover is nil")
 		}
 		
-		return pieceModel
+        return pieceModel
 	}
 	
 	/// Creates a new PlayerModel from a Player
