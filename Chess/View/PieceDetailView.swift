@@ -12,7 +12,7 @@ struct PieceDetailView: View {
 	
     @StateObject var pieceManager: PieceManager
     
-    @State var piece: Piece
+    @Binding var piece: Piece
     
     var body: some View {
         let nameBinding = Binding<String>(get: {
@@ -37,8 +37,8 @@ struct PieceDetailView: View {
             piece.canPromote = $0
         })
         
-        let promotionPieceManager = pieceManager.promotionPieceManager(for: pieceManager.pieces.first { $0.id == piece.id }!)
-        print("# of pieces: \(promotionPieceManager.pieces.count)")
+//        let promotionPieceManager = pieceManager.promotionPieceManager(for: pieceManager.pieces.first { $0.id == piece.id }!)
+        //print("# of pieces: \(promotionPieceManager.pieces.count)")
         
         return List {
             Section {
@@ -62,7 +62,7 @@ struct PieceDetailView: View {
                     NavigationLink(destination: EditZoneView()) {
                         Text("Promotion Zone")
                     }
-                    NavigationLink("Can promote to", destination: pieceList(promotionPieceManager: promotionPieceManager)
+                    NavigationLink("Can promote to", destination: pieceList()
                     )
                 }
             }
@@ -70,11 +70,11 @@ struct PieceDetailView: View {
             .navigationTitle(piece.name == "" ? "Untitled Piece" : piece.name)
     }
     
-    func pieceList(promotionPieceManager: PieceManager) -> some View {
+    func pieceList() -> some View {
         //Text("promotion pieces")
         PieceListView<EmptyView>(
-            pieceManager: promotionPieceManager,
-            pieces: piece.promotionPieces,
+            pieceManager: pieceManager,
+            pieces: [],//TODO,
 //            pieceBinding: { promotionPiece in
 //                guard let index = piece.promotionPieces.firstIndex(where: { $0.id == promotionPiece.id }) else { return nil }
 //                return .init(get: { piece.promotionPieces[index] },

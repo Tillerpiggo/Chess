@@ -41,12 +41,12 @@
         <attribute name="isImportant" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="pieceImage" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="promotionPieces" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[UUID]"/>
         <relationship name="firstMoveMover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="pieceFirstMove" inverseEntity="MoverModel"/>
         <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="pieces" inverseEntity="GameModel"/>
         <relationship name="mover" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="piece" inverseEntity="MoverModel"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="piece" inverseEntity="PlayerModel"/>
         <relationship name="position" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel"/>
-        <relationship name="promotionPieces" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PieceModel"/>
         <relationship name="promotionZone" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionModel"/>
         <relationship name="square" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="piece" inverseEntity="SquareModel"/>
     </entity>

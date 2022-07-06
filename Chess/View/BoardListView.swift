@@ -26,7 +26,7 @@ struct BoardListView: View {
 			List {
 				ForEach(gameStore.games) { game in
 					NavigationLink(destination:
-						GameDetailView(game: makeGameBinding(game)!)
+                                    GameDetailView(pieceManager: gameStore.pieceManager(for: game), game: makeGameBinding(game)!)
 							.environmentObject(gameStore)
 					) {
 						HStack {

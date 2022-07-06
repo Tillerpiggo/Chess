@@ -30,10 +30,10 @@ class PieceManager: ObservableObject {
 		return moverManager
 	}
     
-    func promotionPieceManager(for piece: Piece) -> PieceManager {
-        let modelManager = pieceManager.promotionPieceManager(for: piece)
-        return PieceManager(pieceManager: modelManager, converter: converter, game: game)
-    }
+//    func promotionPieceManager(for piece: Piece) -> PieceManager {
+//        let modelManager = pieceManager.promotionPieceManager(for: piece)
+//        return PieceManager(pieceManager: modelManager, converter: converter, game: game)
+//    }
 	
 	// MARK: - Interface
 	
@@ -66,6 +66,7 @@ class PieceManager: ObservableObject {
 		if let gameModel = converter.retrieveGameModel(game),
 			let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
 			pieceModel.name = name
+            objectWillChange.send()
 			saveContext()
 		}
 	}
@@ -93,7 +94,7 @@ class PieceManager: ObservableObject {
 //            let index = pieceModel.promotionPieces as [PieceModel]
 //            pieceModel.removeFrreomPromotionPieces
             let index = indices.map { $0 }.first!
-            pieceModel.removeFromPromotionPieces(at: index)
+            //pieceModel.removeFromPromotionPieces(at: index)
 //            pieceModel.promotion
             objectWillChange.send()
             saveContext()

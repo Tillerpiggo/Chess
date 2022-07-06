@@ -40,10 +40,10 @@ struct PieceListView<Content>: View where Content: View {
     var body: some View {
 		ZStack {
 			List {
-                ForEach(pieces) { piece in
+                ForEach($pieces) { $piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
-                                   PieceDetailView(pieceManager: pieceManager, piece: piece)
+                                   PieceDetailView(pieceManager: pieceManager, piece: $piece)
 					) {
 						HStack {
 							Image(piece.imageName)

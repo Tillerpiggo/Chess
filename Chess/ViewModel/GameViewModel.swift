@@ -64,10 +64,11 @@ class GameViewModel: ObservableObject {
         switch game.gameState {
         case let .promoting(piece):
             return piece.promotionPieces.compactMap { promotionPiece in
-                var promotionOption = promotionPiece
-                promotionOption.owner = activePlayer
-                
-                return promotionOption
+                return game.piece(for: promotionPiece)
+//                var promotionOption = promotionPiece
+//                promotionOption.owner = activePlayer
+//
+//                return promotionOption
             }
         default: return []
         }

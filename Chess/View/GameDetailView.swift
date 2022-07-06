@@ -11,6 +11,7 @@ import SwiftUI
 struct GameDetailView: View {
 	
 	@EnvironmentObject var gameManager: GameManager
+    @StateObject var pieceManager: PieceManager
 	@Environment(\.presentationMode) var presentationMode: Binding
 
 	@Binding var game: Game
@@ -26,7 +27,7 @@ struct GameDetailView: View {
     }()
 	
     var body: some View {
-        let pieceManager = gameManager.pieceManager(for: game)
+        //let pieceManager = gameManager.pieceManager(for: game)
         
 		return GeometryReader { geometry in
 //            ScrollView {
@@ -80,7 +81,7 @@ struct GameDetailView: View {
                                 .foregroundColor(.rowTextColor)
                         }
                                        
-                        NavigationLink(destination: pieceList(pieceManager: pieceManager))
+                        NavigationLink(destination: pieceList)
                         {
                             HStack {
                                 Text("Pieces")
@@ -104,7 +105,7 @@ struct GameDetailView: View {
 		
     }
     
-    func pieceList(pieceManager: PieceManager) -> some View {
+    var pieceList: some View {
         PieceListView<EditPieceView>(
             pieceManager: pieceManager,
             pieces: pieceManager.pieces,
@@ -132,11 +133,11 @@ struct GameDetailView: View {
 
 }
 
-struct GameDetailView_Previews: PreviewProvider {
-	
-    static var previews: some View {
-		//NavigationView {
-		GameDetailView(game: .constant(Game.standard()))
-		//}
-    }
-}
+//struct GameDetailView_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//		//NavigationView {
+//		GameDetailView(game: .constant(Game.standard()))
+//		//}
+//    }
+//}

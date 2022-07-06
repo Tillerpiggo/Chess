@@ -94,6 +94,11 @@ struct Game: Identifiable, Hashable {
 		print(legalMoves)
 		return legalMoves
 	}
+    
+    // Returns the name of the piece with the given ID
+    func piece(for pieceID: UUID) -> Piece? {
+        return pieces.first { $0.id == pieceID }
+    }
 	
 	private func isMoveLegal(_ move: Move?) -> Bool {
 		guard let move = move, let boardAfterMove = board.boardState(after: move) else { return false }

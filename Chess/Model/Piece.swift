@@ -38,7 +38,7 @@ struct Piece: Identifiable {
     var promotionZone: [Position]
     
     /// This determines what pieces that piece can promote into
-    var promotionPieces: [Piece]
+    var promotionPieces: [UUID]
 	
 	var name: String
 	
@@ -76,7 +76,7 @@ struct Piece: Identifiable {
 		}
 	}
 	
-    init(name: String, image: PieceImage, mover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [Piece] = [], owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -91,7 +91,7 @@ struct Piece: Identifiable {
 		self.id = id
 	}
 	
-    init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [Piece] = [], owner: Player, id: UUID = UUID()) {
+    init(name: String, image: PieceImage, mover: Mover, firstMoveMover: Mover, position: Position, canPromote: Bool = false, promotionZone: [Position] = [], promotionPieces: [UUID] = [], owner: Player, id: UUID = UUID()) {
 		self.name = name
 		self.image = image
 		self.mover = mover
@@ -113,7 +113,7 @@ struct Piece: Identifiable {
 			let positionModel = pieceModel.position, let position = Position(positionModel: positionModel),
 			let playerModel = pieceModel.owner, let owner = Player(rawValue: Int(playerModel.player)),
             let promotionZoneModels = pieceModel.promotionZone?.allObjects as? [PositionModel],
-            let promotionPieceModels = pieceModel.promotionPieces?.array as? [PieceModel],
+            let promotionPieceModels = pieceModel.promotionPieces,
 			let id = pieceModel.id
 			//let moverModel = pieceModel.mover, let mover = Mover(moverModel: moverModel),
 			//let firstMoveMoverModel = pieceModel.firstMoveMover, let firstMoveMover = Mover(moverModel: firstMoveMoverModel)
@@ -146,7 +146,7 @@ struct Piece: Identifiable {
         // Promotion
         self.canPromote = pieceModel.canPromote
         self.promotionZone = promotionZoneModels.compactMap { Position(positionModel: $0) }
-        self.promotionPieces = promotionPieceModels.compactMap { Piece(pieceModel: $0) }
+        self.promotionPieces = promotionPieceModels
         
         self.position = position
 		self.owner = owner
