@@ -37,7 +37,7 @@ struct PieceDetailView: View {
             piece.canPromote = $0
         })
         
-        let promotionPieceManager = pieceManager.promotionPieceManager(for: piece)
+        let promotionPieceManager = pieceManager.promotionPieceManager(for: pieceManager.pieces.first { $0.id == piece.id }!)
         print("# of pieces: \(promotionPieceManager.pieces.count)")
         
         return List {

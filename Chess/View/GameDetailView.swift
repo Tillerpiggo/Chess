@@ -107,7 +107,7 @@ struct GameDetailView: View {
     func pieceList(pieceManager: PieceManager) -> some View {
         PieceListView<EditPieceView>(
             pieceManager: pieceManager,
-            pieces: game.pieces,
+            pieces: pieceManager.pieces,
 //            pieceBinding: { piece in
 //                guard let index = game.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
 //                return .init(get: { game.pieces[index] },

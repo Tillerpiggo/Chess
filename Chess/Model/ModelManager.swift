@@ -36,6 +36,7 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
     
     // For managing the list of pieces that a given piece can promote into
     func promotionPieceManager(for piece: Piece) -> ModelManager<PieceModel> {
+        print("# of pieces originally: \(piece.promotionPieces.count)")
         let pieceManager = ModelManager<PieceModel>(
             persistenceController: persistenceController,
             sortDescriptors: [NSSortDescriptor(keyPath: \PieceModel.position!.rank, ascending: true)],

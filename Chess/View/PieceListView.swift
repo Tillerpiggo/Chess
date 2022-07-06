@@ -32,7 +32,7 @@ struct PieceListView<Content>: View where Content: View {
          removePiece: @escaping (IndexSet) -> Void,
          addView: @escaping (Binding<Bool>) -> Content) {
         self._pieceManager = StateObject<PieceManager>(wrappedValue: pieceManager)
-        self._pieces = State(wrappedValue: pieces)
+        self.pieces = pieces
         self.removePiece = removePiece
         self.addView = addView
     }
@@ -40,7 +40,7 @@ struct PieceListView<Content>: View where Content: View {
     var body: some View {
 		ZStack {
 			List {
-                ForEach(pieceManager.pieces) { piece in
+                ForEach(pieces) { piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
                                    PieceDetailView(pieceManager: pieceManager, piece: piece)
@@ -59,6 +59,11 @@ struct PieceListView<Content>: View where Content: View {
 				}
 				.onDelete { (pieceIndex) in
 					//pieceManager.removePiece(at: pieceIndex)
+                    // remove it here for sake of UI updating quickly
+                    let index = pieceIndex.map { $0 }.first!
+                    pieces.remove(at: index)
+                    
+                    // Remove it in the backend
                     removePiece(pieceIndex)
 				}
 				
