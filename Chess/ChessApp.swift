@@ -39,6 +39,7 @@ struct ChessApp: App {
             TabView {
                 BoardListView()
                     .environmentObject(gameStore)
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .tabItem {
                         Text("Your Games")
                     }

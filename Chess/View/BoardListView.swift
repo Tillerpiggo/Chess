@@ -11,6 +11,7 @@ import SwiftUI
 struct BoardListView: View {
 	
 	@EnvironmentObject var gameStore: GameManager
+    @Environment(\.managedObjectContext) var managedObjectContext
 	
 	//private var twoColumnGrid = [GridItem(.flexible()), GridItem(.flexible())]
 	
