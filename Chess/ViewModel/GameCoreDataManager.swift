@@ -302,6 +302,7 @@ class GameCoreDataManager: NSObject, ObservableObject {
 		pieceModel.name = piece.name
 		pieceModel.hasMoved = piece.hasMoved
 		pieceModel.isImportant = piece.isImportant
+        //pieceModel.isntImportant = piece.isntImportant
 		pieceModel.id = piece.id
 		pieceModel.position = positionModel(from: piece.position)
         

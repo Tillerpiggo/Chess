@@ -9,11 +9,11 @@
 import SwiftUI
 
 struct PieceListView<Content>: View where Content: View {
-	
-	@StateObject var pieceManager: PieceManager
+    
+	@ObservedObject var pieceManager: PieceManager
 	
 	//@Binding var game: Game
-    @State var pieces: [Piece]
+    //@State var pieces: [Piece]
     //var pieceBinding: (Piece) -> (Binding<Piece>)
     var removePiece: (IndexSet) -> Void
     var addView: (Binding<Bool>) -> Content
@@ -28,11 +28,11 @@ struct PieceListView<Content>: View where Content: View {
 //	}
     
     init(pieceManager: PieceManager,
-         pieces: [Piece],
+         //pieces: [Piece],
          removePiece: @escaping (IndexSet) -> Void,
          addView: @escaping (Binding<Bool>) -> Content) {
-        self._pieceManager = StateObject<PieceManager>(wrappedValue: pieceManager)
-        self.pieces = pieces
+        self.pieceManager = pieceManager
+        //self._pieces = State(wrappedValue: pieces)
         self.removePiece = removePiece
         self.addView = addView
     }
@@ -40,10 +40,10 @@ struct PieceListView<Content>: View where Content: View {
     var body: some View {
 		ZStack {
 			List {
-                ForEach($pieces) { $piece in
+                ForEach(pieceManager.pieces) { piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
-                                   PieceDetailView(pieceManager: pieceManager, piece: $piece)
+                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(for: piece)!)
 					) {
 						HStack {
 							Image(piece.imageName)
@@ -60,8 +60,8 @@ struct PieceListView<Content>: View where Content: View {
 				.onDelete { (pieceIndex) in
 					//pieceManager.removePiece(at: pieceIndex)
                     // remove it here for sake of UI updating quickly
-                    let index = pieceIndex.map { $0 }.first!
-                    pieces.remove(at: index)
+//                    let index = pieceIndex.map { $0 }.first!
+//                    pieces.remove(at: index)
                     
                     // Remove it in the backend
                     removePiece(pieceIndex)
@@ -99,6 +99,18 @@ struct PieceListView<Content>: View where Content: View {
 			}
 		}
 		
+    }
+    
+    func pieceBinding(for boundPiece: Piece) -> Binding<Piece>? {
+        guard let piece = pieceManager.pieces.first(where: { $0.id == boundPiece.id }) else { return nil }
+        return Binding<Piece>(
+            get: {
+                return piece
+            },
+            set: {
+                pieceManager.updatePiece($0)
+            }
+        )
     }
 }
 

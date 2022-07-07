@@ -33,7 +33,7 @@
         <relationship name="moverCanMove" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoverModel" inverseName="canMovePatterns" inverseEntity="MoverModel"/>
     </entity>
     <entity name="PieceModel" representedClassName="PieceModel" syncable="YES" codeGenerationType="class">
-        <attribute name="canPromote" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="canPromote" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="hasMoved" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isCapturesSameAsNormal" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>

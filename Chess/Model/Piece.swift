@@ -26,6 +26,7 @@ struct Piece: Identifiable {
 	/// has no legal moves and the "important" piece can be captured next game. This could also be used if there were multiple "important" pieces, and the game could
 	/// determine if they need to be mated, captured, and if all must be or only some. The game could even ignore this entirely.
 	var isImportant: Bool = false
+    var isntImportant: Bool = false
 	
 	var mover: Mover
 	var firstMoveMover: Mover // Tells the piece how to move if it is on the first move
@@ -33,6 +34,7 @@ struct Piece: Identifiable {
 	var isCapturesSameAsNormal: Bool
     
     var canPromote: Bool = false
+    var test: Bool = false
     
     /// This determines where the piece needs to go in order to be promoted
     var promotionZone: [Position]
@@ -152,6 +154,7 @@ struct Piece: Identifiable {
 		self.owner = owner
 		self.hasMoved = pieceModel.hasMoved
 		self.isImportant = pieceModel.isImportant
+        //self.isntImportant = pieceModel.isntImportant
 		self.id = id
 	}
 	
@@ -297,6 +300,7 @@ extension Piece: Equatable {
 		if lhs.hasMoved != rhs.hasMoved { return false }
 		if lhs.position != rhs.position { return false }
 		if lhs.isImportant != rhs.isImportant { return false }
+        if lhs.canPromote != rhs.canPromote { return false }
 		if lhs.name != rhs.name { return false }
 		if lhs.image != rhs.image { return false }
 		if lhs.mover != rhs.mover {
