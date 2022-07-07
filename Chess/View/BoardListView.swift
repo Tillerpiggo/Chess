@@ -11,7 +11,8 @@ import SwiftUI
 struct BoardListView: View {
 	
 	@EnvironmentObject var gameStore: GameManager
-    @Environment(\.managedObjectContext) var managedObjectContext
+//    @Environment(\.managedObjectContext) var managedObjectContext
+//    @FetchRequest(sortDescriptors: [SortDescriptor(\.title)) var students: FetchedResults<Student>
 	
 	//private var twoColumnGrid = [GridItem(.flexible()), GridItem(.flexible())]
 	
