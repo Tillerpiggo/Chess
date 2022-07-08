@@ -12,7 +12,8 @@ struct PieceDetailView: View {
 	
     @ObservedObject var pieceManager: PieceManager
     
-    @Binding var piece: Piece
+    //@Binding var piece: Piece
+    @Binding var piece: PieceModel
     
     var body: some View {
 //        let nameBinding = Binding<String>(get: {
@@ -43,15 +44,12 @@ struct PieceDetailView: View {
         
         return List {
             Section {
-                TextField("Piece name", text: $piece.name)
+                TextField("Piece name", text: $piece.name.toUnwrapped(defaultValue: ""))
                     .padding(.vertical, 16)
             }
             
             Section(footer: Text("When a player captures or checkmates all of the opponent’s important pieces, that player wins the game. In standard chess, only the King is important.")) {
                 Toggle("Is Important", isOn: $piece.isImportant)
-//                    .onChange(of: piece.isImportant) {
-//                        pieceManager.setPieceIsImportant(piece, to: $0)
-//                    }
             }
 //
 //            Section {
@@ -75,7 +73,7 @@ struct PieceDetailView: View {
                 }
             }
         }.listStyle(InsetGroupedListStyle())
-            .navigationTitle(piece.name == "" ? "Untitled Piece" : piece.name)
+            .navigationTitle(piece.name ?? "Untitled Piece")
     }
     
 //    var pieceList: some View {
@@ -114,9 +112,9 @@ struct PieceDetailView: View {
 //        )
 //    }
     
-    var promotionPieceManager: PieceManager {
-        return pieceManager.promotionPieceManager(for: piece)
-    }
+//    var promotionPieceManager: PieceManager {
+//        return pieceManager.promotionPieceManager(for: piece)
+//    }
                                    
 //    func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
 //        guard let index = pieceManager.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }

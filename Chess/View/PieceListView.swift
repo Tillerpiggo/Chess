@@ -40,16 +40,17 @@ struct PieceListView<Content>: View where Content: View {
     var body: some View {
 		ZStack {
 			List {
-                ForEach(pieceManager.pieces) { piece in
+                ForEach($pieceManager.pieceModels) { $piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
-                                   PieceDetailView(pieceManager: pieceManager, piece: pieceBinding(for: piece)!)
+//                                   PieceDetailView(pieceManager: pieceManager, piece: $piece)//pieceBinding(for: piece)!)
+                                   PieceDetailView(pieceManager: pieceManager, piece: $piece)
 					) {
 						HStack {
-							Image(piece.imageName)
-								.resizable()
-								.frame(width: 32, height: 32)
-							Text(piece.name)
+//                            Image(Piece.PieceImage(rawValue: piece.pieceImage).imageName(owner: piece.owner))
+//								.resizable()
+//								.frame(width: 32, height: 32)
+                            Text(piece.name ?? "")
 						}
 					}
                     .listRowBackground(rowColor)
@@ -101,17 +102,17 @@ struct PieceListView<Content>: View where Content: View {
 		
     }
     
-    func pieceBinding(for boundPiece: Piece) -> Binding<Piece>? {
-        guard let piece = pieceManager.pieces.first(where: { $0.id == boundPiece.id }) else { return nil }
-        return Binding<Piece>(
-            get: {
-                return piece
-            },
-            set: {
-                pieceManager.updatePiece($0)
-            }
-        )
-    }
+//    func pieceBinding(for boundPiece: Piece) -> Binding<Piece>? {
+//        guard let piece = pieceManager.pieces.first(where: { $0.id == boundPiece.id }) else { return nil }
+//        return Binding<Piece>(
+//            get: {
+//                return piece
+//            },
+//            set: {
+//                pieceManager.updatePiece($0)
+//            }
+//        )
+//    }
 }
 
 /*

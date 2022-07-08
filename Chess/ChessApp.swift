@@ -24,7 +24,7 @@ struct ChessApp: App {
         let game = Game.standard()
 		
 		return GameViewModel(game: game)
-	}()
+	}() 
 
 	
 	@StateObject var gameStore: GameManager =

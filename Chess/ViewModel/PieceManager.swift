@@ -12,7 +12,8 @@ import Combine
 // Handles fetching all of the pieces from a game and provides an interface for adding, editing, and deleting them.
 class PieceManager: ObservableObject {
 	
-    @Published private(set) var pieces = [Piece]()
+    //@Published private(set) var pieces = [Piece]()
+    @Published var pieceModels = [PieceModel]()
     
 	private var game: Game
 	private var converter: ModelConverter
@@ -85,6 +86,7 @@ class PieceManager: ObservableObject {
            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
 //            pieceModel.name = piece.name
 //            pieceModel
+            //pieceModel.isImportant = piece.isImportant
             converter.makePieceModelMatch(piece: piece, game: gameModel, pieceModel: pieceModel)
             saveContext()
         }
@@ -123,9 +125,9 @@ class PieceManager: ObservableObject {
         }
     }
     
-    func promotionPieces(for piece: Piece) -> [Piece] {
-        return piece.promotionPieces.compactMap { id in pieces.first { piece in piece.id == id }}
-    }
+//    func promotionPieces(for piece: Piece) -> [Piece] {
+//        return piece.promotionPieces.compactMap { id in pieces.first { piece in piece.id == id }}
+//    }
 	
 	func movePiece(from source: IndexSet, to destination: Int) {
 		let startingPosition = source.map { $0 }.first!
@@ -165,8 +167,9 @@ class PieceManager: ObservableObject {
 		
 		// Subscription to ModelManager<PieceModel> to pieces of a game updated
 		self.cancellable = pieceManager.models.eraseToAnyPublisher().sink { pieces in
-			print("updated pieces to \(pieces.map { $0.position!.rank }), \(pieces.map { $0.name })")
-			self.pieces = pieces.compactMap { Piece(pieceModel: $0) }
+			//print("updated pieces to \(pieces.map { $0.position!.rank }), \(pieces.map { $0.name })")
+			//self.pieces = pieces.compactMap { Piece(pieceModel: $0) }
+            self.pieceModels = pieces
 		}
 	}
 }
