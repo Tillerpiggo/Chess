@@ -68,53 +68,51 @@ struct PieceDetailView: View {
                     NavigationLink(destination: EditZoneView()) {
                         Text("Promotion Zone")
                     }
-//                    NavigationLink("Can promote to", destination: pieceList
-//                    )
+                    
+                    NavigationLink("Can promote to", destination: pieceList)
                 }
+                    
             }
         }.listStyle(InsetGroupedListStyle())
-            .navigationTitle(piece.name ?? "Untitled Piece")
+            .navigationTitle((piece.name ?? "") == "" ? "Untitled Piece" : (piece.name ?? ""))
     }
     
-//    var pieceList: some View {
-//        //Text("promotion pieces")
-//        PieceListView<EmptyView>(
-//            pieceManager: promotionPieceManager,
-//            //pieces: pieceManager.promotionPieces(for: piece),//TODO,
-////            pieceBinding: { promotionPiece in
-////                guard let index = piece.promotionPieces.firstIndex(where: { $0.id == promotionPiece.id }) else { return nil }
-////                return .init(get: { piece.promotionPieces[index] },
-////                             set: {
-////                    pieceManager.updatePiece($0)
-////                    print("updating piece!!!")
-////                })
-////            },
-//            removePiece: { indices in
-//                //let index = indices.map { $0 }.first!
-//                //piece.promotionPieces.remove(at: index)
-//                
-//                let index = indices.map { $0 }.first!
-//                let removedPiece = piece.promotionPieces.remove(at: index)
-//                print("index: \(index)")
-//                pieceManager.removePromotionPiece(removedPiece, from: piece)
+    var pieceList: some View {
+        //Text("promotion pieces")
+        PieceListView<EmptyView>(
+            pieceManager: promotionPieceManager,
+            //pieces: pieceManager.promotionPieces(for: piece),//TODO,
+//            pieceBinding: { promotionPiece in
+//                guard let index = piece.promotionPieces.firstIndex(where: { $0.id == promotionPiece.id }) else { return nil }
+//                return .init(get: { piece.promotionPieces[index] },
+//                             set: {
+//                    pieceManager.updatePiece($0)
+//                    print("updating piece!!!")
+//                })
 //            },
-//
-//            addView: { isPresented in
-//                EmptyView()
-////                EditPieceView(
-////                    title: "Add Piece",
-////                    piece: defaultPiece,
-////                    isPresented: isPresented
-////                ) { piece in
-////                    pieceManager.addPiece(piece)
-////                }
-//            }
-//        )
-//    }
+            removePiece: { indices in
+                //let index = indices.map { $0 }.first!
+                //piece.promotionPieces?.remove(atOffsets: indices)
+
+                piece.promotionPieces?.remove(atOffsets: indices)
+            },
+
+            addView: { isPresented in
+                EmptyView()
+//                EditPieceView(
+//                    title: "Add Piece",
+//                    piece: defaultPiece,
+//                    isPresented: isPresented
+//                ) { piece in
+//                    pieceManager.addPiece(piece)
+//                }
+            }
+        )
+    }
     
-//    var promotionPieceManager: PieceManager {
-//        return pieceManager.promotionPieceManager(for: piece)
-//    }
+    var promotionPieceManager: PieceManager {
+        return pieceManager.promotionPieceManager(for: piece)
+    }
                                    
 //    func makePieceBinding(_ piece: Piece) -> Binding<Piece>? {
 //        guard let index = pieceManager.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }

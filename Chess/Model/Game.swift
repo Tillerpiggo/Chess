@@ -55,7 +55,7 @@ struct Game: Identifiable, Hashable {
             
             // Check for promotion
             if let piece = board.squares[move.end]?.piece,
-               piece.promotionZone.contains(move.end) {
+               piece.canPromote, piece.promotionZone.contains(move.end) {
                 gameState = .promoting(piece)
             } else {
                 nextTurn()

@@ -36,20 +36,27 @@ struct PieceListView<Content>: View where Content: View {
         self.removePiece = removePiece
         self.addView = addView
     }
+    
+    func pieceImage(for piece: PieceModel) -> String {
+        let owner = Player(rawValue: Int(piece.owner?.player ?? 0)) ?? .white
+        let pieceImage = Piece.PieceImage(rawValue: Int(piece.pieceImage))?.imageName(owner: owner)
+        return pieceImage ?? "white_pawn"
+    }
 //
     var body: some View {
 		ZStack {
 			List {
-                ForEach($pieceManager.pieceModels) { $piece in
+                ForEach($pieceManager.pieces) { $piece in
 					NavigationLink(destination:
 									//PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))
 //                                   PieceDetailView(pieceManager: pieceManager, piece: $piece)//pieceBinding(for: piece)!)
                                    PieceDetailView(pieceManager: pieceManager, piece: $piece)
 					) {
 						HStack {
-//                            Image(Piece.PieceImage(rawValue: piece.pieceImage).imageName(owner: piece.owner))
-//								.resizable()
-//								.frame(width: 32, height: 32)
+                            // TODO: abstract this into a viewmodel
+                            Image(pieceImage(for: piece))
+								.resizable()
+								.frame(width: 32, height: 32)
                             Text(piece.name ?? "")
 						}
 					}
@@ -58,14 +65,16 @@ struct PieceListView<Content>: View where Content: View {
 				.onMove { (source, destination) in
 					pieceManager.movePiece(from: source, to: destination)
 				}
-				.onDelete { (pieceIndex) in
+				.onDelete { (indices) in
 					//pieceManager.removePiece(at: pieceIndex)
                     // remove it here for sake of UI updating quickly
 //                    let index = pieceIndex.map { $0 }.first!
 //                    pieces.remove(at: index)
                     
+                    removePiece(indices)
+                    
                     // Remove it in the backend
-                    removePiece(pieceIndex)
+                    //pieceManager.removePiece(at: pieceIndex)
 				}
 				
 				Button(action: {
