@@ -79,7 +79,7 @@ struct PieceDetailView: View {
     
     var pieceList: some View {
         //Text("promotion pieces")
-        PieceListView<EmptyView>(
+        PieceListView<AddPromotionPieceView>(
             pieceManager: promotionPieceManager,
             //pieces: pieceManager.promotionPieces(for: piece),//TODO,
 //            pieceBinding: { promotionPiece in
@@ -98,14 +98,28 @@ struct PieceDetailView: View {
             },
 
             addView: { isPresented in
-                EmptyView()
-//                EditPieceView(
-//                    title: "Add Piece",
-//                    piece: defaultPiece,
-//                    isPresented: isPresented
-//                ) { piece in
-//                    pieceManager.addPiece(piece)
-//                }
+                AddPromotionPieceView(
+                    pieces: pieceManager.pieces.filter {
+                        if let pieceID = $0.id, let promotionPieces = piece.promotionPieces {
+                            return !promotionPieces.contains(pieceID)
+                        } else {
+                            return false
+                        }
+                    },
+                    isPresented: isPresented) { newPiece in
+                        // TODO: Abstract this out
+                        //guard piece != nil else { return }
+                        if piece.promotionPieces == nil {
+                            piece.promotionPieces = [UUID]()
+                            print("check")
+                        }
+                        
+                        print("piece.promotionPieces: \(piece.promotionPieces?.count)")
+                        
+                        if let id = newPiece.id {
+                            piece.promotionPieces?.append(id)
+                        }
+                    }
             }
         )
     }

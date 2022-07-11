@@ -15,6 +15,7 @@
 		02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF340728712F8400C87CC0 /* EditZoneView.swift */; };
 		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
 		02FD341B2877D5780081F831 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341A2877D5780081F831 /* Binding+Extensions.swift */; };
+		02FD341D287BE5780081F831 /* AddPromotionPieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
 		23079A6626D9FAC200A343CE /* MoverModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6526D9FAC200A343CE /* MoverModel.swift */; };
 		23123D2525D5E07200F2B813 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23123D2425D5E07200F2B813 /* GameView.swift */; };
@@ -93,6 +94,7 @@
 		02AF340728712F8400C87CC0 /* EditZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditZoneView.swift; sourceTree = "<group>"; };
 		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
 		02FD341A2877D5780081F831 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
+		02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPromotionPieceView.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
 		23079A6526D9FAC200A343CE /* MoverModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverModel.swift; sourceTree = "<group>"; };
 		23123D2425D5E07200F2B813 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				23C427AF26E29F7E00E7D31C /* PieceChooser.swift */,
 				2391B26526C3782400349054 /* PieceListView.swift */,
 				23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */,
+				02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */,
 				02AF340728712F8400C87CC0 /* EditZoneView.swift */,
 				02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */,
 				23311FF626D99753003D45FF /* EditPatternView.swift */,
@@ -435,6 +438,7 @@
 				238182A326B9060B00F056F8 /* CGSize+Extensions.swift in Sources */,
 				024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */,
 				23311FEF26D979F9003D45FF /* PieceMovementEditorViewModel.swift in Sources */,
+				02FD341D287BE5780081F831 /* AddPromotionPieceView.swift in Sources */,
 				234BE2B924C8F34C00580B6B /* Square.swift in Sources */,
 				2371E28E25D1DC6F009D4D21 /* BoardView.swift in Sources */,
 				233932F625DCE7FB0050235F /* Mover.swift in Sources */,
