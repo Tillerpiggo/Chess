@@ -94,7 +94,8 @@ struct PieceDetailView: View {
                 //let index = indices.map { $0 }.first!
                 //piece.promotionPieces?.remove(atOffsets: indices)
 
-                piece.promotionPieces?.remove(atOffsets: indices)
+                //piece.promotionPieces?.remove(atOffsets: indices)
+                pieceManager.removePromotionPiece(at: indices, from: piece)
             },
 
             addView: { isPresented in
@@ -107,18 +108,7 @@ struct PieceDetailView: View {
                         }
                     },
                     isPresented: isPresented) { newPiece in
-                        // TODO: Abstract this out
-                        //guard piece != nil else { return }
-                        if piece.promotionPieces == nil {
-                            piece.promotionPieces = [UUID]()
-                            print("check")
-                        }
-                        
-                        print("piece.promotionPieces: \(piece.promotionPieces?.count)")
-                        
-                        if let id = newPiece.id {
-                            piece.promotionPieces?.append(id)
-                        }
+                        pieceManager.addPromotionPiece(newPiece, to: piece)
                     }
             }
         )

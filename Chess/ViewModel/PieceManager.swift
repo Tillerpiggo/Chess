@@ -82,6 +82,46 @@ class PieceManager: ObservableObject {
 		}
 	}
     
+    func removePromotionPiece(at indices: IndexSet, from piece: PieceModel) {
+        piece.promotionPieces?.remove(atOffsets: indices)
+        saveContext()
+    }
+    
+    func addPromotionPiece(_ newPiece: PieceModel, to piece: PieceModel) {
+        if piece.promotionPieces == nil {
+            piece.promotionPieces = [UUID]()
+            print("check")
+        }
+        
+        saveContext()
+        
+        // Insert in rank-order
+        guard let promotionPieces = piece.promotionPieces, let insertedRank = newPiece.position?.rank else { return }
+        
+        var insertionIndex = 0
+        
+        for index in 0..<promotionPieces.count {
+            insertionIndex = index
+            if let promotionPieceRank = pieces.first(where: { $0.id == promotionPieces[index] })?.position?.rank {
+                if insertedRank < promotionPieceRank {
+                    break
+                }
+            }
+            
+            if index == promotionPieces.count - 1 {
+                insertionIndex += 1
+            }
+        }
+        
+        print("insertionIndex: \(insertionIndex)")
+        
+        if let id = newPiece.id {
+            piece.promotionPieces?.insert(id, at: insertionIndex)
+        }
+        
+        saveContext()
+    }
+    
     func setPieceIsImportant(_ piece: Piece, to isImportant: Bool) {
         if let gameModel = converter.retrieveGameModel(game),
            let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {

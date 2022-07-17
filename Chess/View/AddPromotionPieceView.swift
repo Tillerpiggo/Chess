@@ -12,7 +12,7 @@ import CoreData
 struct AddPromotionPieceView: View {
     
     var pieces: [PieceModel]
-    @State var selectedPiece: PieceModel?
+    @State var selectedPiece: Int = 0
     
     @Binding var isPresented: Bool
     
@@ -20,7 +20,6 @@ struct AddPromotionPieceView: View {
     
     init(pieces: [PieceModel], isPresented: Binding<Bool>, onAdd: @escaping (PieceModel) -> Void) {
         self.pieces = pieces
-        self.selectedPiece = pieces.first ?? nil
         self._isPresented = isPresented
         self.onAdd = onAdd
     }
@@ -29,15 +28,15 @@ struct AddPromotionPieceView: View {
         VStack {
             AddCancelHeader(
                 title: "Add Promotion Piece",
-                isAddEnabled: selectedPiece != nil) {
+                isAddEnabled: true) {
                     self.isPresented = false
                 } onAdd: {
-                    self.onAdd(self.selectedPiece!)
+                    self.onAdd(pieces[selectedPiece])
                     self.isPresented = false
                 }
             Picker("Select a piece", selection: $selectedPiece) {
-                ForEach(pieces, id: \.id) { piece in
-                    Text(piece.name ?? "")
+                ForEach(0..<pieces.count) { index in
+                    Text(pieces[index].name ?? "")
                 }
             }
             Spacer()

@@ -58,6 +58,11 @@ struct PieceListView<Content>: View where Content: View {
 								.resizable()
 								.frame(width: 32, height: 32)
                             Text(piece.name ?? "")
+                            Spacer()
+                            if piece.isImportant {
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(.boardGreen)
+                            }
 						}
 					}
                     .listRowBackground(rowColor)
