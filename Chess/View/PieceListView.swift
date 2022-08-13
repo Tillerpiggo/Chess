@@ -79,7 +79,7 @@ struct PieceListView<Content>: View where Content: View {
                     removePiece(indices)
                     
                     // Remove it in the backend
-                    //pieceManager.removePiece(at: pieceIndex)
+                    //pieceManager.removePiece(at: indices)
 				}
 				
 				Button(action: {
