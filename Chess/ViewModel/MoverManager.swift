@@ -19,7 +19,7 @@ class MoverManager: ObservableObject {
 	private var moverManager: ModelManager<MoverModel>
 	private var firstMoveMoverManager: ModelManager<MoverModel>
 	private var cancellables: [AnyCancellable]?
-	private var game: Game
+	private var game: GameModel
 	var piece: Piece
 	
 	private func saveContext() { moverManager.save() }
@@ -39,8 +39,7 @@ class MoverManager: ObservableObject {
 	}
 	
 	private func addOrRemovePattern(_ pattern: Pattern?, index: Int?, piece: Piece, movementType: Piece.MovementType, remove: Bool) {
-		if	let gameModel = converter.retrieveGameModel(game),
-			let pieceModel = converter.retrievePieceModel(piece, from: gameModel)
+		if let pieceModel = converter.retrievePieceModel(piece, from: game)
 		{
 			
 			var patternModel: PatternModel? = nil
@@ -84,7 +83,7 @@ class MoverManager: ObservableObject {
 		}
 	}
 	
-	init(moverManager: ModelManager<MoverModel>, firstMoveMoverManager: ModelManager<MoverModel>, converter: ModelConverter, game: Game, piece: Piece) {
+	init(moverManager: ModelManager<MoverModel>, firstMoveMoverManager: ModelManager<MoverModel>, converter: ModelConverter, game: GameModel, piece: Piece) {
 		self.moverManager = moverManager
 		self.firstMoveMoverManager = moverManager
 		self.converter = converter
