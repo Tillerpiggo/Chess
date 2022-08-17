@@ -24,11 +24,11 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
 		context.delete(object)
 	}
 	
-	func pieceManager(for game: Game) -> ModelManager<PieceModel> {
+	func pieceManager(for game: GameModel) -> ModelManager<PieceModel> {
 		let pieceManager = ModelManager<PieceModel>(
 			persistenceController: persistenceController,
 			sortDescriptors: [NSSortDescriptor(keyPath: \PieceModel.position!.rank, ascending: true)],
-			predicate: NSPredicate(format: "%K = %@", (\PieceModel.game!.id)._kvcKeyPathString!, game.id as CVarArg)
+			predicate: NSPredicate(format: "%K = %@", (\PieceModel.game!.id)._kvcKeyPathString!, game.id! as CVarArg)
 		)
 		
 		return pieceManager

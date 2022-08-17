@@ -19,7 +19,7 @@ class PieceManager: ObservableObject {
     //@Published private(set) var pieces = [Piece]()
     @Published var pieces = [PieceModel]()
     
-	private var game: Game
+	private var game: GameModel
 	private var converter: ModelConverter
 	
 	private var pieceManager: ModelManager<PieceModel>
@@ -51,31 +51,25 @@ class PieceManager: ObservableObject {
     // TODO: Refactor gameModel to be a property of this class itself, so it isn't always recalculated (or just refactor the whole get game model and get pieceModel thing)
     
 	func addPiece(_ piece: Piece) {
-		if let gameModel = converter.retrieveGameModel(game) {
-			gameModel.addToPieces(converter.pieceModel(from: piece, in: gameModel))
-			saveContext()
-		}
+        game.addToPieces(converter.pieceModel(from: piece, in: game))
+        saveContext()
 	}
 	
 	func removePiece(_ piece: Piece) {
-		if let gameModel = converter.retrieveGameModel(game),
-		   let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
-			gameModel.removeFromPieces(pieceModel)
+		if let pieceModel = converter.retrievePieceModel(piece, from: game) {
+			game.removeFromPieces(pieceModel)
 			saveContext()
 		}
 	}
 	
 	func removePiece(at indices: IndexSet) {
 		let index = indices.map { $0 }.first!
-		if let gameModel = converter.retrieveGameModel(game) {
-			gameModel.removeFromPieces(at: index)
-			saveContext()
-		}
+        game.removeFromPieces(at: index)
+        saveContext()
 	}
 	
 	func renamePiece(_ piece: Piece, to name: String) {
-		if let gameModel = converter.retrieveGameModel(game),
-			let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+		if let pieceModel = converter.retrievePieceModel(piece, from: game) {
 			pieceModel.name = name
             objectWillChange.send()
 			saveContext()
@@ -123,20 +117,18 @@ class PieceManager: ObservableObject {
     }
     
     func setPieceIsImportant(_ piece: Piece, to isImportant: Bool) {
-        if let gameModel = converter.retrieveGameModel(game),
-           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+        if let pieceModel = converter.retrievePieceModel(piece, from: game) {
             pieceModel.isImportant = isImportant
             saveContext()
         }
     }
     
     func updatePiece(_ piece: Piece) {
-        if let gameModel = converter.retrieveGameModel(game),
-           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+        if let pieceModel = converter.retrievePieceModel(piece, from: game) {
 //            pieceModel.name = piece.name
 //            pieceModel
             //pieceModel.isImportant = piece.isImportant
-            converter.makePieceModelMatch(piece: piece, game: gameModel, pieceModel: pieceModel)
+            converter.makePieceModelMatch(piece: piece, game: game, pieceModel: pieceModel)
             saveContext()
         }
     }
@@ -150,8 +142,7 @@ class PieceManager: ObservableObject {
 //    }
     
     func setPieceCanPromote(_ piece: Piece, to canPromote: Bool) {
-        if let gameModel = converter.retrieveGameModel(game),
-           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
+        if let pieceModel = converter.retrievePieceModel(piece, from: game) {
             pieceModel.canPromote = canPromote
             saveContext()
         }
@@ -159,8 +150,7 @@ class PieceManager: ObservableObject {
     
     func removePromotionPiece(_ pieceID: UUID, from piece: Piece) {
         print("removing piece")
-        if let gameModel = converter.retrieveGameModel(game),
-           let pieceModel = converter.retrievePieceModel(piece, from: gameModel),
+        if let pieceModel = converter.retrievePieceModel(piece, from: game),
            let promotionPieces = pieceModel.promotionPieces {
 //            let index = pieceModel.promotionPieces as [PieceModel]
 //            pieceModel.removeFrreomPromotionPieces
@@ -181,17 +171,17 @@ class PieceManager: ObservableObject {
 	func movePiece(from source: IndexSet, to destination: Int) {
 		let startingPosition = source.map { $0 }.first!
 		
-		if let gameModel = converter.retrieveGameModel(game), let pieceModel = gameModel.pieces?.object(at: startingPosition) as? PieceModel {
+		if let pieceModel = game.pieces?.object(at: startingPosition) as? PieceModel {
 			
-			gameModel.removeFromPieces(at: startingPosition)
+			game.removeFromPieces(at: startingPosition)
 			
 			// If the piece is moving from start -> end, the insertion index will be lower than what it was
 			if startingPosition < destination {
-				gameModel.insertIntoPieces(pieceModel, at: destination - 1)
+				game.insertIntoPieces(pieceModel, at: destination - 1)
 				
 			// If the piece is moving from the end -> start, it doesn't affect insertion index
 			} else {
-				gameModel.insertIntoPieces(pieceModel, at: destination)
+				game.insertIntoPieces(pieceModel, at: destination)
 			}
 			
 			saveContext()
@@ -209,7 +199,7 @@ class PieceManager: ObservableObject {
 //        }
 //    }
 	
-	init(pieceManager: ModelManager<PieceModel>, converter: ModelConverter, game: Game) {
+	init(pieceManager: ModelManager<PieceModel>, converter: ModelConverter, game: GameModel) {
 		self.pieceManager = pieceManager
 		self.converter = converter
 		self.game = game

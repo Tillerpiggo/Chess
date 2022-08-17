@@ -24,6 +24,7 @@ struct CreateGameView: View {
         return board
     }
     
+    // Fetch the pieces for this game in order to make it
     var didPressDone: (Game) -> Void
     
     var body: some View {

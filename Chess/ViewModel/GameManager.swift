@@ -13,7 +13,7 @@ import Combine
 // (so that I can keep the sweet functional programming of Movers without rewriting everything)
 class GameManager: ObservableObject {
 	//@Published private(set) var games = [Game]()
-	@Published var games = [Game]()
+	@Published var games = [GameModel]()
 	
 	
 	// (replacable with test data as well)
@@ -24,12 +24,28 @@ class GameManager: ObservableObject {
 	private func saveContext() { gameManager.save() }
 	private func delete(_ object: NSManagedObject) { gameManager.delete(object) }
 	
-	func pieceManager(for game: Game) -> PieceManager {
-		let modelManager = gameManager.pieceManager(for: game)
-		let pieceManager = PieceManager(pieceManager: modelManager, converter: converter, game: game)
-		
-		return pieceManager
-	}
+//	func pieceManager(for game: Game) -> PieceManager {
+//		let modelManager = gameManager.pieceManager(for: game)
+//		let pieceManager = PieceManager(pieceManager: modelManager, converter: converter, game: game)
+//
+//		return pieceManager
+//	}
+    
+    func pieceManager(for game: GameModel) -> PieceManager {
+        let modelManager = gameManager.pieceManager(for: game)
+        let pieceManager = PieceManager(pieceManager: modelManager, converter: converter, game: game)
+        
+        return pieceManager
+    }
+    
+    // Returns a game with the most up to date pieces, as obtained from a piece manager for the game
+//    func updatedGame(_ game: Game) -> Game {
+//        var newGame = game
+//        let pieceManager = pieceManager(for: game)
+//        newGame.pieces = pieceManager.pieces.compactMap { Piece(pieceModel: $0) }
+//
+//        return newGame
+//    }
 	
 	// MARK: - Intents
 	func addGame(_ game: Game) {
@@ -137,7 +153,7 @@ class GameManager: ObservableObject {
 		// Subscription to ModelManager<GameModel> to keep games updated
 		self.cancellable = gameManager.models.eraseToAnyPublisher().sink { games in
 			print("updated games")
-			self.games = games.compactMap { Game(gameModel: $0) }
+			self.games = games
 		}
 	}
 }

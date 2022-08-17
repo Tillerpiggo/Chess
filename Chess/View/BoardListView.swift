@@ -24,13 +24,13 @@ struct BoardListView: View {
 		
 		NavigationView {
 			List {
-				ForEach(gameStore.games) { game in
+                ForEach(gameStore.games, id: \.id) { game in
 					NavigationLink(destination:
                                     GameDetailView(pieceManager: gameStore.pieceManager(for: game), game: makeGameBinding(game)!)
 							.environmentObject(gameStore)
 					) {
 						HStack {
-							Text(game.name)
+							Text(game.name ?? "Untitled Game")
                                 .foregroundColor(.rowTextColor)
 							Spacer()
 						}//.contentShape(Rectangle())
