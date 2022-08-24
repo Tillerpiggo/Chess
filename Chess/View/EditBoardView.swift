@@ -10,9 +10,9 @@ import SwiftUI
 
 struct EditBoardView: View {
 	
-	@State var game: Game
+	//@Binding var game: GameModel
     //var changedGame: (Game) -> Void
-    @StateObject var model: EditBoardViewModel
+    @ObservedObject var model: EditBoardViewModel
     
     @State var bottomLeftSquareColor: Square.SquareType = .dark
     
@@ -22,9 +22,8 @@ struct EditBoardView: View {
     // True if isDraggingPiece
     @State var isDraggingPiece: Bool = true
     
-    init(game: Game, changedGame: @escaping (Game) -> Void) {
-        self._game = State(wrappedValue: game)
-        self._model = StateObject(wrappedValue: EditBoardViewModel(game: game, changedGame: changedGame))
+    init(game: GameModel, converter: ModelConverter) {
+        self._model = EditBoardViewModel(game: game, converter: ModelConverter)
     }
     
     private func toggleBottomLeftSquareColor() {

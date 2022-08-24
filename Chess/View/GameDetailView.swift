@@ -69,14 +69,8 @@ struct GameDetailView: View {
                     .disabled(true)
                     
                     Section {
-                        NavigationLink(destination: EditBoardView(game: game, changedGame: { game in
-                            //print("unchanged game: \(self.game.board.squares[0][0].piece?.name)")
-                            //print("does game == game? \(self.game == game)")
-                            self.game = game
-                            //print("does game == game now? \(self.game == game)")
-                            //print("changed game: \(self.game.board.squares[0][0].piece?.name)")
-                        })
-                        ) {
+                        NavigationLink(destination: EditBoardView(game: game, converter: gameManager.converter))
+                        {
                             Text("Board")
                                 .foregroundColor(.rowTextColor)
                         }

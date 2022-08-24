@@ -10,7 +10,6 @@
         <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BoardModel" inverseName="game" inverseEntity="BoardModel"/>
         <relationship name="pieces" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PieceModel" inverseName="game" inverseEntity="PieceModel"/>
         <relationship name="players" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PlayerModel" inverseName="game" inverseEntity="PlayerModel"/>
-        <relationship name="squares" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="game" inverseEntity="SquareModel"/>
     </entity>
     <entity name="MoveModel" representedClassName="MoveModel" syncable="YES" codeGenerationType="class">
         <relationship name="end" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="moveEnd" inverseEntity="PositionModel"/>
@@ -70,14 +69,14 @@
         <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BoardModel" inverseName="squares" inverseEntity="BoardModel"/>
-        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="squares" inverseEntity="GameModel"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel"/>
         <relationship name="piece" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PieceModel" inverseName="square" inverseEntity="PieceModel"/>
         <relationship name="position" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="board" inverseEntity="PositionModel"/>
         <relationship name="startingPieceOwner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="square" inverseEntity="PlayerModel"/>
     </entity>
     <elements>
         <element name="BoardModel" positionX="-712.05078125" positionY="8.59375" width="128" height="73"/>
-        <element name="GameModel" positionX="-536.78515625" positionY="-213.62890625" width="128" height="133"/>
+        <element name="GameModel" positionX="-536.78515625" positionY="-213.62890625" width="128" height="104"/>
         <element name="MoveModel" positionX="-656" positionY="752.55078125" width="128" height="73"/>
         <element name="MoverModel" positionX="-222.82421875" positionY="-45.50390625" width="128" height="103"/>
         <element name="PatternModel" positionX="-300.51953125" positionY="240.4375" width="128" height="163"/>
