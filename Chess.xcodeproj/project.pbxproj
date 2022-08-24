@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02389F0B2864E53200A2B098 /* PieceMovementEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */; };
+		02421F2628ACBE7E00AE941F /* GameDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */; };
 		024928E4275030B2002FAA46 /* BoardView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView2.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
 		0249B34B28773B6E00135CDC /* PromotionPieceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */; };
@@ -87,6 +88,7 @@
 
 /* Begin PBXFileReference section */
 		02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceMovementEditorView.swift; sourceTree = "<group>"; };
+		02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewModel.swift; sourceTree = "<group>"; };
 		024928E3275030B2002FAA46 /* BoardView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView2.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
 		0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionPieceManager.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				237EAD7426E011CE00143BA1 /* PieceManager.swift */,
 				0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */,
 				23D1E90E26E08A6800A36B0B /* MoverManager.swift */,
+				02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */,
 				23E8553826B88BDE009E34B9 /* YourBoardsViewModel.swift */,
 				23262ECB26BA11B300EA7FBE /* EditGameViewModel.swift */,
 				2391B26F26C4583200349054 /* EditPieceViewModel.swift */,
@@ -455,6 +458,7 @@
 				237EAD7526E011CE00143BA1 /* PieceManager.swift in Sources */,
 				23294DBB26C8BB2700F45EE9 /* AutofocusTextField.swift in Sources */,
 				2391B27026C4583200349054 /* EditPieceViewModel.swift in Sources */,
+				02421F2628ACBE7E00AE941F /* GameDetailViewModel.swift in Sources */,
 				23311FF726D99753003D45FF /* EditPatternView.swift in Sources */,
 				23E8553026B7CA61009E34B9 /* BoardListView.swift in Sources */,
 				0249B34B28773B6E00135CDC /* PromotionPieceManager.swift in Sources */,
