@@ -21,6 +21,7 @@ struct BoardView2: View {
     var onDrag: (Position, Position) -> Void = { _, _ in }
     var onDrop: ([NSItemProvider], Position) -> Void = { _, _ in }
     var updateIsDraggingPiece: (Bool) -> Void
+    // test commit
     
     init(board: Binding<Board>,
          selectedSquares: [Position] = [],
