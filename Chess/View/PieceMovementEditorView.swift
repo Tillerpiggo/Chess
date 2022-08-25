@@ -40,7 +40,7 @@ struct PieceMovementEditorView: View {
                         HStack {
                             Spacer()
                             BoardView2(
-                                board: .constant(viewModel.board),
+                                board: viewModel.board,
                                 selectedSquares: viewModel.selectedSquares,
                                 squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),
                                 cornerRadius: 8)

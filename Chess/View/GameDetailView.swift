@@ -57,8 +57,8 @@ struct GameDetailView: View {
                     Section {
                         HStack {
                             Spacer()
-                            BoardView2(board: $game.board, squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.board.files), cornerRadius: 8)
-                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(game.board.ranks) / CGFloat(game.board.files))
+                            BoardView2(board: game.board!, squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.files), cornerRadius: 8)
+                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(game.ranks) / CGFloat(game.files))
                             Spacer()
                         }
                         
@@ -81,7 +81,7 @@ struct GameDetailView: View {
                                 Text("Pieces")
                                     .foregroundColor(.rowTextColor)
                                 Spacer()
-                                Text("\(game.pieces.count)")
+                                Text("\(game.pieces?.count ?? 0)")
                                     .foregroundColor(.rowTextColor)
                                     .opacity(0.2)
                             }

@@ -20,7 +20,7 @@ class GameManager: ObservableObject {
 	private var gameManager: ModelManager<GameModel>
 	private var cancellable: AnyCancellable?
 	
-	private var converter: ModelConverter { gameManager.converter }
+	var converter: ModelConverter { gameManager.converter }
 	private func saveContext() { gameManager.save() }
 	private func delete(_ object: NSManagedObject) { gameManager.delete(object) }
 	

@@ -221,3 +221,9 @@ extension Game: Equatable {
 		return true
 	}
 }
+
+extension GameModel {
+    var gameStruct: Game? { Game(gameModel: self) }
+    var ranks: Int { gameStruct?.ranks ?? 0 }
+    var files: Int { gameStruct?.files ?? 0 }
+}

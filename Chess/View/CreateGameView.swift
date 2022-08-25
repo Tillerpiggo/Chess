@@ -29,7 +29,7 @@ struct CreateGameView: View {
 //    }
     
     // Fetch the pieces for this game in order to make it
-    var didPressDone: (Game) -> Void
+    var didPressDone: (GameModel) -> Void
     
     var body: some View {
         
@@ -75,10 +75,10 @@ struct CreateGameView: View {
         }
     }
     
-    init(isPresented: Binding<Bool>, isPlayingGame: Binding<Bool>, didPressDone: @escaping (Game) -> Void) {
+    init(isPresented: Binding<Bool>, isPlayingGame: Binding<Bool>, didPressDone: @escaping (GameModel) -> Void) {
         self._isPresented = isPresented
         self._isPlayingGame = isPlayingGame
         self.didPressDone = didPressDone
-        self._board = State<Game>(initialValue: Game(board: Board.empty(ranks: 1, files: 9), pieces: [], players: [.white, .black], name: ""))
+//        self._board = State<Game>(initialValue: Game(board: Board.empty(ranks: 1, files: 9), pieces: [], players: [.white, .black], name: ""))
     }
 }

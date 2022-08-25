@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct BoardView2: View {
-    @Binding var board: Board
+    var board: Board
     var selectedSquares: [Position]
     var legalMoves: [Position]
     var selectionColor: Color
@@ -21,9 +21,8 @@ struct BoardView2: View {
     var onDrag: (Position, Position) -> Void = { _, _ in }
     var onDrop: ([NSItemProvider], Position) -> Void = { _, _ in }
     var updateIsDraggingPiece: (Bool) -> Void
-    // test commit
     
-    init(board: Binding<Board>,
+    init(board: BoardModel,
          selectedSquares: [Position] = [],
          legalMoves: [Position] = [],
          selectionColor: Color = .selectedSquareColor,
@@ -36,11 +35,40 @@ struct BoardView2: View {
          onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
          updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
     {
-        self._board = board
+        self.init(
+            board: Board(boardModel: board)!,
+            selectedSquares: selectedSquares,
+            legalMoves: legalMoves,
+            selectionColor: selectionColor,
+            bottomLeftSquareColor: bottomLeftSquareColor,
+            squareLength: squareLength,
+            cornerRadius: cornerRadius,
+            pieceOpacity: pieceOpacity,
+            onSelected: onSelected,
+            onDrag: onDrag,
+            onDrop: onDrop,
+            updateIsDraggingPiece: updateIsDraggingPiece
+        )
+    }
+    
+    init(board: Board,
+         selectedSquares: [Position] = [],
+         legalMoves: [Position] = [],
+         selectionColor: Color = .selectedSquareColor,
+         bottomLeftSquareColor: Square.SquareType? = nil,
+         squareLength: CGFloat = 60,
+         cornerRadius: CGFloat = 0,
+         pieceOpacity: CGFloat = 1.0,
+         onSelected: @escaping (Position) -> Void = { _ in },
+         onDrag: @escaping (Position, Position) -> Void = { _, _ in },
+         onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
+         updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
+    {
+        self.board = board
         self.selectedSquares = selectedSquares
         self.legalMoves = legalMoves
         self.selectionColor = selectionColor
-        self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
+        self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.bottomLeftSquareColor
         self.squareLength = squareLength
         self.cornerRadius = cornerRadius
         self.pieceOpacity = pieceOpacity
@@ -416,8 +444,8 @@ struct BoardSquares: Shape {
     }
 }
 
-struct BoardView2_Previews: PreviewProvider {
-    static var previews: some View {
-        BoardView2(board: .constant(Game.standard().board), bottomLeftSquareColor: .dark)
-    }
-}
+//struct BoardView2_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BoardView2(board: .constant(Game.standard().board), bottomLeftSquareColor: .dark)
+//    }
+//}

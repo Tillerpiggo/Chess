@@ -42,7 +42,7 @@ struct PlayView: View {
             .navigationViewStyle(StackNavigationViewStyle())
             .sheet(isPresented: $isPresentingCreateGameView) {
                 CreateGameView(isPresented: $isPresentingCreateGameView, isPlayingGame: $isPlayingGame) { (game) in
-                    self.game = game
+                    self.game = game.gameStruct!
                     print("game.name: \(game.name)")
                 }
                     .environmentObject(gameStore)
