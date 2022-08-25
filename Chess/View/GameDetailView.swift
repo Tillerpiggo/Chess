@@ -11,7 +11,7 @@ import SwiftUI
 struct GameDetailView: View {
 	
 	@EnvironmentObject var gameManager: GameManager
-    @StateObject var pieceManager: PieceManager
+    @ObservedObject var pieceManager: PieceManager
 	@Environment(\.presentationMode) var presentationMode: Binding
 
 	@Binding var game: GameModel
@@ -69,7 +69,7 @@ struct GameDetailView: View {
                     .disabled(true)
                     
                     Section {
-                        NavigationLink(destination: EditBoardView(game: game, converter: gameManager.converter))
+                        NavigationLink(destination: EditBoardView(game: $game, gameManager: gameManager))
                         {
                             Text("Board")
                                 .foregroundColor(.rowTextColor)

@@ -22,8 +22,8 @@ struct EditBoardView: View {
     // True if isDraggingPiece
     @State var isDraggingPiece: Bool = true
     
-    init(game: GameModel, converter: ModelConverter) {
-        self.model = EditBoardViewModel(game: game, converter: converter)
+    init(game: Binding<GameModel>, gameManager: GameManager) {
+        self.model = EditBoardViewModel(game: game.wrappedValue, gameManager: gameManager, converter: gameManager.converter)
     }
     
     private func toggleBottomLeftSquareColor() {
@@ -55,7 +55,7 @@ struct EditBoardView: View {
                 
                 Group {
                     BoardView2(
-                        board: $model.emptyBoard,
+                        board: Binding<Board>(get: { model.emptyBoard }, set: { _ in }),
                         bottomLeftSquareColor: model.bottomLeftSquareColor,
                         squareLength: squareLength,
                         cornerRadius: 14,
@@ -80,7 +80,7 @@ struct EditBoardView: View {
                         )
                     
                     BoardView2(
-                        board: .constant(model.board),
+                        board: Binding<Board>(get: { model.board }, set: { _ in }),
                         squareLength: squareLength,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in

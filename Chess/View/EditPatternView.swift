@@ -49,7 +49,7 @@ struct EditPatternView: View {
                         HStack {
                             Spacer()
                             BoardView2(
-                                board: .constant(viewModel.board),
+                                board: Binding<Board>(get: { viewModel.board }, set: { _ in }),
                                 selectedSquares: viewModel.selectedSquares,
                                 selectionColor: viewModel.isRestricting ? .excludedSquareColor : .selectedSquareColor,
                                 squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),

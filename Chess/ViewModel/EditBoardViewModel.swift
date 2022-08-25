@@ -20,13 +20,20 @@ class EditBoardViewModel: ObservableObject {
     
     // a game of type Game, rather than GameModel - TODO: Refactor this when you switch GameModel with Game (so that GameModels are the less used, struct versions that have better features/calculations
     private var gameStruct: Game? { Game(gameModel: game) }
-    var board: Board { gameStruct!.board } // TODO: Figure out how to properly unwrap this
+    var board: Board {
+        
+        print("boardStruct updated!")
+        return gameStruct!.board
+    } // TODO: Figure out how to properly unwrap this
     
     @Published var game: GameModel
     
+    private var gameManager: GameManager
     private var converter: ModelConverter
     var ranks: Int { gameStruct?.ranks ?? 0 }
     var files: Int { gameStruct?.files ?? 0 }
+    
+    private func saveContext() { gameManager.saveContext() }
     
     @Published var selectedPlayer: Player = .white
     
@@ -407,6 +414,7 @@ class EditBoardViewModel: ObservableObject {
     
     private func updateGame(withSquares squares: [[Square]]) {
         game.board?.squares = converter.squareModelSet(from: squares)
+        saveContext()
     }
     
     private func updateEmptyBoard() {
@@ -417,8 +425,9 @@ class EditBoardViewModel: ObservableObject {
         )
     }
     
-    init(game: GameModel, converter: ModelConverter) {
+    init(game: GameModel, gameManager: GameManager, converter: ModelConverter) {
         self.game = game
+        self.gameManager = gameManager
         self.converter = converter
         
         // Because you can't call updateEmptyBoard() until after initialization
