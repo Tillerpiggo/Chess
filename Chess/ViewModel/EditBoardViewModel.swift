@@ -20,12 +20,13 @@ class EditBoardViewModel: ObservableObject {
     
     // a game of type Game, rather than GameModel - TODO: Refactor this when you switch GameModel with Game (so that GameModels are the less used, struct versions that have better features/calculations
     private var gameStruct: Game? { Game(gameModel: game) }
+    var board: Board { gameStruct!.board } // TODO: Figure out how to properly unwrap this
     
     @Published var game: GameModel
     
     private var converter: ModelConverter
-    private var ranks: Int { gameStruct?.ranks ?? 0 }
-    private var files: Int { gameStruct?.files ?? 0 }
+    var ranks: Int { gameStruct?.ranks ?? 0 }
+    var files: Int { gameStruct?.files ?? 0 }
     
     @Published var selectedPlayer: Player = .white
     
@@ -68,10 +69,10 @@ class EditBoardViewModel: ObservableObject {
         }
     }
     
-    func onDrop(_ piece: Piece, at position: Position) {
-        guard var boardCopy = gameStruct?.board else { return }
+    func onDrop(_ pieceID: String, at position: Position) {
+        guard var boardCopy = gameStruct?.board,
+              var droppedPiece = gameStruct?.pieces.first(where: { $0.id.uuidString == pieceID }) else { return }
         
-        var droppedPiece = piece
         droppedPiece.owner = selectedPlayer
         boardCopy.squares[position]?.setStartingPiece(droppedPiece)
         
