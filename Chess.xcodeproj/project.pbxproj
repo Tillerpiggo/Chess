@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		02389F0B2864E53200A2B098 /* PieceMovementEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */; };
+		02421F2628ACBE7E00AE941F /* GameDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */; };
 		024928E4275030B2002FAA46 /* BoardView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView2.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
 		0249B34B28773B6E00135CDC /* PromotionPieceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */; };
 		028193792754BAEE009BBBB9 /* OffsetTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028193782754BAEE009BBBB9 /* OffsetTransition.swift */; };
 		02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF340728712F8400C87CC0 /* EditZoneView.swift */; };
 		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
+		02FD341B2877D5780081F831 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341A2877D5780081F831 /* Binding+Extensions.swift */; };
+		02FD341D287BE5780081F831 /* AddPromotionPieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
 		23079A6626D9FAC200A343CE /* MoverModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6526D9FAC200A343CE /* MoverModel.swift */; };
 		23123D2525D5E07200F2B813 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23123D2425D5E07200F2B813 /* GameView.swift */; };
@@ -85,12 +88,15 @@
 
 /* Begin PBXFileReference section */
 		02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceMovementEditorView.swift; sourceTree = "<group>"; };
+		02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewModel.swift; sourceTree = "<group>"; };
 		024928E3275030B2002FAA46 /* BoardView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView2.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
 		0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionPieceManager.swift; sourceTree = "<group>"; };
 		028193782754BAEE009BBBB9 /* OffsetTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetTransition.swift; sourceTree = "<group>"; };
 		02AF340728712F8400C87CC0 /* EditZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditZoneView.swift; sourceTree = "<group>"; };
 		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
+		02FD341A2877D5780081F831 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
+		02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPromotionPieceView.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
 		23079A6526D9FAC200A343CE /* MoverModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverModel.swift; sourceTree = "<group>"; };
 		23123D2425D5E07200F2B813 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -236,6 +242,7 @@
 				23C427AF26E29F7E00E7D31C /* PieceChooser.swift */,
 				2391B26526C3782400349054 /* PieceListView.swift */,
 				23294DC026C9CF7A00F45EE9 /* PieceDetailView.swift */,
+				02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */,
 				02AF340728712F8400C87CC0 /* EditZoneView.swift */,
 				02389F0A2864E53200A2B098 /* PieceMovementEditorView.swift */,
 				23311FF626D99753003D45FF /* EditPatternView.swift */,
@@ -262,6 +269,7 @@
 				237EAD7426E011CE00143BA1 /* PieceManager.swift */,
 				0249B34A28773B6E00135CDC /* PromotionPieceManager.swift */,
 				23D1E90E26E08A6800A36B0B /* MoverManager.swift */,
+				02421F2528ACBE7E00AE941F /* GameDetailViewModel.swift */,
 				23E8553826B88BDE009E34B9 /* YourBoardsViewModel.swift */,
 				23262ECB26BA11B300EA7FBE /* EditGameViewModel.swift */,
 				2391B26F26C4583200349054 /* EditPieceViewModel.swift */,
@@ -302,6 +310,7 @@
 				2371E29225D1F96D009D4D21 /* Color+Extensions.swift */,
 				238182A226B9060B00F056F8 /* CGSize+Extensions.swift */,
 				23079A6526D9FAC200A343CE /* MoverModel.swift */,
+				02FD341A2877D5780081F831 /* Binding+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -432,11 +441,13 @@
 				238182A326B9060B00F056F8 /* CGSize+Extensions.swift in Sources */,
 				024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */,
 				23311FEF26D979F9003D45FF /* PieceMovementEditorViewModel.swift in Sources */,
+				02FD341D287BE5780081F831 /* AddPromotionPieceView.swift in Sources */,
 				234BE2B924C8F34C00580B6B /* Square.swift in Sources */,
 				2371E28E25D1DC6F009D4D21 /* BoardView.swift in Sources */,
 				233932F625DCE7FB0050235F /* Mover.swift in Sources */,
 				234BE2B124C8EA9B00580B6B /* Position.swift in Sources */,
 				2367FE2226BF62CD001BF1A2 /* Pattern.swift in Sources */,
+				02FD341B2877D5780081F831 /* Binding+Extensions.swift in Sources */,
 				2367FE1E26BC74B2001BF1A2 /* EditGameView.swift in Sources */,
 				2381829F26B8FE3000F056F8 /* Grid.swift in Sources */,
 				23C427B026E29F7E00E7D31C /* PieceChooser.swift in Sources */,
@@ -447,6 +458,7 @@
 				237EAD7526E011CE00143BA1 /* PieceManager.swift in Sources */,
 				23294DBB26C8BB2700F45EE9 /* AutofocusTextField.swift in Sources */,
 				2391B27026C4583200349054 /* EditPieceViewModel.swift in Sources */,
+				02421F2628ACBE7E00AE941F /* GameDetailViewModel.swift in Sources */,
 				23311FF726D99753003D45FF /* EditPatternView.swift in Sources */,
 				23E8553026B7CA61009E34B9 /* BoardListView.swift in Sources */,
 				0249B34B28773B6E00135CDC /* PromotionPieceManager.swift in Sources */,

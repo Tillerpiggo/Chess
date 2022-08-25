@@ -13,14 +13,20 @@ import SwiftUI
 // By moving pieces, and by managing the empty "ghost" board
 class EditBoardViewModel: ObservableObject {
     var bottomLeftSquareColor: Square.SquareType {
-        return game.board.squares[Position(rank: 0, file: 0)]?.type ?? .dark
+        return gameStruct?.board.squares[Position(rank: 0, file: 0)]?.type ?? .dark
     }
     
-    var changedGame: (Game) -> Void
+    //var changedGame: (Game) -> Void
     
-    @Published var game: Game
-    private var ranks: Int { game.board.squares.first?.count ?? 0 }
-    private var files: Int { game.board.squares.count }
+    // a game of type Game, rather than GameModel - TODO: Refactor this when you switch GameModel with Game (so that GameModels are the less used, struct versions that have better features/calculations
+    private var gameStruct: Game? { Game(gameModel: game) }
+    var board: Board { gameStruct!.board } // TODO: Figure out how to properly unwrap this
+    
+    @Published var game: GameModel
+    
+    private var converter: ModelConverter
+    var ranks: Int { gameStruct?.ranks ?? 0 }
+    var files: Int { gameStruct?.files ?? 0 }
     
     @Published var selectedPlayer: Player = .white
     
@@ -38,7 +44,7 @@ class EditBoardViewModel: ObservableObject {
 //                return blackPiece
 //            }
 //        }
-        let selectedPieces = game.pieces.filter { $0.owner == selectedPlayer || $0.owner == .blackOrWhite }
+        let selectedPieces: [Piece] = gameStruct?.pieces.filter { $0.owner == selectedPlayer || $0.owner == .blackOrWhite } ?? []
         
         return selectedPieces.map { piece in
             var newPiece = piece
@@ -56,17 +62,21 @@ class EditBoardViewModel: ObservableObject {
     }
     
     func onDrag(from startingPosition: Position, to endingPosition: Position) {
-        if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[endingPosition]?.state != .nonexistent {
-            game.moveSetup(move)
-            changedGame(game)
+        guard var boardCopy = gameStruct?.board else { return }
+        if let move = Move(start: startingPosition, end: endingPosition), boardCopy.squares[endingPosition]?.state != .nonexistent {
+            boardCopy.moveSetup(move: move)
+            updateGame(withSquares: boardCopy.squares)
         }
     }
     
-    func onDrop(_ piece: Piece, at position: Position) {
-        var droppedPiece = piece
+    func onDrop(_ pieceID: String, at position: Position) {
+        guard var boardCopy = gameStruct?.board,
+              var droppedPiece = gameStruct?.pieces.first(where: { $0.id.uuidString == pieceID }) else { return }
+        
         droppedPiece.owner = selectedPlayer
-        game.board.squares[position]?.setStartingPiece(droppedPiece)
-        changedGame(game)
+        boardCopy.squares[position]?.setStartingPiece(droppedPiece)
+        
+        updateGame(withSquares: boardCopy.squares)
     }
     
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
@@ -76,22 +86,24 @@ class EditBoardViewModel: ObservableObject {
     func selectedPositionOnBoard(_ selectedPosition: Position) -> Position {
         var directionRemoved = Position(rank: 0, file: 0)
         
+        guard var boardCopy = gameStruct?.board else { return directionRemoved }
+        
         //print("selectedPosition")
-        if let square = game.board.squares[selectedPosition] {
+        if let square = boardCopy.squares[selectedPosition] {
             if let selectedPiece = selectedPiece {
                 
                 if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
-                    game.board.squares[selectedPosition]?.setStartingPiece(nil)
+                    boardCopy.squares[selectedPosition]?.setStartingPiece(nil)
                 } else {
-                    var piece = game.piece(selectedPiece.uuidString)!
-                    piece.owner = selectedPlayer
-                    game.board.squares[selectedPosition]?.setStartingPiece(piece)
+                    var piece = gameStruct?.piece(selectedPiece.uuidString)!
+                    piece!.owner = selectedPlayer
+                    boardCopy.squares[selectedPosition]?.setStartingPiece(piece)
                 }
             } else {
                 if square.state == .empty {
-                    game.board.squares[selectedPosition]?.state = .nonexistent
+                    boardCopy.squares[selectedPosition]?.state = .nonexistent
                 } else if square.state == .nonexistent {
-                    game.board.squares[selectedPosition]?.state = .empty
+                    boardCopy.squares[selectedPosition]?.state = .empty
                 }
 
                 //directionRemoved = trimSquaresIfNecessary(afterSquareRemovedAt: selectedPosition, sideLength: sideLength)
@@ -99,7 +111,7 @@ class EditBoardViewModel: ObservableObject {
                 updateSquarePositions()
             }
             
-            changedGame(game)
+            updateGame(withSquares: boardCopy.squares)
             updateEmptyBoard()
             //print("... and changed the game")
         } else {
@@ -160,7 +172,6 @@ class EditBoardViewModel: ObservableObject {
         }
         
         updateSquarePositions()
-        changedGame(game)
         updateEmptyBoard()
         
         print("game.ranks: \(ranks)")
@@ -173,8 +184,10 @@ class EditBoardViewModel: ObservableObject {
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertFile(at file: Int, selectedPosition: Int, selectedType: Square.SquareType) {
-        print("selectedType: \(selectedType)")
-        print("inserting file at \(file), selectedRank: \(selectedPosition)")
+//        print("selectedType: \(selectedType)")
+//        print("inserting file at \(file), selectedRank: \(selectedPosition)")
+        guard var boardCopy = gameStruct?.board else { return }
+        
         var newFile = [Square]()
         for rank in 0..<ranks {
             let position = Position(rank: rank, file: file)
@@ -189,23 +202,27 @@ class EditBoardViewModel: ObservableObject {
             )
         }
         
-        game.board.squares.insert(newFile, at: file)
+        boardCopy.squares.insert(newFile, at: file)
         
         if (0..<ranks).contains(selectedPosition) {
-            game.board.squares[file][selectedPosition].state = .empty
+            boardCopy.squares[file][selectedPosition].state = .empty
         }
+        
+        updateGame(withSquares: boardCopy.squares)
     }
     
     /// Inserts an empty rank to the board at the specified file index
     /// Every square is .nonexistent with type 'selectedType'
     /// Except for the square at 'selectedPosition', which is .empty
     private func insertRank(at rank: Int, selectedPosition: Int, selectedType: Square.SquareType) {
-        print("selectedType: \(selectedType)")
-        print("inserting rank at \(rank), selectedFile: \(selectedPosition)")
+//        print("selectedType: \(selectedType)")
+//        print("inserting rank at \(rank), selectedFile: \(selectedPosition)")
+        guard var boardCopy = gameStruct?.board else { return }
+        
         for file in 0..<files {
             let position = Position(rank: rank, file: file)
             let type = abs(file - selectedPosition) % 2 == 1 ? selectedType : selectedType.opposite
-            game.board.squares[file].insert(
+            boardCopy.squares[file].insert(
                 Square(
                     state: .nonexistent,
                     position: position,
@@ -216,17 +233,13 @@ class EditBoardViewModel: ObservableObject {
         }
         
         if (0..<files).contains(selectedPosition) {
-            game.board.squares[selectedPosition][rank].state = .empty
+            boardCopy.squares[selectedPosition][rank].state = .empty
         }
+        
+        updateGame(withSquares: boardCopy.squares)
     }
     
-    private func updateSquarePositions() {
-        for file in 0..<files {
-            for rank in 0..<ranks {
-                game.board.squares[file][rank].position = Position(rank: rank, file: file)
-            }
-        }
-    }
+   
     
     /// Given a position where a square was removed, checks if the associated ranks are
     /// empty, and removes them if they are.
@@ -335,16 +348,14 @@ class EditBoardViewModel: ObservableObject {
     private func removeRankIfEmpty(_ rank: Int) -> Bool {
         guard rank >= 0 && rank < ranks else { return false }
 
-        for file in game.board.squares {
+        for file in gameStruct?.board.squares ?? [] {
             if file[rank].state != .nonexistent {
                 return false
             }
         }
 
         // If the rank is empty, remove it
-        for (fileIndex, _) in game.board.squares.enumerated() {
-            game.board.squares[fileIndex].remove(at: rank)
-        }
+        removeRank(rank)
 
         return true
     }
@@ -354,28 +365,68 @@ class EditBoardViewModel: ObservableObject {
     /// Returns true if it removed the rank, and false otherwise
     private func removeFileIfEmpty(_ file: Int) -> Bool {
         guard file >= 0 && file < files else { return false }
-        if !game.board.squares[file].contains(where: { $0.state != .nonexistent }) {
-            game.board.squares.remove(at: file)
+        if !(gameStruct?.board.squares[file].contains(where: { $0.state != .nonexistent }) ?? false) {
+            removeFile(file)
             return true
         }
         
         return false
     }
     
-    func updateEmptyBoard() {
+    // Removes the file from the GameModel
+    private func removeFile(_ file: Int) {
+        guard var boardCopy = gameStruct?.board else { return }
+        
+        boardCopy.squares.remove(at: file)
+        
+        updateGame(withSquares: boardCopy.squares)
+    }
+    
+    // Removes the rank from the GameModel
+    private func removeRank(_ rank: Int) {
+        guard var boardCopy = gameStruct?.board else { return }
+        
+        for (file, _) in boardCopy.squares.enumerated() {
+            boardCopy.squares[file].remove(at: rank)
+        }
+        
+        updateGame(withSquares: boardCopy.squares)
+    }
+    
+    private func updateSquarePositions() {
+        guard var boardCopy = gameStruct?.board else { return }
+        
+        for file in 0..<files {
+            for rank in 0..<ranks {
+                boardCopy.squares[file][rank].position = Position(rank: rank, file: file)
+            }
+        }
+        
+        updateGame(withSquares: boardCopy.squares)
+    }
+    
+    private func updateGame(withSquares squares: [[Square]]) {
+        game.board?.squares = converter.squareModelSet(from: squares)
+    }
+    
+    private func updateEmptyBoard() {
         self.emptyBoard = Board.empty(
-            ranks: game.board.ranks + 2,
-            files: game.board.files + 2,
-            bottomLeftSquareColor: game.board.bottomLeftSquareColor
+            ranks: (gameStruct?.board.ranks ?? 0) + 2,
+            files: (gameStruct?.board.files ?? 0) + 2,
+            bottomLeftSquareColor: gameStruct?.board.bottomLeftSquareColor ?? .dark
         )
     }
     
-    init(game: Game, changedGame: @escaping (Game) -> Void) {
+    init(game: GameModel, converter: ModelConverter) {
         self.game = game
-        self.changedGame = changedGame
+        self.converter = converter
+        
+        // Because you can't call updateEmptyBoard() until after initialization
+        let tempGameStruct = Game(gameModel: game)
+        
         self.emptyBoard = Board.empty(
-            ranks: game.board.ranks + 2,
-            files: game.board.files + 2,
+            ranks: (tempGameStruct?.ranks ?? 0) + 2,
+            files: (tempGameStruct?.files ?? 0) + 2,
             bottomLeftSquareColor: .light
         )
     }

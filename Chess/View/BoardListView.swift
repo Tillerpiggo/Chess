@@ -26,13 +26,13 @@ struct BoardListView: View {
 		
 		NavigationView {
 			List {
-				ForEach(gameStore.games) { game in
+                ForEach($gameStore.games, id: \.id) { $game in
 					NavigationLink(destination:
-                                    GameDetailView(pieceManager: gameStore.pieceManager(for: game), game: makeGameBinding(game)!)
+                                    GameDetailView(pieceManager: gameStore.pieceManager(for: game), game: $game)
 							.environmentObject(gameStore)
 					) {
 						HStack {
-							Text(game.name)
+							Text(game.name ?? "Untitled Game")
                                 .foregroundColor(.rowTextColor)
 							Spacer()
 						}//.contentShape(Rectangle())
@@ -65,11 +65,11 @@ struct BoardListView: View {
 		)
 	}
 	
-	func makeGameBinding(_ game: Game) -> Binding<Game>? {
-		guard let index = gameStore.games.firstIndex(where: { $0.id == game.id }) else { return nil }
-		return .init(get: { gameStore.games[index] },
-					 set: { gameStore.updateGame($0) })
-	}
+//	func makeGameBinding(_ game: Game) -> Binding<Game>? {
+//		guard let index = gameStore.games.firstIndex(where: { $0.id == game.id }) else { return nil }
+//		return .init(get: { gameStore.games[index] },
+//					 set: { gameStore.updateGame($0) })
+//	}
 	
 	init() {
 		UITableView.appearance().backgroundColor = UIColor(.backgroundColor)

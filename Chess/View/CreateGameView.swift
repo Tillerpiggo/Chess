@@ -16,14 +16,19 @@ struct CreateGameView: View {
     @Binding var isPresented: Bool
     @Binding var isPlayingGame: Bool
     
-    @State private var board: Game
-    @State private var boardSelection: Int = 0
+    //@State private var board: Game
+    @State private var gameSelection: Int = 0
     
-    var game: Game {
-        print("board.name: \(board.name)")
-        return board
+    private var game: Game? {
+        return Game(gameModel: gameStore.games[gameSelection])
     }
     
+//    var game: Game {
+//        print("board.name: \(board.name)")
+//        return board
+//    }
+    
+    // Fetch the pieces for this game in order to make it
     var didPressDone: (Game) -> Void
     
     var body: some View {
@@ -37,7 +42,7 @@ struct CreateGameView: View {
                         isPresented = false
                     },
                     onAdd: {
-                        didPressDone(gameStore.games[boardSelection])
+                        didPressDone(gameStore.games[gameSelection])
                         isPresented = false
                         isPlayingGame = true
                     },
@@ -45,15 +50,17 @@ struct CreateGameView: View {
                     addButtonTitle: "Play"
                 )
                 
-                Picker("Board", selection: $boardSelection) {
+                Picker("Board", selection: $gameSelection) {
                     ForEach(0..<gameStore.games.count) { index in
-                        Text(gameStore.games[index].name)
+                        Text(gameStore.games[index].name ?? "Untitled Game")
                     }
                 }.pickerStyle(.inline)
                 
                 GeometryReader { geometry in
-                    BoardView2(board: $gameStore.games[boardSelection].board, squareLength: (geometry.size.width - 20) / CGFloat(gameStore.games[boardSelection].board.files), cornerRadius: 8)
+                    if let game = game {
+                        BoardView2(board: game.board, squareLength: (geometry.size.width - 20) / CGFloat(game.files), cornerRadius: 8)
                         .padding(.leading, 10)
+                    }
                 }
                 
                 // Preview
