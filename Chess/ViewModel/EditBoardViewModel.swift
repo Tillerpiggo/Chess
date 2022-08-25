@@ -133,6 +133,8 @@ class EditBoardViewModel: ObservableObject {
         return directionRemoved
     }
     
+    // Note: something in here seems to be glitched
+    
     /// Selects the position on the ghost board. This should add a square
     /// at the position tapped.
     /// Returns a Position corresponding to the direction the square was added ((rank, file))
