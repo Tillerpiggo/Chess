@@ -55,7 +55,7 @@ struct EditBoardView: View {
                 
                 Group {
                     BoardView2(
-                        board: model.emptyBoard,
+                        board: $model.emptyBoard,
                         bottomLeftSquareColor: model.bottomLeftSquareColor,
                         squareLength: squareLength,
                         cornerRadius: 14,
@@ -80,7 +80,7 @@ struct EditBoardView: View {
                         )
                     
                     BoardView2(
-                        board: model.board,
+                        board: .constant(model.board),
                         squareLength: squareLength,
                         pieceOpacity: isDragEnabled ? 1 : 0.4,
                         onSelected: { selectedPosition in

@@ -22,7 +22,7 @@ struct GameView: View {
                 Color.white
                 
                 BoardView2(
-                    board: game.game.board,
+                    board: $game.game.board,
                     selectedSquares: game.selectedSquares,
                     legalMoves: game.legalMoves,
                     squareLength: squareLength,

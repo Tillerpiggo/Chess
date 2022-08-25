@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PieceMovementEditorView: View {
     @StateObject var moverManager: MoverManager
-    @ObservedObject var viewModel: PieceMovementEditorViewModel
+    @ObservedObject var model: PieceMovementEditorViewModel
     
     @State var isAddPatternViewShowing = false
     
@@ -24,8 +24,8 @@ struct PieceMovementEditorView: View {
                     Rectangle()
                         .fill(Color.backgroundColor)
                         .frame(height: 60)
-                    Picker("test", selection: $viewModel.selectedMovementType) {
-                        ForEach(viewModel.movementTypes, id: \.self) { type in
+                    Picker("test", selection: $model.selectedMovementType) {
+                        ForEach(model.movementTypes, id: \.self) { type in
                             Text(type.string)
                         }
                     }
@@ -40,11 +40,11 @@ struct PieceMovementEditorView: View {
                         HStack {
                             Spacer()
                             BoardView2(
-                                board: viewModel.board,
-                                selectedSquares: viewModel.selectedSquares,
-                                squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(viewModel.board.files),
+                                board: .constant(model.board),
+                                selectedSquares: model.selectedSquares,
+                                squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(model.board.files),
                                 cornerRadius: 8)
-                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(viewModel.board.ranks) / CGFloat(viewModel.board.files))
+                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(model.board.ranks) / CGFloat(model.board.files))
                             Spacer()
                         }
                         
@@ -54,13 +54,13 @@ struct PieceMovementEditorView: View {
                     .disabled(true)
                     
                     Section(header: Text("Patterns")) {
-                        ForEach(viewModel.patterns) { pattern in
+                        ForEach(model.patterns) { pattern in
                             patternView(pattern)
                                 .listRowBackground(Color.rowColor)
                         }
                         
                         .onDelete { (patternIndex) in
-                            moverManager.removePattern(at: patternIndex, movementType: viewModel.selectedMovementType)
+                            moverManager.removePattern(at: patternIndex, movementType: model.selectedMovementType)
                         }
 
                         
@@ -81,15 +81,15 @@ struct PieceMovementEditorView: View {
                 }
                 .listStyle(InsetGroupedListStyle())
             }
-            .navigationBarTitle(Text(viewModel.piece.name), displayMode: .inline)
+            .navigationBarTitle(Text(model.piece.name), displayMode: .inline)
             .sheet(isPresented: $isAddPatternViewShowing) {
                 EditPatternView(
                     title: "Add Pattern",
                     pattern: Pattern(.horizontal),
-                    piece: viewModel.piece,
+                    piece: model.piece,
                     isPresented: $isAddPatternViewShowing
                 ) { pattern in
-                    moverManager.addPattern(pattern, movementType: viewModel.selectedMovementType)
+                    moverManager.addPattern(pattern, movementType: model.selectedMovementType)
                 }
             }
         }
@@ -101,7 +101,7 @@ struct PieceMovementEditorView: View {
     
     init(moverManager: MoverManager) {
         self._moverManager = StateObject(wrappedValue: moverManager)
-        self.viewModel = PieceMovementEditorViewModel(moverManager: moverManager)
+        self.model = PieceMovementEditorViewModel(moverManager: moverManager)
         
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(.boardGreen)
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor : UIColor(.white)], for: .selected)

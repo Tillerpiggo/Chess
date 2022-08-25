@@ -58,7 +58,7 @@ struct CreateGameView: View {
                 
                 GeometryReader { geometry in
                     if let game = game {
-                        BoardView2(board: game.board, squareLength: (geometry.size.width - 20) / CGFloat(game.files), cornerRadius: 8)
+                        BoardView2(board: .constant(game.board), squareLength: (geometry.size.width - 20) / CGFloat(game.files), cornerRadius: 8)
                         .padding(.leading, 10)
                     }
                 }
