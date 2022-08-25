@@ -55,12 +55,12 @@ struct GameDetailView: View {
                     //}
                     
                     Section {
-                        HStack {
-                            Spacer()
-                            BoardView2(board: $game.board, squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.files), cornerRadius: 8)
-                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(game.ranks) / CGFloat(game.files))
-                            Spacer()
-                        }
+//                        HStack {
+//                            Spacer()
+//                            BoardView2(board: $game.board, squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.files), cornerRadius: 8)
+//                                .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(game.ranks) / CGFloat(game.files))
+//                            Spacer()
+//                        }
                         
                     }
                     

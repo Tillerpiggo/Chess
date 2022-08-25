@@ -52,40 +52,40 @@ struct BoardView2: View {
 //        )
 //    }
     
-    init(board: Binding<BoardModel?>,
-         selectedSquares: [Position] = [],
-         legalMoves: [Position] = [],
-         selectionColor: Color = .selectedSquareColor,
-         bottomLeftSquareColor: Square.SquareType? = nil,
-         squareLength: CGFloat = 60,
-         cornerRadius: CGFloat = 0,
-         pieceOpacity: CGFloat = 1.0,
-         onSelected: @escaping (Position) -> Void = { _ in },
-         onDrag: @escaping (Position, Position) -> Void = { _, _ in },
-         onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
-         updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
-    {
-        let boardBinding = Binding<Board>(get: {
-            Board(boardModel: board.wrappedValue!)!
-        }, set: { newValue in
-            // Do nothing, we don't need to set
-        })
-        
-        self.init(board: boardBinding, selectedSquares: selectedSquares, legalMoves: legalMoves, selectionColor: selectionColor, bottomLeftSquareColor: bottomLeftSquareColor, squareLength: squareLength, cornerRadius: cornerRadius, pieceOpacity: pieceOpacity, onSelected: onSelected, onDrag: onDrag, onDrop: onDrop, updateIsDraggingPiece: updateIsDraggingPiece)
-        
-//        self._board = boardBinding
-//        self.selectedSquares = selectedSquares
-//        self.legalMoves = legalMoves
-//        self.selectionColor = selectionColor
-//        self.bottomLeftSquareColor = bottomLeftSquareColor ?? tempBoard.bottomLeftSquareColor
-//        self.squareLength = squareLength
-//        self.cornerRadius = cornerRadius
-//        self.pieceOpacity = pieceOpacity
-//        self.onSelected = onSelected
-//        self.onDrag = onDrag
-//        self.onDrop = onDrop
-//        self.updateIsDraggingPiece = updateIsDraggingPiece
-    }
+//    init(board: Binding<BoardModel?>,
+//         selectedSquares: [Position] = [],
+//         legalMoves: [Position] = [],
+//         selectionColor: Color = .selectedSquareColor,
+//         bottomLeftSquareColor: Square.SquareType? = nil,
+//         squareLength: CGFloat = 60,
+//         cornerRadius: CGFloat = 0,
+//         pieceOpacity: CGFloat = 1.0,
+//         onSelected: @escaping (Position) -> Void = { _ in },
+//         onDrag: @escaping (Position, Position) -> Void = { _, _ in },
+//         onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
+//         updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
+//    {
+//        let boardBinding = Binding<Board>(get: {
+//            Board(boardModel: board.wrappedValue!)!
+//        }, set: { newValue in
+//            // Do nothing, we don't need to set
+//        })
+//
+//        self.init(board: boardBinding, selectedSquares: selectedSquares, legalMoves: legalMoves, selectionColor: selectionColor, bottomLeftSquareColor: bottomLeftSquareColor, squareLength: squareLength, cornerRadius: cornerRadius, pieceOpacity: pieceOpacity, onSelected: onSelected, onDrag: onDrag, onDrop: onDrop, updateIsDraggingPiece: updateIsDraggingPiece)
+//
+////        self._board = boardBinding
+////        self.selectedSquares = selectedSquares
+////        self.legalMoves = legalMoves
+////        self.selectionColor = selectionColor
+////        self.bottomLeftSquareColor = bottomLeftSquareColor ?? tempBoard.bottomLeftSquareColor
+////        self.squareLength = squareLength
+////        self.cornerRadius = cornerRadius
+////        self.pieceOpacity = pieceOpacity
+////        self.onSelected = onSelected
+////        self.onDrag = onDrag
+////        self.onDrop = onDrop
+////        self.updateIsDraggingPiece = updateIsDraggingPiece
+//    }
     
     init(board: Binding<Board>,
          selectedSquares: [Position] = [],
