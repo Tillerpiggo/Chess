@@ -20,8 +20,8 @@ class GameManager: ObservableObject {
 	private var gameManager: ModelManager<GameModel>
 	private var cancellable: AnyCancellable?
 	
-	var converter: ModelConverter { gameManager.converter }
-	func saveContext() { gameManager.save() }
+	private var converter: ModelConverter { gameManager.converter }
+	private func saveContext() { gameManager.save() }
 	private func delete(_ object: NSManagedObject) { gameManager.delete(object) }
 	
 //	func pieceManager(for game: Game) -> PieceManager {
@@ -68,7 +68,7 @@ class GameManager: ObservableObject {
 			gameModel.players = converter.playerModelSet(from: game.players)
             //gameModel.pieces = converter.pieceModelSet(from: game.pieces, in: gameModel)
 			saveContext()
-            
+
             print("updating game!")
 		}
 	}

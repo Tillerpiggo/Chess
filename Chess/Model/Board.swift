@@ -72,7 +72,7 @@ struct Board {
 	/// Returns the boardState after a given move. If the move is illegal, returns nil
     func boardState(after move: Move) -> Board? {
 		var boardState = squares
-		guard let piece = squares[move.start]?.piece else { return nil }
+        guard let piece = squares[move.start]?.piece, piece.canMove(to: move.end, in: self) else { return nil }
         guard move.end.rank < ranks, move.end.rank >= 0, move.end.file < files, move.end.file >= 0 else {
             return nil
         }
@@ -91,11 +91,12 @@ struct Board {
 		var newBoard = self
 		newBoard.squares = boardState
 		
-		if piece.canMove(to: move.end, in: self) {
-			return newBoard
-		} else {
-			return nil
-		}
+        return newBoard
+//		if piece.canMove(to: move.end, in: self) {
+//			return newBoard
+//		} else {
+//			return nil
+//		}
 	}
     
     /// Returns the boardState after a given move changing the board setup.
