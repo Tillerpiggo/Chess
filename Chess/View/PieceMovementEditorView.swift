@@ -81,7 +81,7 @@ struct PieceMovementEditorView: View {
                 }
                 .listStyle(InsetGroupedListStyle())
             }
-            .navigationBarTitle(Text(model.piece.name), displayMode: .inline)
+            .navigationBarTitle(Text(model.piece.name ?? ""), displayMode: .inline)
             .sheet(isPresented: $isAddPatternViewShowing) {
                 EditPatternView(
                     title: "Add Pattern",

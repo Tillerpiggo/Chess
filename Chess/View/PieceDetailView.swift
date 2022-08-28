@@ -52,11 +52,11 @@ struct PieceDetailView: View {
                 Toggle("Is Important", isOn: $piece.isImportant)
             }
 //
-//            Section {
-//                NavigationLink(destination: PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))) {
-//                    Text("Movement")
-//                }
-//            }
+            Section {
+                NavigationLink(destination: PieceMovementEditorView(moverManager: pieceManager.moverManager(for: piece))) {
+                    Text("Movement")
+                }
+            }
             
             Section {
                 Toggle("Can Promote", isOn: $piece.canPromote)

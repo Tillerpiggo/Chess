@@ -61,9 +61,9 @@ class PieceMovementEditorViewModel: ObservableObject {
 	}
 	
 	@ObservedObject var moverManager: MoverManager
-	var piece: Piece { moverManager.piece }
+	var piece: PieceModel { moverManager.piece }
 	private var positionPiece: Piece {
-		var positionPiece = piece
+        var positionPiece = Piece(pieceModel: piece)!
 		positionPiece.position = Position(rank: 3, file: 3)
 		return positionPiece
 	}

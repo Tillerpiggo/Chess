@@ -16,8 +16,7 @@ struct EditPatternView: View {
 	// TODO: Refactor this into a view model
 	
 	//@State var pattern: Pattern
-	@ObservedObject var viewModel: EditPatternViewModel
-	var piece: Piece
+	@StateObject var viewModel: EditPatternViewModel
 	
 	var title: String
 	var didPressDone: (Pattern) -> Void
@@ -95,10 +94,9 @@ struct EditPatternView: View {
 		}
 	}
 	
-	init(title: String, pattern: Pattern, piece: Piece, isPresented: Binding<Bool>, didPressDone: @escaping (Pattern) -> Void) {
+	init(title: String, pattern: Pattern, piece: PieceModel, isPresented: Binding<Bool>, didPressDone: @escaping (Pattern) -> Void) {
 		self.title = title
-		self.viewModel = EditPatternViewModel(pattern: pattern, piece: piece)
-		self.piece = piece
+        self._viewModel = StateObject(wrappedValue: EditPatternViewModel(pattern: pattern, piece: piece))
 		self._isPresented = isPresented
 		self.didPressDone = didPressDone
 	}

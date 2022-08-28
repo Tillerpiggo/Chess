@@ -14,7 +14,7 @@ struct EditBoardView: View {
     //var changedGame: (Game) -> Void
     @StateObject var model: EditBoardViewModel
     
-    @State var bottomLeftSquareColor: Square.SquareType = .dark
+//    @State var bottomLeftSquareColor: Square.SquareType = .dark
     
     // Allow the pieces, not the board, to be dragged
     @State var isDragEnabled: Bool = true
@@ -23,18 +23,20 @@ struct EditBoardView: View {
     @State var isDraggingPiece: Bool = true
     
     init(game: Binding<GameModel>, gameManager: GameManager) {
-        self._model = StateObject(wrappedValue: EditBoardViewModel(game: game.wrappedValue, gameManager: gameManager))
+        self._model = StateObject(wrappedValue: EditBoardViewModel(game: game.wrappedValue) { game in
+            gameManager.updateGame(game)
+        })
     }
     
-    private func toggleBottomLeftSquareColor() {
-        if self.bottomLeftSquareColor == .light {
-            self.bottomLeftSquareColor = .dark
-        } else {
-            self.bottomLeftSquareColor = .light
-        }
-        
-        print("toggled to \(self.bottomLeftSquareColor)")
-    }
+//    private func toggleBottomLeftSquareColor() {
+//        if self.bottomLeftSquareColor == .light {
+//            self.bottomLeftSquareColor = .dark
+//        } else {
+//            self.bottomLeftSquareColor = .light
+//        }
+//
+//        print("toggled to \(self.bottomLeftSquareColor)")
+//    }
     
 //    var emptyBoard: Board {
 //        return Board.empty(
@@ -185,21 +187,21 @@ struct EditBoardView: View {
             //
             .simultaneousGesture(panGesture(sideLength: squareLength))
             .simultaneousGesture(zoomGesture())
-            .onAppear {
-                // Find the square type
-                let coloredSquareFile = model.board.squares.first(where: { $0.contains { $0.state != .nonexistent } })
-                if let coloredSquare = coloredSquareFile?.first(where: { $0.state != .nonexistent }) {
-                    let squaresAway = coloredSquare.position.rank + coloredSquare.position.file
-                    if squaresAway % 2 == 0 {
-                        bottomLeftSquareColor = coloredSquare.type
-                    } else {
-                        bottomLeftSquareColor = coloredSquare.type.opposite
-                    }
-                } else {
-                    bottomLeftSquareColor = .dark
-                }
-                print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
-            }
+//            .onAppear {
+//                // Find the square type
+//                let coloredSquareFile = model.board.squares.first(where: { $0.contains { $0.state != .nonexistent } })
+//                if let coloredSquare = coloredSquareFile?.first(where: { $0.state != .nonexistent }) {
+//                    let squaresAway = coloredSquare.position.rank + coloredSquare.position.file
+//                    if squaresAway % 2 == 0 {
+//                        bottomLeftSquareColor = coloredSquare.type
+//                    } else {
+//                        bottomLeftSquareColor = coloredSquare.type.opposite
+//                    }
+//                } else {
+//                    bottomLeftSquareColor = .dark
+//                }
+//                print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
+//            }
         }
         .navigationBarTitleDisplayMode(.inline)
     }

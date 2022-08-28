@@ -28,7 +28,7 @@ class PieceManager: ObservableObject {
 	private func saveContext() { pieceManager.save() }
 	private func delete(_ object: NSManagedObject) { pieceManager.delete(object) }
 	
-	func moverManager(for piece: Piece) -> MoverManager {
+	func moverManager(for piece: PieceModel) -> MoverManager {
 		let modelManager = pieceManager.moverManager(for: piece, firstMove: false)
 		let firstMoveModelManager = pieceManager.moverManager(for: piece, firstMove: true)
 		let moverManager = MoverManager(moverManager: modelManager, firstMoveMoverManager: firstMoveModelManager, converter: converter, game: game, piece: piece)

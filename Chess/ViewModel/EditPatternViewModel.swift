@@ -84,9 +84,9 @@ class EditPatternViewModel: ObservableObject {
 		return sevenBySevenPositionGrid
 	}
 	
-	init(pattern: Pattern, piece: Piece) {
+	init(pattern: Pattern, piece: PieceModel) {
 		self.pattern = pattern
-		self.piece = piece
+        self.piece = Piece(pieceModel: piece)!
 		self.piece.position = Position(rank: 3, file: 3)
 		
 		self.rankDistance = pattern.rankDistance

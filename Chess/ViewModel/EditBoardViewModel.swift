@@ -13,14 +13,16 @@ import SwiftUI
 // By moving pieces, and by managing the empty "ghost" board
 class EditBoardViewModel: ObservableObject {
     var bottomLeftSquareColor: Square.SquareType {
-        return game.board.squares[Position(rank: 0, file: 0)]?.type ?? .dark
+        //print("bottomLeftSquareColor: \(game.board.squares[Position(rank: 0, file: 0)]?.type)")
+        return game.board.bottomLeftSquareColor
     }
     
     //var changedGame: (Game) -> Void
     
     // a game of type Game, rather than GameModel - TODO: Refactor this when you switch GameModel with Game (so that GameModels are the less used, struct versions that have better features/calculations
     @Published var game: Game
-    private var gameManager: GameManager
+    private var gameChanged: (Game) -> Void
+    //private var gameManager: GameManager
     var board: Board {
         
         //print("boardStruct updated!")
@@ -44,7 +46,7 @@ class EditBoardViewModel: ObservableObject {
         return Board.empty(
             ranks: ranks + 2,
             files: files + 2,
-            bottomLeftSquareColor: .light
+            bottomLeftSquareColor: bottomLeftSquareColor
         )
     }
     
@@ -80,7 +82,8 @@ class EditBoardViewModel: ObservableObject {
         if let move = Move(start: startingPosition, end: endingPosition), game.board.squares[startingPosition]?.state == .occupied, game.board.squares[endingPosition]?.state != .nonexistent {
             
             game.board.moveSetup(move: move)
-            gameManager.updateGame(game)
+            gameChanged(game)
+            //gameManager.updateGame(game)
         }
     }
     
@@ -91,7 +94,8 @@ class EditBoardViewModel: ObservableObject {
         game.board.squares[position]?.setStartingPiece(droppedPiece)
         
         //updateGame(withSquares: boardCopy.squares)
-        gameManager.updateGame(game)
+        gameChanged(game)
+        //gameManager.updateGame(game)
     }
     
     /// Selects the position on the board. If the square has a piece, does nothing. Otherwise, toggles
@@ -127,7 +131,8 @@ class EditBoardViewModel: ObservableObject {
             }
             
             //updateGame(withSquares: boardCopy.squares)
-            gameManager.updateGame(game)
+            gameChanged(game)
+            //gameManager.updateGame(game)
             //updateEmptyBoard()
             //print("... and changed the game")
         } else {
@@ -188,7 +193,8 @@ class EditBoardViewModel: ObservableObject {
         }
         
         updateSquarePositions()
-        gameManager.updateGame(game)
+        //gameManager.updateGame(game)
+        gameChanged(game)
         //updateEmptyBoard()
         
         print("game.ranks: \(ranks)")
@@ -226,7 +232,8 @@ class EditBoardViewModel: ObservableObject {
         }
         
         //updateGame(withSquares: boardCopy.squares)
-        gameManager.updateGame(game)
+        //gameManager.updateGame(game)
+        gameChanged(game)
     }
     
     /// Inserts an empty rank to the board at the specified file index
@@ -255,7 +262,8 @@ class EditBoardViewModel: ObservableObject {
         }
         
         //updateGame(withSquares: boardCopy.squares)
-        gameManager.updateGame(game)
+        //gameManager.updateGame(game)
+        gameChanged(game)
     }
     
    
@@ -399,7 +407,8 @@ class EditBoardViewModel: ObservableObject {
         game.board.squares.remove(at: file)
         
         //updateGame(withSquares: boardCopy.squares)
-        gameManager.updateGame(game)
+        //gameManager.updateGame(game)
+        gameChanged(game)
     }
     
     // Removes the rank from the GameModel
@@ -411,7 +420,8 @@ class EditBoardViewModel: ObservableObject {
         }
         
         //updateGame(withSquares: boardCopy.squares)
-        gameManager.updateGame(game)
+        //gameManager.updateGame(game)
+        gameChanged(game)
     }
     
     private func updateSquarePositions() {
@@ -440,9 +450,9 @@ class EditBoardViewModel: ObservableObject {
 //        )
 //    }
     
-    init(game: GameModel, gameManager: GameManager) {//, gameManager: GameManager, converter: ModelConverter) {
+    init(game: GameModel, gameChanged: @escaping (Game) -> Void) {//, gameManager: GameManager, converter: ModelConverter) {
         self.game = Game(gameModel: game)!
-        self.gameManager = gameManager
+        self.gameChanged = gameChanged
 //        self.gameManager = gameManager
 //        self.converter = converter
 //

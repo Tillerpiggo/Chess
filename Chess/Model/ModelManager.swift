@@ -46,12 +46,12 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
         return pieceManager
     }
 	
-	func moverManager(for piece: Piece, firstMove: Bool) -> ModelManager<MoverModel> {
+	func moverManager(for piece: PieceModel, firstMove: Bool) -> ModelManager<MoverModel> {
 		let predicate: NSPredicate =
 			NSPredicate(
 				format: "%K = %@",
 				(firstMove ? \MoverModel.pieceFirstMove!.id : \MoverModel.piece!.id)._kvcKeyPathString!,
-				piece.id as CVarArg
+				piece.id! as CVarArg
 			)
 		
 		let moverManager = ModelManager<MoverModel>(
