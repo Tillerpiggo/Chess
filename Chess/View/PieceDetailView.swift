@@ -16,31 +16,6 @@ struct PieceDetailView: View {
     @Binding var piece: PieceModel
     
     var body: some View {
-//        let nameBinding = Binding<String>(get: {
-//            piece.name
-//        }, set: {
-//            pieceManager.renamePiece(piece, to: $0)
-//            piece.name = $0
-//            // do whatever you want here
-//        })
-        
-//        let isImportantBinding = Binding<Bool>(get: {
-//            piece.isImportant
-//        }, set: {
-//            
-//            piece.isImportant = $0
-//        })
-        
-//        let canPromoteBinding = Binding<Bool>(get: {
-//            piece.canPromote
-//        }, set: {
-//            pieceManager.setPieceCanPromote(piece, to: $0)
-//            piece.canPromote = $0
-//            print("canPromote: \(piece.canPromote)")
-//        })
-        
-//        let promotionPieceManager = pieceManager.promotionPieceManager(for: pieceManager.pieces.first { $0.id == piece.id }!)
-        //print("# of pieces: \(promotionPieceManager.pieces.count)")
         
         return List {
             Section {
