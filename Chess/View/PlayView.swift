@@ -47,11 +47,6 @@ struct PlayView: View {
                 }
                     .environmentObject(gameStore)
             }
-//            .sheet(isPresented: $isPlayingGame) {
-//                if let game = game {
-//                    GameView(game: GameViewModel(game: game))
-//                }
-//            }
             
             if let game = game {
                 Color.white

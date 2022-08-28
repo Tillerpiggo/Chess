@@ -9,14 +9,9 @@
 import CoreData
 import Combine
 
-//protocol PieceManagerProtocol {
-//    func removePiece(
-//}
-
 // Handles fetching all of the pieces from a game and provides an interface for adding, editing, and deleting them.
 class PieceManager: ObservableObject {
 	
-    //@Published private(set) var pieces = [Piece]()
     @Published var pieces = [PieceModel]()
     
 	private var game: GameModel
@@ -35,11 +30,6 @@ class PieceManager: ObservableObject {
 		
 		return moverManager
 	}
-    
-//    func promotionPieceManager(for piece: Piece) -> PieceManager {
-//        let modelManager = pieceManager.promotionPieceManager(for: piece)
-//        return PieceManager(pieceManager: modelManager, converter: converter, game: game)
-//    }
     
     func promotionPieceManager(for piece: PieceModel) -> PieceManager {
         let modelManager = pieceManager.promotionPieceManager(for: piece)
@@ -125,21 +115,10 @@ class PieceManager: ObservableObject {
     
     func updatePiece(_ piece: Piece) {
         if let pieceModel = converter.retrievePieceModel(piece, from: game) {
-//            pieceModel.name = piece.name
-//            pieceModel
-            //pieceModel.isImportant = piece.isImportant
             converter.makePieceModelMatch(piece: piece, game: game, pieceModel: pieceModel)
             saveContext()
         }
     }
-    
-//    func setPieceIsImportant(_ piece: Piece, to isntImportant: Bool) {
-//        if let gameModel = converter.retrieveGameModel(game),
-//           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
-//            pieceModel.isntImportant = isntImportant
-//            saveContext()
-//        }
-//    }
     
     func setPieceCanPromote(_ piece: Piece, to canPromote: Bool) {
         if let pieceModel = converter.retrievePieceModel(piece, from: game) {
@@ -152,10 +131,6 @@ class PieceManager: ObservableObject {
         print("removing piece")
         if let pieceModel = converter.retrievePieceModel(piece, from: game),
            let promotionPieces = pieceModel.promotionPieces {
-//            let index = pieceModel.promotionPieces as [PieceModel]
-//            pieceModel.removeFrreomPromotionPieces
-            //pieceModel.removeFromPromotionPieces(at: index)
-//            pieceModel.promotion
             var removedPromotionPieces = promotionPieces
             removedPromotionPieces.removeAll { $0 == pieceID }
             pieceModel.promotionPieces = removedPromotionPieces
@@ -163,10 +138,6 @@ class PieceManager: ObservableObject {
             saveContext()
         }
     }
-    
-//    func promotionPieces(for piece: Piece) -> [Piece] {
-//        return piece.promotionPieces.compactMap { id in pieces.first { piece in piece.id == id }}
-//    }
 	
 	func movePiece(from source: IndexSet, to destination: Int) {
 		let startingPosition = source.map { $0 }.first!
@@ -187,17 +158,6 @@ class PieceManager: ObservableObject {
 			saveContext()
 		}
 	}
-    
-//    /// Update the piece with the matching ID to have all of the same fields as the piece passed in to this function
-//    func updatePiece(_ piece: Piece) {
-//        if let gameModel = converter.retrieveGameModel(game),
-//           let pieceModel = converter.retrievePieceModel(piece, from: gameModel) {
-//            pieceModel.name = piece.name
-//            print("updating piece")
-//            //converter.updatePieceModel(pieceModel, toMatch: piece, in: gameModel)
-//            saveContext()
-//        }
-//    }
 	
 	init(pieceManager: ModelManager<PieceModel>, converter: ModelConverter, game: GameModel) {
 		self.pieceManager = pieceManager
@@ -206,8 +166,6 @@ class PieceManager: ObservableObject {
 		
 		// Subscription to ModelManager<PieceModel> to pieces of a game updated
 		self.cancellable = pieceManager.models.eraseToAnyPublisher().sink { pieces in
-			//print("updated pieces to \(pieces.map { $0.position!.rank }), \(pieces.map { $0.name })")
-			//self.pieces = pieces.compactMap { Piece(pieceModel: $0) }
             self.pieces = pieces
 		}
 	}

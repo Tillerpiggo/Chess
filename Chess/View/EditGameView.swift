@@ -16,7 +16,6 @@ struct EditGameView: View {
 	
 	@ObservedObject var viewModel: EditGameViewModel
 	@State private var isConfirmDismissActionSheetShown = false
-	//@State private var hasBecomeFirstResponder = false
 	
 	var title: String
 	var didPressDone: (Game) -> Void

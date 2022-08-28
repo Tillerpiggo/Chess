@@ -11,7 +11,7 @@ import SwiftUI
 // Handles the Game View, where you can test a game or play it (only worries about the board)
 class GameViewModel: ObservableObject {
     
-    // TODO: Refactor BoardView2 to not require a Binding (?)
+    // TODO: Refactor BoardView to not require a Binding (?)
     // I'm doing it for now because im not 100% on if the updating will work without it
     @Published var game: Game
     @Published private(set) var selectedSquares: [Position] = []
@@ -67,10 +67,6 @@ class GameViewModel: ObservableObject {
                 var promotionPiece = game.piece(for: promotionPiece)
                 promotionPiece?.owner = activePlayer
                 return promotionPiece
-//                var promotionOption = promotionPiece
-//                promotionOption.owner = activePlayer
-//
-//                return promotionOption
             }
         default: return []
         }

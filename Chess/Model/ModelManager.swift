@@ -36,7 +36,6 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
     
     // For managing the list of pieces that a given piece can promote into
     func promotionPieceManager(for piece: PieceModel) -> ModelManager<PieceModel> {
-        //print("# of pieces originally: \(piece.promotionPieces.count)")
         let pieceManager = ModelManager<PieceModel>(
             persistenceController: persistenceController,
             sortDescriptors: [NSSortDescriptor(keyPath: \PieceModel.position!.rank, ascending: true)],
@@ -61,21 +60,6 @@ class ModelManager<Model: NSManagedObject>: NSObject, ObservableObject, NSFetche
 		
 		return moverManager
 	}
-	
-	/*
-	func patternManager(for piece: Piece, movementType: Piece.MovementType) -> ModelManager<PatternModel> {
-		let mover: mover
-		switch movementType {
-		case .normal: mover = piece.mover
-		}
-		
-		let patternManager = ModelManager<PatternModel(
-			persistenceController: persistenceController,
-			sortDescriptors: [],
-			predicate: NSPredicate(format: "%K = %@",
-								   (\.PatternModel.mover!.id)._kvcKeyPathString!, mover.id as CVarArg))
-	}
-*/
 	
 	// MARK: - Init
 	

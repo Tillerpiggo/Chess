@@ -8,14 +8,6 @@
 
 import Foundation
 
-/*
-struct Player: Identifiable, Equatable {
-    var id: UUID = UUID()
-    
-    
-}
-*/
-
 // Might add stuff like red, blue, green, and yellow for 4-player
 // blackOrWhite means either black or white (for archetype pieces)
 enum Player: Int, Equatable {

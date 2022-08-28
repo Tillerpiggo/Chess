@@ -37,35 +37,3 @@ class EditGameViewModel: ObservableObject {
 	}
 	
 }
-
-/*
-class EditGameViewModel: ObservableObject {
-	@Published var name: String {
-		didSet { game.name = name; update() }
-	}
-	
-	@Published var canSaveBoard: Bool = false
-	@Published var hasChanged: Bool = false
-	
-	//private(set) var game: Game
-	//private var initialGame: Game
-	
-	func update() {
-		// Update canAddBoard
-		// TODO: - Add check that this name is unique
-		canSaveBoard = !game.name.isEmpty
-		
-		// Update hasChanged
-		hasChanged = (game != initialGame)
-	}
-	
-	// This is only a binding as a workaround
-	init(game: Game) {
-		self.game = game
-		self.initialGame = game
-		
-		self.name = game.name
-	}
-	
-}
-*/

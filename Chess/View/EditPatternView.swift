@@ -47,7 +47,7 @@ struct EditPatternView: View {
                     Section {
                         HStack {
                             Spacer()
-                            BoardView2(
+                            BoardView(
                                 board: Binding<Board>(get: { viewModel.board }, set: { _ in }),
                                 selectedSquares: viewModel.selectedSquares,
                                 selectionColor: viewModel.isRestricting ? .excludedSquareColor : .selectedSquareColor,

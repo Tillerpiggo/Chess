@@ -160,14 +160,6 @@ struct Game: Identifiable, Hashable {
 	}
 	
 	init?(gameModel: GameModel) {
-		
-//		guard let testName = gameModel.name else { print("gameModel.name"); return nil }
-//		guard let testBoardModel = gameModel.board else { print("boardModel"); return nil } // This is the issue, gameModel.board is nil
-//		guard let testBoard = Board(boardModel: testBoardModel) else { print("board"); return nil }
-//		guard let testPlayerModels = gameModel.players?.array as? [PlayerModel] else { print("playerModels"); return nil }
-//		guard let testPieceModels = gameModel.pieces?.allObjects as? [PieceModel] else { print("pieceModels"); return nil }
-//		guard let testID = gameModel.id else { print("id"); return nil }
-		
 		guard
 			let name = gameModel.name,
 			let boardModel = gameModel.board, let board = Board(boardModel: boardModel),

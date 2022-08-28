@@ -368,18 +368,13 @@ extension Pattern {
 	static func inDirections(_ directions: [Move.Direction]) -> ((Move, Board) -> Bool) {
 		return { (move, board) in
 			
-			//print("move: \(move)")
-			
 			// If the move goes in a direction that is listed, return true
 			for direction in move.directions {
 				if directions.contains(direction) {
-					// print("move contains direction: \(direction)")
 					return true
 				}
 			}
-			
-			//print("move is not in the direction. Move directions: \(move.directions). Directions: \(directions)")
-			
+            
 			return false
 		}
 	}

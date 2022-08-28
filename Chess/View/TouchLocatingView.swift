@@ -148,15 +148,7 @@ struct TouchLocater: ViewModifier {
                 .overlay(
                     ZStack {
                         TouchLocatingView(onUpdate: perform, types: type, limitToBounds: limitToBounds)
-                            
-//                        Rectangle()
-//                            .fill(Color.blue)
-//                            .opacity(0.4)
-//                            .allowsHitTesting(false)
                     }
-                        //.offset(offset(in: g.size))
-                        //.frame(width: g.size.width, height: g.size.height)
-                    
                 )
         }
     }
@@ -169,28 +161,3 @@ extension View {
     }
 }
 
-//// Finally, here's some example code you can try out.
-//struct ContentView: View {
-//    var body: some View {
-//        VStack {
-//            Text("This will track all touches, inside bounds only.")
-//                .padding()
-//                .background(.red)
-//                .onTouch(perform: updateLocation)
-//
-//            Text("This will track all touches, ignoring bounds – you can start a touch inside, then carry on moving it outside.")
-//                .padding()
-//                .background(.blue)
-//                .onTouch(limitToBounds: false, perform: updateLocation)
-//
-//            Text("This will track only starting touches, inside bounds only.")
-//                .padding()
-//                .background(.green)
-//                .onTouch(type: .started, perform: updateLocation)
-//        }
-//    }
-//
-//    func updateLocation(_ location: CGPoint, _ type: TouchLocatingView.TouchType) {
-//        print(location)
-//    }
-//}

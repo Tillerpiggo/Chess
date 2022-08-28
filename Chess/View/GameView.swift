@@ -21,7 +21,7 @@ struct GameView: View {
             ZStack {
                 Color.white
                 
-                BoardView2(
+                BoardView(
                     board: $game.game.board,
                     selectedSquares: game.selectedSquares,
                     legalMoves: game.legalMoves,

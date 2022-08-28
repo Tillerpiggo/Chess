@@ -18,12 +18,6 @@ struct Board {
         print("bottomLeftSquareColor: \(bottomLeftSquareColor)")
         return bottomLeftSquareColor
     }
-	
-	/*
-	lazy var squareStateForPosition: (Position) -> Square.SquareState = { (position) -> Square.SquareState in
-		return square(at: position, in: squares)?.state ?? .nonexistent
-	}
-*/
     
 	var files: Int {
 		return squares.count
@@ -92,11 +86,6 @@ struct Board {
 		newBoard.squares = boardState
 		
         return newBoard
-//		if piece.canMove(to: move.end, in: self) {
-//			return newBoard
-//		} else {
-//			return nil
-//		}
 	}
     
     /// Returns the boardState after a given move changing the board setup.
@@ -255,19 +244,6 @@ struct Board {
 			.rook
 		]
 		
-		/*
-		let blackBackRank: [Square.StandardPieceType] = [
-			.rook(.black),
-			.knight(.black),
-			.bishop(.black),
-			.queen(.black),
-			.king(.black),
-			.bishop(.black),
-			.knight(.black),
-			.rook(.black)
-		]
-*/
-		
 		for (fileIndex, _) in squares.enumerated() {
 			squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
 			squares[fileIndex][1].setPiece(.whitePawn, owner: .white, id: ids[.whitePawn]!)
@@ -283,7 +259,6 @@ struct Board {
 	}
 	
 	init?(boardModel: BoardModel) {
-        //print("initializing boradmodel")
 		// Arbitrary sort parameter because it doesn't matter
 		guard let squareModelList = boardModel.squares?.sortedArray(using: [NSSortDescriptor(key: "state", ascending: true)]) as? [SquareModel] else {
 			print("Failed to initialize board out of boardModel")
@@ -303,10 +278,6 @@ struct Board {
 				squareArray[file].append(Square(state: .nonexistent, piece: nil, startingPieceID: nil, startingPieceOwner: nil, position: Position(rank: rank, file: file), type: .light))
 			}
 		}
-        
-        //print("squareList: \(squareList.count)")
-        //print("numberOfRanks: \(numberOfRanks)")
-        //print("numberOfFiles: \(numberOfFiles)")
 		
 		// Populate the array
 		for square in squareList {
@@ -320,9 +291,7 @@ struct Board {
 
 extension Board: Equatable {
 	static func == (lhs: Board, rhs: Board) -> Bool {
-		//print(lhs.squares.flatMap { $0.map { $0.piece?.mover.canMovePatterns.map { $0.type } ?? [] } })
-		//print(rhs.squares.flatMap { $0.map { $0.piece?.mover.canMovePatterns.map { $0.type } ?? [] } })
-        
+
         guard lhs.files == rhs.files && lhs.ranks == rhs.ranks else {
             return false
         }

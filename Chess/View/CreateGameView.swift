@@ -23,11 +23,6 @@ struct CreateGameView: View {
         return Game(gameModel: gameStore.games[gameSelection])
     }
     
-//    var game: Game {
-//        print("board.name: \(board.name)")
-//        return board
-//    }
-    
     // Fetch the pieces for this game in order to make it
     var didPressDone: (GameModel) -> Void
     
@@ -58,14 +53,10 @@ struct CreateGameView: View {
                 
                 GeometryReader { geometry in
                     if let game = game {
-                        BoardView2(board: .constant(game.board), squareLength: (geometry.size.width - 20) / CGFloat(game.files), cornerRadius: 8)
+                        BoardView(board: .constant(game.board), squareLength: (geometry.size.width - 20) / CGFloat(game.files), cornerRadius: 8)
                         .padding(.leading, 10)
                     }
                 }
-                
-                // Preview
-                
-                
                 
                 Spacer()
             }
@@ -79,6 +70,5 @@ struct CreateGameView: View {
         self._isPresented = isPresented
         self._isPlayingGame = isPlayingGame
         self.didPressDone = didPressDone
-//        self._board = State<Game>(initialValue: Game(board: Board.empty(ranks: 1, files: 9), pieces: [], players: [.white, .black], name: ""))
     }
 }

@@ -60,12 +60,6 @@ struct Piece: Identifiable {
 	
 	private func canMove(move: Move, in board: Board) -> Bool {
 		if board.squares[move.end]?.piece?.owner != self.owner { // You are moving to an empty square or capturing a piece
-//            if board.squares[move.end]?.state == .occupied { // You are capturing a piece
-//				return mover.canCapture(move, board)
-//			} else { // You are moving to an empty square
-//				// If it's the first move, use the firstMoveMover. If you've already moved, use the normal mover.
-//				return hasMoved ? mover.canMove(move, board) : firstMoveMover.canMove(move, board)
-//			}
             switch board.squares[move.end]?.state {
             case .occupied: return mover.canCapture(move, board)
             case .nonexistent: return false // TODO: add bool to allow some pieces to create squares
@@ -117,8 +111,6 @@ struct Piece: Identifiable {
             let promotionZoneModels = pieceModel.promotionZone?.allObjects as? [PositionModel],
             let promotionPieceModels = pieceModel.promotionPieces,
 			let id = pieceModel.id
-			//let moverModel = pieceModel.mover, let mover = Mover(moverModel: moverModel),
-			//let firstMoveMoverModel = pieceModel.firstMoveMover, let firstMoveMover = Mover(moverModel: firstMoveMoverModel)
 		else {
 			print("Failed to initialize piece from pieceModel")
 			return nil
@@ -236,24 +228,6 @@ struct Piece: Identifiable {
             owner: .black
         )
     }
-	
-//	static func pawn(position: Position, owner: Player) -> Piece {
-//		// If pawns are white, they should only go up, and if they are black they should only go down
-//		let directionRestrictionPattern = Pattern(
-//			.inDirections,
-//			isRestricting: true,
-//			directions: (owner == .white) ? [.down] : [.up]
-//		)
-//
-//		return Piece(
-//			name: "Pawn",
-//			image: .pawn,
-//			mover: Mover.pawn.appendingPatterns([directionRestrictionPattern]),
-//			firstMoveMover: Mover.pawnFirstMove.appendingPatterns([directionRestrictionPattern]),
-//			position: position,
-//			owner: owner
-//		)
-//	}
 	
 	enum PieceImage: Int {
 		case king = 0, queen = 1, bishop = 2,

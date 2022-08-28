@@ -27,37 +27,15 @@ struct GameDetailView: View {
     }()
 	
     var body: some View {
-        //let pieceManager = gameManager.pieceManager(for: game)
         
 		return GeometryReader { geometry in
-//            ScrollView {
-//                VStack {
-//                    BoardView2(board: $game.board, squareLength: geometry.size.width - 48)
-//
-//                    // First section
-//                }
-//            }
-            
-            
-            //VStack(spacing: 0) {
                 
                 List {
-                    //GeometryReader { g in
-                        //Section {
-    //                        BoardView2(board: $game.board, squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.board.files))
-    //                            .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * (CGFloat(max(game.board.ranks, game.board.files)) / CGFloat(min(game.board.ranks, game.board.files))))
-                                
-                        //}
-                        //.listRowBackground(Color.backgroundColor)
-                        //.listRowInsets(EdgeInsets())
-                        //.disabled(true)
-                        //.frame(width: g.size.width, height: (g.size.width) * (CGFloat(game.board.ranks) / CGFloat(game.board.files)))
-                    //}
                     
                     Section {
                         HStack {
                             Spacer()
-                            BoardView2(board: Binding<Board>(get: { game.gameStruct!.board }, set: { _ in }), squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.files), cornerRadius: 8)
+                            BoardView(board: Binding<Board>(get: { game.gameStruct!.board }, set: { _ in }), squareLength: (geometry.size.width * lengthPercent - totalMargin) / CGFloat(game.files), cornerRadius: 8)
                                 .frame(width: geometry.size.width * lengthPercent - totalMargin, height: (geometry.size.width * lengthPercent - totalMargin) * CGFloat(game.ranks) / CGFloat(game.files))
                             Spacer()
                         }
@@ -102,12 +80,6 @@ struct GameDetailView: View {
     var pieceList: some View {
         PieceListView<EditPieceView>(
             pieceManager: pieceManager,
-            //pieces: pieceManager.pieces,
-//            pieceBinding: { piece in
-//                guard let index = game.pieces.firstIndex(where: { $0.id == piece.id }) else { return nil }
-//                return .init(get: { game.pieces[index] },
-//                             set: { pieceManager.updatePiece($0) })
-//            },
             removePiece: { index in
                 pieceManager.removePiece(at: index)
             },
@@ -126,12 +98,3 @@ struct GameDetailView: View {
     }
 
 }
-
-//struct GameDetailView_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//		//NavigationView {
-//		GameDetailView(game: .constant(Game.standard()))
-//		//}
-//    }
-//}
