@@ -35,7 +35,7 @@ struct BoardView: View {
          onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
          updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
     {
-        self.model = BoardViewModel(board: board.wrappedValue, squareLength: squareLength, onSelected: onSelected, onDrag: onDrag, onDrop: onDrop)
+        self.model = BoardViewModel(board: board, squareLength: squareLength, onSelected: onSelected, onDrag: onDrag, onDrop: onDrop)
         self.selectedSquares = selectedSquares
         self.legalMoves = legalMoves
         self.selectionColor = selectionColor

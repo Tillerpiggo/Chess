@@ -11,7 +11,12 @@ import SwiftUI
 // Handles the BoardView - principally, translating a BoardModel into a usable Board for the view to read and render from, but also for other business logic
 class BoardViewModel: ObservableObject {
     
-    @Published var board: Board
+    var board: Board {
+        return boardBinding.wrappedValue
+    }
+    
+    var boardBinding: Binding<Board>
+    
     var files: Int { board.files }
     var ranks: Int { board.ranks }
     
@@ -228,8 +233,8 @@ class BoardViewModel: ObservableObject {
         return (rank, file)
     }
     
-    init(board: Board, squareLength: CGFloat, onSelected: @escaping (Position) -> Void, onDrag: @escaping (Position, Position) -> Void = { _, _ in }, onDrop: @escaping ([NSItemProvider], Position) -> Void) {
-        self.board = board
+    init(board: Binding<Board>, squareLength: CGFloat, onSelected: @escaping (Position) -> Void, onDrag: @escaping (Position, Position) -> Void = { _, _ in }, onDrop: @escaping ([NSItemProvider], Position) -> Void) {
+        self.boardBinding = board
         self.squareLength = squareLength
         
         self.onSelected = onSelected
