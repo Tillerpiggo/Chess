@@ -13,6 +13,7 @@
 		02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF340728712F8400C87CC0 /* EditZoneView.swift */; };
 		02B50C8A28B80B7300B011CC /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B50C8928B80B7300B011CC /* BoardViewModel.swift */; };
 		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
+		02DB389A28BBF61E006C0EFD /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DB389928BBF61E006C0EFD /* View+Extensions.swift */; };
 		02FD341B2877D5780081F831 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341A2877D5780081F831 /* Binding+Extensions.swift */; };
 		02FD341D287BE5780081F831 /* AddPromotionPieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */; };
 		23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */; };
@@ -89,6 +90,7 @@
 		02AF340728712F8400C87CC0 /* EditZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditZoneView.swift; sourceTree = "<group>"; };
 		02B50C8928B80B7300B011CC /* BoardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
+		02DB389928BBF61E006C0EFD /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		02FD341A2877D5780081F831 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
 		02FD341C287BE5780081F831 /* AddPromotionPieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPromotionPieceView.swift; sourceTree = "<group>"; };
 		23079A6126D9CF5900A343CE /* EditPatternViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPatternViewModel.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				234BE2B624C8F20400580B6B /* Identifiable+Extensions.swift */,
+				02DB389928BBF61E006C0EFD /* View+Extensions.swift */,
 				23311FF226D98F31003D45FF /* String+Extensions.swift */,
 				2381829926B8F7C600F056F8 /* Array+Extensions.swift */,
 				2371E29225D1F96D009D4D21 /* Color+Extensions.swift */,
@@ -482,6 +485,7 @@
 				23294DA726C876D500F45EE9 /* NavigationAppearanceModifier.swift in Sources */,
 				23294DC126C9CF7F00F45EE9 /* PieceDetailView.swift in Sources */,
 				2371E29925D1FC91009D4D21 /* ChessApp.swift in Sources */,
+				02DB389A28BBF61E006C0EFD /* View+Extensions.swift in Sources */,
 				23079A6226D9CF5900A343CE /* EditPatternViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

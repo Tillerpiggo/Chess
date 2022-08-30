@@ -34,9 +34,9 @@ extension Array where Element == Piece {
 
 extension Array where Element == [Square] {
     
-	subscript(index: Position) -> Square? {
+	subscript(index: Position?) -> Square? {
 		get {
-			guard index.file >= 0 && index.file < self.count, index.rank >= 0 && index.rank < self[index.file].count else {
+			guard let index = index, index.file >= 0 && index.file < self.count, index.rank >= 0 && index.rank < self[index.file].count else {
 				return nil
 			}
 			
@@ -44,7 +44,7 @@ extension Array where Element == [Square] {
 		}
 		
 		set {
-			if let newValue = newValue {
+			if let index = index, let newValue = newValue {
 				self[index.file][index.rank] = newValue
 			}
 		}

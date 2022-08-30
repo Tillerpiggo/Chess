@@ -9,18 +9,17 @@
 import SwiftUI
 
 struct BoardView: View {
-    @Binding var board: Board
+    @ObservedObject var model: BoardViewModel
     
     var selectedSquares: [Position]
     var legalMoves: [Position]
     var selectionColor: Color
     var bottomLeftSquareColor: Square.SquareType
-    var squareLength: CGFloat
     var cornerRadius: CGFloat
     var pieceOpacity: CGFloat
     var onSelected: (Position) -> Void = { _ in }
-    var onDrag: (Position, Position) -> Void = { _, _ in }
-    var onDrop: ([NSItemProvider], Position) -> Void = { _, _ in }
+    //var onDrag: (Position, Position) -> Void = { _, _ in }
+    //var onDrop: ([NSItemProvider], Position) -> Void = { _, _ in }
     var updateIsDraggingPiece: (Bool) -> Void
     
     init(board: Binding<Board>,
@@ -36,28 +35,20 @@ struct BoardView: View {
          onDrop: @escaping ([NSItemProvider], Position) -> Void = { _, _ in },
          updateIsDraggingPiece: @escaping (Bool) -> Void = { _ in })
     {
-        self._board = board
+        self.model = BoardViewModel(board: board.wrappedValue, squareLength: squareLength, onSelected: onSelected, onDrag: onDrag, onDrop: onDrop)
         self.selectedSquares = selectedSquares
         self.legalMoves = legalMoves
         self.selectionColor = selectionColor
         self.bottomLeftSquareColor = bottomLeftSquareColor ?? board.wrappedValue.bottomLeftSquareColor
-        self.squareLength = squareLength
         self.cornerRadius = cornerRadius
         self.pieceOpacity = pieceOpacity
         self.onSelected = onSelected
-        self.onDrag = onDrag
-        self.onDrop = onDrop
         self.updateIsDraggingPiece = updateIsDraggingPiece
-    }
-    
-    var size: CGSize {
-        return CGSize(width: squareLength * CGFloat(board.files),
-                      height: squareLength * CGFloat(board.ranks))
     }
     
     var pieces: [Piece] {
         var pieces = [Piece]()
-        for file in board.squares {
+        for file in model.board.squares {
             for square in file {
                 if let piece = square.piece, piece.position != dragPiece?.position {
                     pieces.append(piece)
@@ -75,9 +66,9 @@ struct BoardView: View {
             ZStack {
                 // The board
                 Group {
-                    BoardSquares(board, type: .light)
+                    BoardSquares(model.board, type: .light)
                         .fill(bottomLeftSquareColor == .dark ? Color.lightSquareColor : Color.darkSquareColor)
-                    BoardSquares(board, type: .dark)
+                    BoardSquares(model.board, type: .dark)
                         .fill(bottomLeftSquareColor == .dark ? Color.darkSquareColor : Color.lightSquareColor)
                 }
                 .cornerRadius(cornerRadius)
@@ -87,38 +78,30 @@ struct BoardView: View {
                     Rectangle()
                         .fill(selectionColor)
                         .opacity(0.5)
-                        .frame(width: squareLength, height: squareLength)
-                        .offset(
-                            x: CGFloat(position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
-                            y: CGFloat(board.ranks - position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
-                        )
+                        .frame(size: model.squareSize)
+                        .offset(model.offset(for: position))
                 }
                 
                 if let selectedSquare = selectedSquare,
-                   let square = board.squares[endingPosition(for: gestureDragOffset, sideLength: squareLength, startingPosition: selectedSquare.position)],
+                   let square = model.endingSquare(dragOffset: gestureDragOffset, startingPosition: selectedSquare.position),
                    square.state != .nonexistent, selectedSquare.piece != nil {
                     Group {
                         Rectangle()
                             .fill(Color.selectedSquareColor)
-                            .frame(width: squareLength, height: squareLength)
+                            .frame(size: model.squareSize)
                             .opacity(0.5)
                         Circle()
                             .fill(Color.black.opacity(0.2))
-                            .frame(width: squareLength * 2 + 16, height: squareLength * 2 + 16)
+                            .frame(size: model.circleSize)
                     }
-                    .offset(circleDragOffset(sideLength: squareLength, position: selectedSquare.position))
+                    .offset(model.circleOffset(for: selectedSquare.position, currentOffset: gestureDragOffset))
                 }
 
                 ForEach(pieces, id: \.position) { piece in
                     Image(piece.imageName)
                         .resizable()
-                        .frame(
-                            width: squareLength * 0.9,
-                            height: squareLength * 0.9)
-                        .offset(
-                            x: CGFloat(piece.position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
-                            y: CGFloat(board.ranks - piece.position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
-                        )
+                        .frame(size: model.pieceSize)
+                        .offset(model.offset(for: piece.position))
                         .transition(.opacity)
                 }
                 .opacity(pieceOpacity)
@@ -127,58 +110,65 @@ struct BoardView: View {
                 ForEach(legalMoves.compactMap { $0 }, id: \.self) { position in
                     Circle()
                         .fill(.black.opacity(0.2))
-                        .frame(width: squareLength * 0.3, height: squareLength * 0.3)
-                        .offset(
-                            x: CGFloat(position.file) * squareLength - (squareLength * CGFloat(board.files) - squareLength) / 2,
-                            y: CGFloat(board.ranks - position.rank) * squareLength - (squareLength * CGFloat(board.ranks) + squareLength) / 2
-                        )
+                        .frame(size: model.dotSize)
+                        .offset(model.offset(for: position))
                 }
                 
                 // The piece being dragged
                 if let dragPiece = dragPiece {
                     Image(dragPiece.imageName)
                         .resizable()
-                        .frame(width: squareLength * 2, height: squareLength * 2)
-                        .offset(pieceDragOffset(sideLength: squareLength, position: dragPiece.position))
+                        .frame(size: model.dragPieceSize)
+                        .offset(model.pieceDragOffset(for: dragPiece.position, currentOffset: gestureDragOffset))
                         .transition(
                             AnyTransition.scale(scale: 0.0).combined(with:
-                                                                    AnyTransition.offset(circleDragOffset(sideLength: squareLength, position: dragPiece.position)))
+                                                                        AnyTransition.offset(model.circleOffset(for: dragPiece.position, currentOffset: gestureDragOffset)))
                         )
                         .animation(.interactiveSpring(), value: gestureDragOffset)
                 }
                     
             }
-            .frame(width: squareLength * CGFloat(board.files), height: squareLength * CGFloat(board.ranks))
+            .frame(size: model.size)
             .onTouch(type: .startOrEnd) { location, type in
+//                model.onTouch(
+//                    location: location,
+//                    type: type,
+//                    size: geometry.size,
+//                    selectedSquare: $selectedSquare,
+//                    dragPiece: $dragPiece,
+//                    touchDownPosition: $touchDownPosition
+//                )
+                
+                let position = model.position(at: location, in: geometry.size)
+                
                 if type == .started {
-                    touchDownPosition = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
-                    selectedSquare = board.squares[touchDownPosition!] // force unwrap because it was just set
+                    touchDownPosition = position
+                    selectedSquare = model.board.squares[touchDownPosition]
                     updateIsDraggingPiece(selectedSquare?.piece != nil)
-                } else if type == .ended {
-                    let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
-                    print("selectedPosition (BoardView): \(position)")
+                }
+                
+                else if type == .ended {
                     if position == touchDownPosition {
                         onSelected(position)
                     }
+                    
+//                    if dragPiece != nil {
+//                        // animate piece down
+//                    }
+                    
                     touchDownPosition = nil
-                    if dragPiece != nil {
-                        // animate piece down
-                    }
-                    
-                    
                     selectedSquare = nil
                     dragPiece = nil
                     updateIsDraggingPiece(false)
                 }
             }
             .onDrop(of: ["public.text"], isTargeted: nil, perform: { providers, location in
-                let position = position(at: location, in: geometry.size, ranks: board.ranks, files: board.files)
                 
-                onDrop(providers, position)
-                print("You dropped something!")
+                model.onDrop(providers: providers, location: location, size: geometry.size)
+
                 return true
             })
-            .gesture(dragPieceGesture(sideLength: squareLength))
+            .gesture(dragPieceGesture)
         }
     }
     // Make sure that dragging doesn't trigger tapping on the ghost board
@@ -187,13 +177,11 @@ struct BoardView: View {
     
     // MARK: - Drag Piece Gesture
     @GestureState private var gestureDragOffset: CGSize = .zero
-    @GestureState private var canPlaceDragPiece: Bool = true
     @State private var dragPiece: Piece? = nil
     
-    private func dragPieceGesture(sideLength: CGFloat) -> some Gesture {
-        
+    var dragPieceGesture: some Gesture {
         // TODO: make this gesture faster. Right now, it makes the overall dragging laggy
-        let dragGesture = DragGesture(minimumDistance: 12)
+        DragGesture(minimumDistance: 12)
             .updating($gestureDragOffset) { latestDragGestureValue, pieceDragOffset, transaction in
                 pieceDragOffset = latestDragGestureValue.translation
                 print("ondrag pieceDragOffset: \(pieceDragOffset)")
@@ -208,133 +196,132 @@ struct BoardView: View {
             .onEnded { finalDragGestureValue in
                 if let square = selectedSquare, square.state != .nonexistent {
                     print("onDrag!!!: \(finalDragGestureValue.translation)")
-                    onDrag(square.position, endingPosition(for: finalDragGestureValue.translation, sideLength: sideLength, startingPosition: square.position))
+                    model.onDrag(from: square.position, translation: finalDragGestureValue.translation)
+                    //onDrag(square.position, endingPosition(for: finalDragGestureValue.translation, sideLength: sideLength, startingPosition: square.position))
                 }
-                
+
                 selectedSquare = nil
                 dragPiece = nil
-                
+
                 updateIsDraggingPiece(false)
             }
-        
-        return dragGesture
     }
     
-    private func endingPosition(for translation: CGSize, sideLength: CGFloat, startingPosition: Position) -> Position {
-        let finalDragLocation: (Int, Int) = location(for: translation, sideLength: sideLength)
-        
-        let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
-        return endingPosition
-    }
+//    private func endingPosition(for translation: CGSize, sideLength: CGFloat, startingPosition: Position) -> Position {
+//        let finalDragLocation: (Int, Int) = location(for: translation, sideLength: sideLength)
+//
+//        let endingPosition = Position(rank: startingPosition.rank + finalDragLocation.0, file: startingPosition.file + finalDragLocation.1)
+//        return endingPosition
+//    }
     
-    private func location(for translation: CGSize, sideLength: CGFloat) -> (Int, Int) {
-        let rank = Int((-1 * translation.height / sideLength + 0.5).rounded(.up) - 1)
-        let file = Int((translation.width / sideLength + 0.5).rounded(.up) - 1)
-        
-        print("rank: \(rank)")
-        
-        return (rank, file)
-    }
+//    private func location(for translation: CGSize, sideLength: CGFloat) -> (Int, Int) {
+//        let rank = Int((-1 * translation.height / sideLength + 0.5).rounded(.up) - 1)
+//        let file = Int((translation.width / sideLength + 0.5).rounded(.up) - 1)
+//
+//        print("rank: \(rank)")
+//
+//        return (rank, file)
+//    }
     
-    private func gestureDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
-        // First, offset so that the piece is at 0,0 (bottom left corner)
-        var xOriginOffset = -1 * sideLength * (CGFloat(board.files) / 2.0 - 0.5)
-        var yOriginOffset = -1 * sideLength * (CGFloat(board.ranks) / 2.0 - 0.5)
-        
-        // Transpose it to the desired square
-        xOriginOffset += CGFloat(position.file) * sideLength
-        yOriginOffset += CGFloat(position.rank) * sideLength
-        
-        return CGSize(
-            width: gestureDragOffset.width + xOriginOffset,
-            height: gestureDragOffset.height - yOriginOffset
-        )
-        
-    }
+//    private func gestureDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
+//        // First, offset so that the piece is at 0,0 (bottom left corner)
+//        var xOriginOffset = -1 * sideLength * (CGFloat(board.files) / 2.0 - 0.5)
+//        var yOriginOffset = -1 * sideLength * (CGFloat(board.ranks) / 2.0 - 0.5)
+//
+//        // Transpose it to the desired square
+//        xOriginOffset += CGFloat(position.file) * sideLength
+//        yOriginOffset += CGFloat(position.rank) * sideLength
+//
+//        return CGSize(
+//            width: gestureDragOffset.width + xOriginOffset,
+//            height: gestureDragOffset.height - yOriginOffset
+//        )
+//
+//    }
     
     // Offsets pieceDragOffset for visual display
-    private func pieceDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
-        // Place it above the finger
-        var offset = gestureDragOffset(sideLength: sideLength, position: position)
-        offset.height -= 50
-        
-        return offset
-    }
+//    private func pieceDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
+//        // Place it above the finger
+//        var offset = gestureDragOffset(sideLength: sideLength, position: position)
+//        offset.height -= 50
+//
+//        return offset
+//    }
     
-    private func circleDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
-        var offset = gestureDragOffset(sideLength: sideLength, position: position)
-        offset.width /= sideLength
-        offset.height /= sideLength
-        
-        print("ranks: \(board.ranks), files: \(board.files)")
-        
-        if board.files % 2 == 0 {
-            offset.width += 0.5
-        }
-        
-        if board.ranks % 2 == 0 {
-            offset.height += 0.5
-        }
-        
-        offset.width = (offset.width).rounded() * sideLength
-        offset.height = (offset.height).rounded() * sideLength
-        
-        if board.files % 2 == 0 {
-            offset.width -= sideLength / 2.0
-        }
-        
-        if board.ranks % 2 == 0 {
-            offset.height -= sideLength / 2.0
-        }
-        
-        return offset
-    }
+//    private func circleDragOffset(sideLength: CGFloat, position: Position) -> CGSize {
+//        var offset = gestureDragOffset(sideLength: sideLength, position: position)
+//        offset.width /= sideLength
+//        offset.height /= sideLength
+//
+//        print("ranks: \(board.ranks), files: \(board.files)")
+//
+//        if board.files % 2 == 0 {
+//            offset.width += 0.5
+//        }
+//
+//        if board.ranks % 2 == 0 {
+//            offset.height += 0.5
+//        }
+//
+//        offset.width = (offset.width).rounded() * sideLength
+//        offset.height = (offset.height).rounded() * sideLength
+//
+//        if board.files % 2 == 0 {
+//            offset.width -= sideLength / 2.0
+//        }
+//
+//        if board.ranks % 2 == 0 {
+//            offset.height -= sideLength / 2.0
+//        }
+//
+//        return offset
+//    }
     
-    private func position(at location: CGPoint, in size: CGSize, ranks: Int, files: Int) -> Position {
-        let file = position(
-            tappedAt: location.x,
-            divisions: files,
-            length: squareLength * CGFloat(files),
-            smallestSide: CGFloat(size.smallestSide))
-        var rank = position(
-            tappedAt: location.y,
-            divisions: ranks,
-            length: squareLength * CGFloat(ranks),
-            smallestSide: CGFloat(size.smallestSide))
-        rank = ranks - rank - 1
-        
-        //print("")
-        
-        print("BoardView ranks: \(ranks) (BoardView)")
-        print("BoardView files: \(files) (BoardView)")
-        
-        return Position(rank: rank, file: file)
-    }
+//    private func position(at location: CGPoint, in size: CGSize, ranks: Int, files: Int) -> Position {
+//        let file = position(
+//            tappedAt: location.x,
+//            divisions: files,
+//            length: squareLength * CGFloat(files),
+//            smallestSide: CGFloat(size.smallestSide))
+//        var rank = position(
+//            tappedAt: location.y,
+//            divisions: ranks,
+//            length: squareLength * CGFloat(ranks),
+//            smallestSide: CGFloat(size.smallestSide))
+//        rank = ranks - rank - 1
+//
+//        //print("")
+//
+//        print("BoardView ranks: \(ranks) (BoardView)")
+//        print("BoardView files: \(files) (BoardView)")
+//
+//        return Position(rank: rank, file: file)
+//    }
     
     // TODO: describe this method better and use better argument names
     
-    // Returns the position on the board, rank or file,
-    // given the location in a certain dimension tapped, the number of divisions
-    // along that dimension, the total length of the dimension,
-    // and the length of the board that occupies that dimension
-    private func position(tappedAt coordinate: CGFloat, divisions: Int, length: CGFloat, smallestSide: CGFloat) -> Int {
-        // Transpose coordinate to the total length:
-        
-        // 1. Shift it so that it is centered
-        let transposition = (length - smallestSide) / 2 // partial length is centered in total length
-        print("transposition: \(transposition)")
-        let transposedCoordinate = coordinate// - transposition// - transpositionDownwards
-        
-        print("transposed: \(transposedCoordinate)")
-        print("transdivisions: \(divisions)")
-        print("translength: \(length)")
-        
-        // Calculate the position
-        let position = Int(floor(Double(transposedCoordinate) * Double(divisions) / Double(length)))
-        print("trans POSItion: \(position)")
-        
-        return position
-    }
+//    // Returns the position on the board, rank or file,
+//    // given the location in a certain dimension tapped, the number of divisions
+//    // along that dimension, the total length of the dimension,
+//    // and the length of the board that occupies that dimension
+//    private func position(tappedAt coordinate: CGFloat, divisions: Int, length: CGFloat, smallestSide: CGFloat) -> Int {
+//        // Transpose coordinate to the total length:
+//
+//        // 1. Shift it so that it is centered
+//        let transposition = (length - smallestSide) / 2 // partial length is centered in total length
+//        print("transposition: \(transposition)")
+//        let transposedCoordinate = coordinate// - transposition// - transpositionDownwards
+//
+//        print("transposed: \(transposedCoordinate)")
+//        print("transdivisions: \(divisions)")
+//        print("translength: \(length)")
+//
+//        // Calculate the position
+//        let position = Int(floor(Double(transposedCoordinate) * Double(divisions) / Double(length)))
+//        print("trans POSItion: \(position)")
+//
+//        return position
+//    }
     
     
 }
