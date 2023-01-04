@@ -10,8 +10,8 @@ import Foundation
 
 /// A chess board that can tell what positions are allowed and which ones aren't.
 struct Board {
-	/// A 2D array of squares - a list of files ([file][rank]
-	var squares: [[Square]]
+	/// A 2D array of squares - a list of files ([file][rank])
+	private(set) var squares: [[Square]]
     
     var bottomLeftSquareColor: Square.SquareType {
         let bottomLeftSquareColor = squares[Position(rank: 0, file: 0)]?.type ?? .dark
@@ -139,21 +139,21 @@ struct Board {
 		return squares[position.file][position.rank]
 	}
 	
-	mutating func setup(pieces: [Piece]) {
-		for (fileIndex, file) in squares.enumerated() {
-			for (rankIndex, square) in file.enumerated()  {
-				if let pieceID = square.startingPieceID,
-                   let pieceOwner = square.startingPieceOwner {
-					var piece = pieces.first(where: { $0.id == pieceID })
-					//piece?.position = Position(rank: rankIndex, file: fileIndex)
-                    //piece?.id = UUID() // needs to be unique for ForEach()
-                    piece?.position = square.position
-					piece?.owner = pieceOwner
-					squares[fileIndex][rankIndex].setPiece(piece)
-				}
-			}
-		}
-	}
+//	mutating func setup(pieces: [Piece]) {
+//		for (fileIndex, file) in squares.enumerated() {
+//			for (rankIndex, square) in file.enumerated()  {
+//				if let pieceID = square.startingPieceID,
+//                   let pieceOwner = square.startingPieceOwner {
+//					var piece = pieces.first(where: { $0.id == pieceID })
+//					//piece?.position = Position(rank: rankIndex, file: fileIndex)
+//                    //piece?.id = UUID() // needs to be unique for ForEach()
+//                    piece?.position = square.position
+//					piece?.owner = pieceOwner
+//					squares[fileIndex][rankIndex].setPiece(piece)
+//				}
+//			}
+//		}
+//	}
 	
     static func empty(ranks: Int = 8, files: Int = 8, bottomLeftSquareColor: Square.SquareType = .dark) -> Board  {
 		var squares = [[Square]]()
@@ -182,7 +182,7 @@ struct Board {
         return (position.rank + position.file) % 2 == squareTypeNumber ? .light : .dark
     }
 	
-	static func standardPieces() -> [Square.StandardPieceType: Piece] {
+	static func standardPieces() -> [Game.StandardPieceType: Piece] {
 		
 		// The position of the piece. Since these pieces will be put in Game.pieces, their position on the board doesn't matter
 		// However, the rank determines their position in the list.
@@ -192,7 +192,7 @@ struct Board {
 		// The owner of the piece. All but the pawn can be either black or white
 		let o: Player = .blackOrWhite
 		
-		var pieces: [Square.StandardPieceType: Piece] = [
+		var pieces: [Game.StandardPieceType: Piece] = [
 			.whitePawn: .whitePawn(position: p(0)),
             .blackPawn: .blackPawn(position: p(0)),
 			.knight: .knight(position: p(2), owner: o),
@@ -204,7 +204,7 @@ struct Board {
         
         
         // Set up promotion pieces for white and black
-        let promotionPieceTypes: [Square.StandardPieceType] = [.knight, .bishop, .rook, .queen]
+        let promotionPieceTypes: [Game.StandardPieceType] = [.knight, .bishop, .rook, .queen]
         let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
         
         var whitePawn = pieces[.whitePawn]!
@@ -218,8 +218,8 @@ struct Board {
 		return pieces
 	}
 	
-	static func pieceIDs(pieces: [Square.StandardPieceType: Piece]) -> [Square.StandardPieceType: UUID] {
-		var standardIDs = [Square.StandardPieceType: UUID]()
+	static func pieceIDs(pieces: [Game.StandardPieceType: Piece]) -> [Game.StandardPieceType: UUID] {
+		var standardIDs = [Game.StandardPieceType: UUID]()
 		
 		for (pieceType, piece) in pieces {
 			standardIDs[pieceType] = piece.id
@@ -228,12 +228,12 @@ struct Board {
 		return standardIDs
 	}
 	
-	static func standard(ids: [Square.StandardPieceType: UUID]) -> Board {
+	static func standard(ids: [Game.StandardPieceType: UUID]) -> Board {
 		// Create an empty board
 		var squares = Board.empty().squares
 		
 		// Add in the pieces
-		let backRank: [Square.StandardPieceType] = [
+		let backRank: [Game.StandardPieceType] = [
 			.rook,
 			.knight,
 			.bishop,

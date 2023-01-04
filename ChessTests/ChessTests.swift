@@ -94,7 +94,7 @@ class ChessTests: XCTestCase {
 //
 //		//let board = Board(squares: [[Square(state: .occupied, piece: .pawn(position: Position(rank: 0, file: 0), owner: .white), position: Position(rank: 0, file: 0), type: .dark)]])
 //		//let game = Game(board: board, players: [.white, .black], name: "Test Board")
-//		let gameStore = GameManager(gameManager: testGameCoreDataManager)
+//		let gameStore = CoreDataGameManager(gameManager: testGameCoreDataManager)
 //		gameStore.addGame(game)
 //
 //		// Test that it can be converetd from a gameModel back into a game

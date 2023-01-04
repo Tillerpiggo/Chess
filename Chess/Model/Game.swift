@@ -15,6 +15,7 @@ struct Game: Identifiable, Hashable {
     }
     
 	var name: String
+    var description: String
     var board: Board
 	var pieces: [Piece]
     var players: [Player]
@@ -149,8 +150,9 @@ struct Game: Identifiable, Hashable {
     // Convenience
     private func piece(_ id: UUID) -> Piece? { piece(id.uuidString) }
 	
-	init(board: Board, pieces: [Piece], players: [Player], name: String) {
+    init(board: Board, pieces: [Piece], players: [Player], name: String, description: String) {
 		self.name = name
+        self.description = description
 		self.board = board
 		self.players = players
 		self.pieces = pieces
@@ -162,6 +164,7 @@ struct Game: Identifiable, Hashable {
 	init?(gameModel: GameModel) {
 		guard
 			let name = gameModel.name,
+            let description = gameModel.gameDescription,
 			let boardModel = gameModel.board, let board = Board(boardModel: boardModel),
 			let playerModels = gameModel.players?.array as? [PlayerModel],
 			let pieceModels = gameModel.pieces?.array as? [PieceModel],
@@ -173,6 +176,7 @@ struct Game: Identifiable, Hashable {
 		
 		// Crash when this fails just to alert me of the issue
 		self.name = name
+        self.description = description
 		self.board = board
 		self.players = playerModels.compactMap { Player(rawValue: Int($0.player)) }
 		
@@ -183,16 +187,6 @@ struct Game: Identifiable, Hashable {
 		self.id = id
 		
 		self.setupBoard()
-	}
-	
-	static func standard() -> Game {
-		let standardPieces = Board.standardPieces()
-		let ids = Board.pieceIDs(pieces: standardPieces)
-		let board = Board.standard(ids: ids)
-		
-		let pieces = standardPieces.map { $0.value }
-		
-		return Game(board: board, pieces: pieces, players: [.white, .black], name: "")
 	}
 	
 	// Uses pieces to make the board return to the starting position
@@ -218,4 +212,13 @@ extension GameModel {
     var gameStruct: Game? { Game(gameModel: self) }
     var ranks: Int { gameStruct?.ranks ?? 0 }
     var files: Int { gameStruct?.files ?? 0 }
+}
+
+// Contains definitions/helper methods for standard games and other common variants
+extension Game {
+    
+    enum StandardPieceType: Hashable {
+        case king, queen, bishop, knight, rook, whitePawn, blackPawn
+    }
+    
 }

@@ -66,7 +66,7 @@ struct Square: Equatable, Identifiable, Hashable {
 	}
 	
 	// This is just to make it elegant to define boards
-	mutating func setPiece(_ standardPiece: StandardPieceType, owner: Player, id: UUID) {
+    mutating func setPiece(_ standardPiece: Game.StandardPieceType, owner: Player, id: UUID) {
 		switch standardPiece {
 		case .king:
 			piece = Piece.king(position: position, owner: owner)
@@ -90,11 +90,6 @@ struct Square: Equatable, Identifiable, Hashable {
 		
 		state = .occupied
 	}
-	
-	enum StandardPieceType: Hashable {
-		case king, queen, bishop, knight, rook, whitePawn, blackPawn
-	}
-	///
     
 	enum SquareState: Int {
         /// Square does not exist on the board

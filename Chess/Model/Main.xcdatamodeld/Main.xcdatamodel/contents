@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BoardModel" representedClassName="BoardModel" syncable="YES" codeGenerationType="class">
         <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="board" inverseEntity="GameModel"/>
         <relationship name="squares" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SquareModel" inverseName="board" inverseEntity="SquareModel"/>
     </entity>
     <entity name="GameModel" representedClassName="GameModel" syncable="YES" codeGenerationType="class">
+        <attribute name="gameDescription" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="board" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BoardModel" inverseName="game" inverseEntity="BoardModel"/>
@@ -74,15 +75,4 @@
         <relationship name="position" maxCount="1" deletionRule="Nullify" destinationEntity="PositionModel" inverseName="board" inverseEntity="PositionModel"/>
         <relationship name="startingPieceOwner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerModel" inverseName="square" inverseEntity="PlayerModel"/>
     </entity>
-    <elements>
-        <element name="BoardModel" positionX="-712.05078125" positionY="8.59375" width="128" height="73"/>
-        <element name="GameModel" positionX="-536.78515625" positionY="-213.62890625" width="128" height="104"/>
-        <element name="MoveModel" positionX="-656" positionY="752.55078125" width="128" height="73"/>
-        <element name="MoverModel" positionX="-222.82421875" positionY="-45.50390625" width="128" height="103"/>
-        <element name="PatternModel" positionX="-300.51953125" positionY="240.4375" width="128" height="163"/>
-        <element name="PieceModel" positionX="-1355.828125" positionY="150.3515625" width="128" height="269"/>
-        <element name="PlayerModel" positionX="-247.7890625" positionY="446.96875" width="128" height="103"/>
-        <element name="PositionModel" positionX="-879.33984375" positionY="436.26171875" width="128" height="134"/>
-        <element name="SquareModel" positionX="-464.9609375" positionY="529.984375" width="128" height="163"/>
-    </elements>
 </model>

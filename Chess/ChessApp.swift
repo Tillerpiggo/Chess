@@ -17,18 +17,18 @@ struct ChessApp: App {
 	@Environment(\.scenePhase) var scenePhase
 	
 	
-	@StateObject var game: GameViewModel = {
-		
-		let players: [Player] = [.white, .black]
-		
-        let game = Game.standard()
-		
-		return GameViewModel(game: game)
-	}() 
+//	@StateObject var game: GameViewModel = {
+//
+//		let players: [Player] = [.white, .black]
+//
+//        let game = Game.standard()
+//
+//		return GameViewModel(game: game)
+//	}()
 
 	
-	@StateObject var gameStore: GameManager =
-		GameManager(
+	@StateObject var gameStore: CoreDataGameManager =
+		CoreDataGameManager(
 			gameManager: ModelManager<GameModel>(persistenceController: PersistenceController.shared,
 												 sortDescriptors: [NSSortDescriptor(keyPath: \GameModel.name, ascending: true)])
 		)
@@ -37,9 +37,9 @@ struct ChessApp: App {
 		WindowGroup {
             
             TabView {
-                BoardListView()
+                YourBoardsView()
                     .environmentObject(gameStore)
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    //.environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .tabItem {
                         Text("Your Games")
                     }
@@ -49,9 +49,9 @@ struct ChessApp: App {
                         Text("Play")
                     }
             }
-            .onAppear {
-                UITableView.appearance().separatorColor = UIColor(Color.separatorColor)
-            }
+//            .onAppear {
+//                UITableView.appearance().separatorColor = UIColor(Color.black)
+//            }
              
             //GameView(game: game)
 		}
