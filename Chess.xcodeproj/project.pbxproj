@@ -11,6 +11,7 @@
 		024928E4275030B2002FAA46 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E3275030B2002FAA46 /* BoardView.swift */; };
 		024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024928E527519482002FAA46 /* TouchLocatingView.swift */; };
 		029D3A2D2962D55100835EF2 /* GameModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029D3A2C2962D55100835EF2 /* GameModelTests.swift */; };
+		029D3A2F2966D78F00835EF2 /* SetupPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029D3A2E2966D78F00835EF2 /* SetupPosition.swift */; };
 		02AF340828712F8400C87CC0 /* EditZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF340728712F8400C87CC0 /* EditZoneView.swift */; };
 		02B50C8A28B80B7300B011CC /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B50C8928B80B7300B011CC /* BoardViewModel.swift */; };
 		02BA035627A755C200A47338 /* GameBoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA035527A755C200A47338 /* GameBoardModel.swift */; };
@@ -90,6 +91,7 @@
 		024928E3275030B2002FAA46 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		024928E527519482002FAA46 /* TouchLocatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchLocatingView.swift; sourceTree = "<group>"; };
 		029D3A2C2962D55100835EF2 /* GameModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModelTests.swift; sourceTree = "<group>"; };
+		029D3A2E2966D78F00835EF2 /* SetupPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupPosition.swift; sourceTree = "<group>"; };
 		02AF340728712F8400C87CC0 /* EditZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditZoneView.swift; sourceTree = "<group>"; };
 		02B50C8928B80B7300B011CC /* BoardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		02BA035527A755C200A47338 /* GameBoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardModel.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				234BE2AC24C8E7F700580B6B /* Game.swift */,
 				234BE2AE24C8E9EB00580B6B /* Piece.swift */,
 				234BE2B224C8EC6600580B6B /* Board.swift */,
+				029D3A2E2966D78F00835EF2 /* SetupPosition.swift */,
 				233932F525DCE7FB0050235F /* Mover.swift */,
 				2367FE2126BF62CA001BF1A2 /* Pattern.swift */,
 				234BE2B824C8F34C00580B6B /* Square.swift */,
@@ -539,6 +542,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FA84073272F6FF100329658 /* EditBoardViewModel.swift in Sources */,
+				029D3A2F2966D78F00835EF2 /* SetupPosition.swift in Sources */,
 				23E8553D26B88CE5009E34B9 /* Main.xcdatamodeld in Sources */,
 				238182A326B9060B00F056F8 /* CGSize.swift in Sources */,
 				024928E627519482002FAA46 /* TouchLocatingView.swift in Sources */,

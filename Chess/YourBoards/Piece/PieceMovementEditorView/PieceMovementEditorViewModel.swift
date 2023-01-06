@@ -26,7 +26,7 @@ class PieceMovementEditorViewModel: ObservableObject {
 		for file in 0..<7  {
 			for rank in 0..<7  {
 				let position = Position(rank: rank, file: file)
-				if positionPiece.position != position, canMove(Move(start: positionPiece.position, end: position)!, Board.empty(ranks: 7, files: 7)) {
+				if positionPiece.position != position, canMove(Move(start: positionPiece.position, end: position)!, Board.emptyBoard(ranks: 7, files: 7)) {
 					sevenBySevenPositionGrid.append(Position(rank: rank, file: file))
 				}
 			}
@@ -38,7 +38,7 @@ class PieceMovementEditorViewModel: ObservableObject {
 	}
     
     var board: Board {
-        var board = Board.empty(ranks: 7, files: 7)
+        var board = Board.emptyBoard(ranks: 7, files: 7)
         board.squares[3][3].setPiece(positionPiece)
         
         return board

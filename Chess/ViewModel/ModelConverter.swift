@@ -63,8 +63,8 @@ struct ModelConverter {
 		squareModel.state = Int16(square.state.rawValue)
 		squareModel.type = Int16(square.type.rawValue)
 		squareModel.position = positionModel(from: square.position)
-		squareModel.startingPieceID = square.startingPieceID
-		if let startingPieceOwner = square.startingPieceOwner { squareModel.startingPieceOwner = playerModel(from: startingPieceOwner) }
+//		squareModel.startingPieceID = square.startingPieceID
+//		if let startingPieceOwner = square.startingPieceOwner { squareModel.startingPieceOwner = playerModel(from: startingPieceOwner) }
 		
 		// TODO: make sure this doesn't screw anything up
 		/*

@@ -11,7 +11,7 @@ import Foundation
 /// A chess board that can tell what positions are allowed and which ones aren't.
 struct Board {
 	/// A 2D array of squares - a list of files ([file][rank])
-	private(set) var squares: [[Square]]
+	var squares: [[Square]]
     
     var bottomLeftSquareColor: Square.SquareType {
         let bottomLeftSquareColor = squares[Position(rank: 0, file: 0)]?.type ?? .dark
@@ -42,7 +42,7 @@ struct Board {
 	
     /// Performs a move and returns if the move succeeded or not
     mutating func move(move: Move) -> Bool {
-        if let boardState = boardState(after: move) {
+        if let boardState = afterMove(move) {
 			self = boardState
 			return true
 		} else {
@@ -64,7 +64,7 @@ struct Board {
     }
 	
 	/// Returns the boardState after a given move. If the move is illegal, returns nil
-    func boardState(after move: Move) -> Board? {
+    func afterMove(_ move: Move) -> Board? {
 		var boardState = squares
         guard let piece = squares[move.start]?.piece, piece.canMove(to: move.end, in: self) else { return nil }
         guard move.end.rank < ranks, move.end.rank >= 0, move.end.file < files, move.end.file >= 0 else {
@@ -96,24 +96,24 @@ struct Board {
               move.end.file >= 0 else {
                   return nil
         }
-        
+
         // Empty the starting square
         boardState[move.start]?.setPiece(nil)
         boardState[move.start]?.state = .empty
-        let startingPieceID = boardState[move.start]?.startingPieceID
-        let startingPieceOwner = boardState[move.start]?.startingPieceOwner
-        boardState[move.start]?.startingPieceID = nil
-        boardState[move.start]?.startingPieceOwner = nil
-        
+//        let startingPieceID = boardState[move.start]?.startingPieceID
+//        let startingPieceOwner = boardState[move.start]?.startingPieceOwner
+//        boardState[move.start]?.startingPieceID = nil
+//        boardState[move.start]?.startingPieceOwner = nil
+
         // Setup piece in ending square
         boardState[move.end]?.setPiece(piece)
         boardState[move.end]?.state = .occupied
-        boardState[move.end]?.startingPieceID = startingPieceID
-        boardState[move.end]?.startingPieceOwner = startingPieceOwner
-        
+//        boardState[move.end]?.startingPieceID = startingPieceID
+//        boardState[move.end]?.startingPieceOwner = startingPieceOwner
+
         var newBoard = self
         newBoard.squares = boardState
-        
+
         return newBoard
     }
 	
@@ -130,6 +130,13 @@ struct Board {
 		
 		return pieces
 	}
+    
+    func containsSquare(atPosition pos: Position) -> Bool {
+        let positionIsInBounds = pos.file >= 0 && pos.file < files && pos.rank >= 0 && pos.rank < ranks
+        let squareAtPositionExists = squares[pos]?.state != .nonexistent
+        
+        return positionIsInBounds && squareAtPositionExists
+    }
 	
 	func piece(at position: Position) -> Piece? { squares[position]?.piece }
 	
@@ -139,7 +146,7 @@ struct Board {
 		return squares[position.file][position.rank]
 	}
 	
-//	mutating func setup(pieces: [Piece]) {
+//    mutating func setup(setupPosition: SetupPosition) {
 //		for (fileIndex, file) in squares.enumerated() {
 //			for (rankIndex, square) in file.enumerated()  {
 //				if let pieceID = square.startingPieceID,
@@ -153,110 +160,121 @@ struct Board {
 //				}
 //			}
 //		}
+//        for piece in setupPosition.pieces {
+//            squares[piece.position]?.setPiece(piece)
+//        }
 //	}
-	
-    static func empty(ranks: Int = 8, files: Int = 8, bottomLeftSquareColor: Square.SquareType = .dark) -> Board  {
-		var squares = [[Square]]()
-		
-		// Create an empty board
-		for fileIndex in 0..<files {
-			var file = [Square]()
-			for rankIndex in 0..<ranks {
-				file.append(Square(
-								state: .empty,
-								piece: nil,
-								startingPieceID: nil,
-								startingPieceOwner: nil,
-								position: Position(rank: rankIndex, file: fileIndex),
-                                type: Board.squareType(position: Position(rank: rankIndex, file: fileIndex), bottomLeftSquareColor: bottomLeftSquareColor))
-				)
-			}
-			squares.append(file)
-		}
-		
-		return Board(squares: squares)
-	}
+    
+    mutating func setPiece(_ piece: Piece, at position: Position) {
+        squares[piece.position]?.setPiece(piece)
+    }
     
     static func squareType(position: Position, bottomLeftSquareColor: Square.SquareType = .dark) -> Square.SquareType {
         let squareTypeNumber = bottomLeftSquareColor == .dark ? 0 : 1
         return (position.rank + position.file) % 2 == squareTypeNumber ? .light : .dark
     }
 	
-	static func standardPieces() -> [Game.StandardPieceType: Piece] {
-		
-		// The position of the piece. Since these pieces will be put in Game.pieces, their position on the board doesn't matter
-		// However, the rank determines their position in the list.
-		// This is just a fast way to get a position with a specific rank.
-		let p: (Int) -> Position = { rank in Position(rank: rank, file: 0) }
-		
-		// The owner of the piece. All but the pawn can be either black or white
-		let o: Player = .blackOrWhite
-		
-		var pieces: [Game.StandardPieceType: Piece] = [
-			.whitePawn: .whitePawn(position: p(0)),
-            .blackPawn: .blackPawn(position: p(0)),
-			.knight: .knight(position: p(2), owner: o),
-			.bishop: .bishop(position: p(3), owner: o),
-			.rook: .rook(position: p(4), owner: o),
-			.queen: .queen(position: p(5), owner: o),
-			.king: .king(position: p(6), owner: o)
-		]
-        
-        
-        // Set up promotion pieces for white and black
-        let promotionPieceTypes: [Game.StandardPieceType] = [.knight, .bishop, .rook, .queen]
-        let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
-        
-        var whitePawn = pieces[.whitePawn]!
-        whitePawn.promotionPieces = promotionPieces
-        pieces[.whitePawn] = whitePawn
-        
-        var blackPawn = pieces[.blackPawn]!
-        blackPawn.promotionPieces = promotionPieces
-        pieces[.blackPawn] = blackPawn
-		
-		return pieces
-	}
+//	static func standardPieces() -> [Piece] {
+//
+//		// The position of the piece. Since these pieces will be put in Game.pieces, their position on the board doesn't matter
+//		// However, the rank determines their position in the list.
+//		// This is just a fast way to get a position with a specific rank.
+//		let p: (Int) -> Position = { rank in Position(rank: rank, file: 0) }
+//
+//		// The owner of the piece. All but the pawn can be either black or white
+//		let o: Player = .blackOrWhite
+//
+//		var pieces = [
+//			.whitePawn(position: p(0)),
+//            .blackPawn(position: p(0)),
+//			.knight(position: p(2), owner: o),
+//			.bishop: .bishop(position: p(3), owner: o),
+//			.rook: .rook(position: p(4), owner: o),
+//			.queen: .queen(position: p(5), owner: o),
+//			.king: .king(position: p(6), owner: o)
+//		]
+//
+//
+//        // Set up promotion pieces for white and black
+//        let promotionPieceTypes: [Game.StandardPieceType] = [.knight, .bishop, .rook, .queen]
+//        let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
+//
+//        var whitePawn = pieces[.whitePawn]!
+//        whitePawn.promotionPieces = promotionPieces
+//        pieces[.whitePawn] = whitePawn
+//
+//        var blackPawn = pieces[.blackPawn]!
+//        blackPawn.promotionPieces = promotionPieces
+//        pieces[.blackPawn] = blackPawn
+//
+//		return pieces
+//	}
 	
-	static func pieceIDs(pieces: [Game.StandardPieceType: Piece]) -> [Game.StandardPieceType: UUID] {
-		var standardIDs = [Game.StandardPieceType: UUID]()
-		
-		for (pieceType, piece) in pieces {
-			standardIDs[pieceType] = piece.id
-		}
-		
-		return standardIDs
-	}
-	
-	static func standard(ids: [Game.StandardPieceType: UUID]) -> Board {
-		// Create an empty board
-		var squares = Board.empty().squares
-		
-		// Add in the pieces
-		let backRank: [Game.StandardPieceType] = [
-			.rook,
-			.knight,
-			.bishop,
-			.queen,
-			.king,
-			.bishop,
-			.knight,
-			.rook
-		]
-		
-		for (fileIndex, _) in squares.enumerated() {
-			squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
-			squares[fileIndex][1].setPiece(.whitePawn, owner: .white, id: ids[.whitePawn]!)
-			squares[fileIndex][7].setPiece(backRank[fileIndex], owner: .black, id: ids[backRank[fileIndex]]!)
-            squares[fileIndex][6].setPiece(.blackPawn, owner: .black, id: ids[.blackPawn]!)
-		}
-		
-		return Board(squares: squares)
-	}
+//	static func pieceIDs(pieces: [Game.StandardPieceType: Piece]) -> [Game.StandardPieceType: UUID] {
+//		var standardIDs = [Game.StandardPieceType: UUID]()
+//
+//		for (pieceType, piece) in pieces {
+//			standardIDs[pieceType] = piece.id
+//		}
+//
+//		return standardIDs
+//	}
+//
+//	static func standard(ids: [Game.StandardPieceType: UUID]) -> Board {
+//		// Create an empty board
+//		var squares = Board.emptyBoard().squares
+//
+//		// Add in the pieces
+//		let backRank: [Game.StandardPieceType] = [
+//			.rook,
+//			.knight,
+//			.bishop,
+//			.queen,
+//			.king,
+//			.bishop,
+//			.knight,
+//			.rook
+//		]
+//
+//		for (fileIndex, _) in squares.enumerated() {
+//			squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
+//			squares[fileIndex][1].setPiece(.whitePawn, owner: .white, id: ids[.whitePawn]!)
+//			squares[fileIndex][7].setPiece(backRank[fileIndex], owner: .black, id: ids[backRank[fileIndex]]!)
+//            squares[fileIndex][6].setPiece(.blackPawn, owner: .black, id: ids[.blackPawn]!)
+//		}
+//
+//		return Board(squares: squares)
+//	}
 	
 	init(squares: [[Square]]) {
 		self.squares = squares
 	}
+    
+    /// Creates a rectangular empty board with the given dimensions and bottom left square color
+    static func emptyBoard(ranks: Int = 8, files: Int = 8, bottomLeftSquareColor: Square.SquareType = .dark) -> Board  {
+        
+        var squares = [[Square]]()
+        
+        for fileIndex in 0..<files {
+            
+            var file = [Square]()
+            
+            for rankIndex in 0..<ranks {
+                let emptySquare = Square(state: .empty, piece: nil, position: position, type: Board.squareType()
+                file.append(Square(
+                                state: .empty,
+                                piece: nil,
+                                startingPieceID: nil,
+                                startingPieceOwner: nil,
+                                position: Position(rank: rankIndex, file: fileIndex),
+                                type: Board.squareType(position: Position(rank: rankIndex, file: fileIndex), bottomLeftSquareColor: bottomLeftSquareColor))
+                )
+            }
+            squares.append(file)
+        }
+        
+        return Board(squares: squares)
+    }
 	
 	init?(boardModel: BoardModel) {
 		// Arbitrary sort parameter because it doesn't matter

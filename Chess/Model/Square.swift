@@ -12,22 +12,22 @@ import Foundation
 struct Square: Equatable, Identifiable, Hashable {
     var state: SquareState
     private(set) var piece: Piece?
-	var startingPieceID: UUID?
-	var startingPieceOwner: Player?
+	//var startingPieceID: UUID?
+	//var startingPieceOwner: Player?
     var position: Position {
         didSet {
             piece?.position = position
         }
     }
-	var type: SquareType
+//	var type: SquareType
     
     var id: UUID = UUID()
     
     func hash(into hasher: inout Hasher) {
         // Combine everything but the player because the player has a mover which cannot become hashable. If this fails for some reason to uniquiely id a square, then add piece to the mix, and implement this special hashing for it.
         hasher.combine(state)
-        hasher.combine(startingPieceID)
-        hasher.combine(startingPieceOwner)
+//        hasher.combine(startingPieceID)
+//        hasher.combine(startingPieceOwner)
         hasher.combine(position)
         hasher.combine(type)
         hasher.combine(id)
@@ -46,50 +46,50 @@ struct Square: Equatable, Identifiable, Hashable {
         }
 	}
     
-    // Sets the piece and also sets the square's startingPieceID and owner
-    // to match the given piece
-    mutating func setStartingPiece(_ piece: Piece?) {
-        self.setPiece(piece)
-        startingPieceID = piece?.id
-        startingPieceOwner = piece?.owner
-        
-        if piece == nil {
-            state = .empty
-        } else {
-            state = .occupied
-        }
-    }
+//    // Sets the piece and also sets the square's startingPieceID and owner
+//    // to match the given piece
+//    mutating func setStartingPiece(_ piece: Piece?) {
+//        self.setPiece(piece)
+//        startingPieceID = piece?.id
+//        startingPieceOwner = piece?.owner
+//
+//        if piece == nil {
+//            state = .empty
+//        } else {
+//            state = .occupied
+//        }
+//    }
 	
 	// Updates the square's piece so that it knows that piece has moved
 	mutating func pieceHasMoved() {
 		piece?.hasMoved = true
 	}
 	
-	// This is just to make it elegant to define boards
-    mutating func setPiece(_ standardPiece: Game.StandardPieceType, owner: Player, id: UUID) {
-		switch standardPiece {
-		case .king:
-			piece = Piece.king(position: position, owner: owner)
-		case .queen:
-			piece = Piece.queen(position: position, owner: owner)
-		case .bishop:
-			piece = Piece.bishop(position: position, owner: owner)
-		case .knight:
-			piece = Piece.knight(position: position, owner: owner)
-		case .rook:
-			piece = Piece.rook(position: position, owner: owner)
-		case .whitePawn:
-			piece = Piece.whitePawn(position: position)
-        case .blackPawn:
-            piece = Piece.blackPawn(position: position)
-		}
-		
-		piece?.id = id
-		startingPieceID = id
-		startingPieceOwner = piece?.owner
-		
-		state = .occupied
-	}
+//	// This is just to make it elegant to define boards
+//    mutating func setPiece(_ standardPiece: Game.StandardPieceType, owner: Player, id: UUID) {
+//		switch standardPiece {
+//		case .king:
+//			piece = Piece.king(position: position, owner: owner)
+//		case .queen:
+//			piece = Piece.queen(position: position, owner: owner)
+//		case .bishop:
+//			piece = Piece.bishop(position: position, owner: owner)
+//		case .knight:
+//			piece = Piece.knight(position: position, owner: owner)
+//		case .rook:
+//			piece = Piece.rook(position: position, owner: owner)
+//		case .whitePawn:
+//			piece = Piece.whitePawn(position: position)
+//        case .blackPawn:
+//            piece = Piece.blackPawn(position: position)
+//		}
+//
+//		piece?.id = id
+////		startingPieceID = id
+////		startingPieceOwner = piece?.owner
+//
+//		state = .occupied
+//	}
     
 	enum SquareState: Int {
         /// Square does not exist on the board
@@ -102,23 +102,23 @@ struct Square: Equatable, Identifiable, Hashable {
         case occupied = 2
     }
 	
-	enum SquareType: Int {
-		case light = 0
-		case dark = 1
-        
-        var opposite: SquareType {
-            switch self {
-            case .light: return .dark
-            case .dark: return .light
-            }
-        }
-	}
+//	enum SquareType: Int {
+//		case light = 0
+//		case dark = 1
+//
+//        var opposite: SquareType {
+//            switch self {
+//            case .light: return .dark
+//            case .dark: return .light
+//            }
+//        }
+//	}
 	
 	init(state: SquareState, piece: Piece? = nil, startingPieceID: UUID? = nil, startingPieceOwner: Player? = nil, position: Position, type: SquareType) {
 		self.state = state
 		self.piece = piece
-		self.startingPieceID = startingPieceID
-		self.startingPieceOwner = startingPieceOwner
+//		self.startingPieceID = startingPieceID
+//		self.startingPieceOwner = startingPieceOwner
 		self.position = position
 		self.type = type
 	}
@@ -143,15 +143,15 @@ struct Square: Equatable, Identifiable, Hashable {
 			}
 		}
 		
-		var startingPieceOwner: Player?
-		if let player = squareModel.startingPieceOwner?.player { startingPieceOwner = Player(rawValue: Int(player)) }
+		//var startingPieceOwner: Player?
+		//if let player = squareModel.startingPieceOwner?.player { startingPieceOwner = Player(rawValue: Int(player)) }
 		
 		// Initialize
 		self.init(
 			state: state,
 			piece: squareModelPiece,
-			startingPieceID: squareModel.startingPieceID,
-			startingPieceOwner: startingPieceOwner,
+//			startingPieceID: squareModel.startingPieceID,
+//			startingPieceOwner: startingPieceOwner,
 			position: position,
 			type: type
 		)

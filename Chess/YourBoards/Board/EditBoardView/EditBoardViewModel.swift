@@ -30,7 +30,7 @@ class EditBoardViewModel: ObservableObject {
     @Published var selectedPiece: UUID?
     
     var emptyBoard: Board {
-        return Board.empty(
+        return Board.emptyBoard(
             ranks: ranks + 2,
             files: files + 2,
             bottomLeftSquareColor: bottomLeftSquareColor
@@ -64,10 +64,11 @@ class EditBoardViewModel: ObservableObject {
     }
     
     func onDrop(_ pieceID: String, at position: Position) {
-        guard var droppedPiece = game.pieces.first(where: { $0.id.uuidString == pieceID }) else { return }
-        
-        droppedPiece.owner = selectedPlayer
-        game.board.squares[position]?.setStartingPiece(droppedPiece)
+//        guard var droppedPiece = game.pieces.first(where: { $0.id.uuidString == pieceID }) else { return }
+//
+//        droppedPiece.owner = selectedPlayer
+//        game.board.squares[position]?.setStartingPiece(droppedPiece)
+        game.setupPosition.addPieceWithID(pieceID, atPosition: position, player: selectedPlayer)
         
         gameChanged(game)
     }
@@ -81,13 +82,10 @@ class EditBoardViewModel: ObservableObject {
         
         if let square = board.squares[selectedPosition] {
             if let selectedPiece = selectedPiece {
-                
                 if square.piece?.id == selectedPiece && square.piece?.owner == selectedPlayer {
-                    game.board.squares[selectedPosition]?.setStartingPiece(nil)
+                    game.setupPosition.removePiece(atPosition: selectedPosition)
                 } else {
-                    var piece = game.piece(selectedPiece.uuidString)!
-                    piece.owner = selectedPlayer
-                    game.board.squares[selectedPosition]?.setStartingPiece(piece)
+                    game.setupPosition.addPieceWithID(selectedPiece, atPosition: selectedPosition, player: selectedPlayer)
                 }
             } else {
                 if square.state == .empty {

@@ -17,6 +17,7 @@ struct Game: Identifiable, Hashable {
 	var name: String
     var description: String
     var board: Board
+    var setupPosition: SetupPosition
 	var pieces: [Piece]
     var players: [Player]
     
@@ -51,7 +52,6 @@ struct Game: Identifiable, Hashable {
         // || !onlyAllowLegalMoves effectively bypasses other restrictions
 		guard board.squares[move.start]?.piece?.owner == activePlayer || !onlyAllowLegalMoves else { return }
 		
-        // Proceed if the move is legal OR if we don't care about move legality (and make sure it's possible on the board)
         if (isMoveLegal(move) || !onlyAllowLegalMoves), board.move(move: move) {
             
             // Check for promotion
@@ -82,7 +82,7 @@ struct Game: Identifiable, Hashable {
     
     // Moves a piece on the board, changing how the board is setup at the start of a game
     mutating func moveSetup(_ move: Move) {
-        board.moveSetup(move: move)
+        setupPosition.applyMove(move, inBoard: board)
     }
     
     private func player(after player: Player) -> Player? {
@@ -102,7 +102,7 @@ struct Game: Identifiable, Hashable {
     }
 	
 	private func isMoveLegal(_ move: Move?) -> Bool {
-		guard let move = move, let boardAfterMove = board.boardState(after: move) else { return false }
+		guard let move = move, let boardAfterMove = board.afterMove(move) else { return false }
 		
 		if importantPiecesThreatened(forPlayer: activePlayer, board: boardAfterMove) < 1 {
 			return true
@@ -154,6 +154,7 @@ struct Game: Identifiable, Hashable {
 		self.name = name
         self.description = description
 		self.board = board
+        self.setupPosition = SetupPosition()
 		self.players = players
 		self.pieces = pieces
 		self.activePlayer = players.first! // You should not be able to create a board with less than one player
@@ -166,6 +167,7 @@ struct Game: Identifiable, Hashable {
 			let name = gameModel.name,
             let description = gameModel.gameDescription,
 			let boardModel = gameModel.board, let board = Board(boardModel: boardModel),
+            let setupPositionModel = gameModel.setupPosition, let setupPosition = SetupPosition(setupPositionModel: setupPositionModel),
 			let playerModels = gameModel.players?.array as? [PlayerModel],
 			let pieceModels = gameModel.pieces?.array as? [PieceModel],
 			let id = gameModel.id
@@ -177,7 +179,9 @@ struct Game: Identifiable, Hashable {
 		// Crash when this fails just to alert me of the issue
 		self.name = name
         self.description = description
+        self.setupPosition = setupPosition
 		self.board = board
+        self.setupPosition = setupPosition
 		self.players = playerModels.compactMap { Player(rawValue: Int($0.player)) }
 		
 		self.pieces = pieceModels.compactMap { Piece(pieceModel: $0) }
@@ -191,7 +195,12 @@ struct Game: Identifiable, Hashable {
 	
 	// Uses pieces to make the board return to the starting position
 	private mutating func setupBoard() {
-		board.setup(pieces: self.pieces)
+        setupPosition.forEachPiece { (id, position, player) in
+            if var archetypalPiece = pieces.first(where: { $0.id == id }) {
+                archetypalPiece.owner = player
+                board.setPiece(archetypalPiece, at: position)
+            }
+        }
 	}
 }
 
@@ -217,8 +226,77 @@ extension GameModel {
 // Contains definitions/helper methods for standard games and other common variants
 extension Game {
     
-    enum StandardPieceType: Hashable {
-        case king, queen, bishop, knight, rook, whitePawn, blackPawn
+//    enum StandardPieceType: Hashable {
+//        case king, queen, bishop, knight, rook, whitePawn, blackPawn
+//    }
+    
+    // Generates standard pieces
+    static func standardPieces() -> [Game.StandardPieceType: Piece] {
+        
+        // The position of the piece. Since these pieces will be put in Game.pieces, their position on the board doesn't matter
+        // However, the rank determines their position in the list.
+        // This is just a fast way to get a position with a specific rank.
+        let p: (Int) -> Position = { rank in Position(rank: rank, file: 0) }
+        
+        // The owner of the piece. All but the pawn can be either black or white
+        let o: Player = .blackOrWhite
+        
+        var pieces: [Game.StandardPieceType: Piece] = [
+            .whitePawn: .whitePawn(position: p(0)),
+            .blackPawn: .blackPawn(position: p(0)),
+            .knight: .knight(position: p(2), owner: o),
+            .bishop: .bishop(position: p(3), owner: o),
+            .rook: .rook(position: p(4), owner: o),
+            .queen: .queen(position: p(5), owner: o),
+            .king: .king(position: p(6), owner: o)
+        ]
+        
+        
+        // Set up promotion pieces for white and black
+        let promotionPieceTypes: [Game.StandardPieceType] = [.knight, .bishop, .rook, .queen]
+        let promotionPieces: [UUID] = promotionPieceTypes.compactMap { pieces[$0]?.id }
+        
+        var whitePawn = pieces[.whitePawn]!
+        whitePawn.promotionPieces = promotionPieces
+        pieces[.whitePawn] = whitePawn
+        
+        var blackPawn = pieces[.blackPawn]!
+        blackPawn.promotionPieces = promotionPieces
+        pieces[.blackPawn] = blackPawn
+        
+        return pieces
+    }
+    
+    static func standardGame() -> Game {
+        let pieces = standardPieces()
+        var setupPosition = SetupPosition(
+        
+    }
+    
+    static func standard(ids: [Game.StandardPieceType: UUID]) -> Board {
+        // Create an empty board
+        var squares = Board.emptyBoard().squares
+        
+        // Add in the pieces
+        let backRank: [Game.StandardPieceType] = [
+            .rook,
+            .knight,
+            .bishop,
+            .queen,
+            .king,
+            .bishop,
+            .knight,
+            .rook
+        ]
+        
+        for (fileIndex, _) in squares.enumerated() {
+            squares[fileIndex][0].setPiece(backRank[fileIndex], owner: .white, id: ids[backRank[fileIndex]]!)
+            squares[fileIndex][1].setPiece(.whitePawn, owner: .white, id: ids[.whitePawn]!)
+            squares[fileIndex][7].setPiece(backRank[fileIndex], owner: .black, id: ids[backRank[fileIndex]]!)
+            squares[fileIndex][6].setPiece(.blackPawn, owner: .black, id: ids[.blackPawn]!)
+        }
+        
+        return Board(squares: squares)
     }
     
 }

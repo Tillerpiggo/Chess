@@ -272,10 +272,10 @@ class GameCoreDataManager: NSObject, ObservableObject {
 		squareModel.state = Int16(square.state.rawValue)
 		squareModel.type = Int16(square.type.rawValue)
 		squareModel.position = positionModel(from: square.position)
-		squareModel.startingPieceID = square.startingPieceID
-		if let owner = square.startingPieceOwner {
-			squareModel.startingPieceOwner = playerModel(from: owner)
-		}
+//		squareModel.startingPieceID = square.startingPieceID
+//		if let owner = square.startingPieceOwner {
+//			squareModel.startingPieceOwner = playerModel(from: owner)
+//		}
 		if let piece = square.piece {
 			squareModel.piece = pieceModel(from: piece)
 		}

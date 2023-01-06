@@ -53,7 +53,7 @@ class EditPatternViewModel: ObservableObject {
 	private var piece: Piece
     
     var board: Board {
-        var board = Board.empty(ranks: 7, files: 7)
+        var board = Board.emptyBoard(ranks: 7, files: 7)
         board.squares[3][3].setPiece(piece)
         return board
     }
@@ -66,7 +66,7 @@ class EditPatternViewModel: ObservableObject {
 				let position = Position(rank: rank, file: file)
 				
 				if let move = Move(start: piece.position, end: position) {
-					var canMove = self.canMove(move, Board.empty(ranks: 7, files: 7))
+					var canMove = self.canMove(move, Board.emptyBoard(ranks: 7, files: 7))
 					
 					if isRestricting {
 						canMove.toggle()
